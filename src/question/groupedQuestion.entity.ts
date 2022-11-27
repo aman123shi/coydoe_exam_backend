@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { CourseEntity } from '@app/course/course.entity';
-@Entity({ name: 'questions' })
-export class QuestionEntity {
+@Entity({ name: 'grouped-questions' })
+export class GroupedQuestionEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -31,6 +31,9 @@ export class QuestionEntity {
 
   @Column()
   year: number;
+
+  @Column()
+  questionNumber: number;
 
   @Column()
   @ManyToOne((type) => CourseEntity)

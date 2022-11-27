@@ -9,6 +9,9 @@ export class CourseEntity {
   @Column()
   name: string;
 
+  @Column({ default: false })
+  hasDirections: boolean;
+
   @Column({ nullable: false })
   @ManyToOne((type) => ExamCategoryEntity)
   examCategory: number; //Entrance COC
