@@ -1,5 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { CourseEntity } from '@app/course/course.entity';
+import { DirectionEntity } from './direction.entity';
+import { SubExamCategoryEntity } from '@app/sub-exam-category/sub-exam-category.entity';
 @Entity({ name: 'grouped-questions' })
 export class GroupedQuestionEntity {
   @PrimaryGeneratedColumn()
@@ -36,10 +38,10 @@ export class GroupedQuestionEntity {
   questionNumber: number;
 
   @Column()
-  @ManyToOne((type) => CourseEntity)
-  course: number; //Biology Math
+  @ManyToOne((type) => DirectionEntity)
+  direction: number; //Biology Math
 
   @Column({ nullable: true })
-  @ManyToOne((type) => CourseEntity)
+  @ManyToOne((type) => SubExamCategoryEntity)
   subExamCategory: number; //natural social
 }

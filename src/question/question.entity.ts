@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { CourseEntity } from '@app/course/course.entity';
+import { SubExamCategoryEntity } from '@app/sub-exam-category/sub-exam-category.entity';
 @Entity({ name: 'questions' })
 export class QuestionEntity {
   @PrimaryGeneratedColumn()
@@ -37,6 +38,6 @@ export class QuestionEntity {
   course: number; //Biology Math
 
   @Column({ nullable: true })
-  @ManyToOne((type) => CourseEntity)
+  @ManyToOne((type) => SubExamCategoryEntity)
   subExamCategory: number; //natural social
 }
