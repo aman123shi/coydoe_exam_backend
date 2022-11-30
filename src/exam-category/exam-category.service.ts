@@ -14,7 +14,9 @@ export class ExamCategoryService {
   async getExamCategory(): Promise<ExamCategoryEntity[]> {
     return await this.examCategoryRepository.find();
   }
-
+  async getExamCategoryById(id: number): Promise<ExamCategoryEntity> {
+    return await this.examCategoryRepository.findOne({ where: [{ id: id }] });
+  }
   async createExamCategory(
     examCategoryDto: ExamCategoryDto,
   ): Promise<ExamCategoryEntity> {
