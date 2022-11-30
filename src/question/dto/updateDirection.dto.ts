@@ -1,17 +1,4 @@
-export class UpdateDirectionDto {
-  readonly directionText?: string;
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateDirectionDto } from './createDirection.dto';
 
-  readonly sectionName?: string; //section three grammar
-
-  readonly directionNumber?: number;
-
-  readonly startQuestionNumber?: number;
-
-  readonly endQuestionNumber?: number;
-
-  readonly course?: number;
-
-  readonly courseYear?: number;
-
-  readonly passage?: string;
-}
+export class UpdateDirectionDto extends PartialType(CreateDirectionDto) {}

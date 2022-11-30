@@ -6,6 +6,8 @@ import {
   Param,
   Post,
   Put,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ExamCategoryDto } from './dto/exam-category.dto';
 import { ExamCategoryService } from './exam-category.service';

@@ -8,13 +8,9 @@ import {
   Put,
 } from '@nestjs/common';
 import { CreateGroupedQuestionDto } from './dto/createGroupedQuestion.dto';
-import { CreateQuestionDto } from './dto/createQuestion.dto';
 import { GetGroupedQuestionDto } from './dto/getGroupedQuestion.dto';
-import { GetQuestionDto } from './dto/getQuestion.dto';
 import { UpdateGroupedQuestionDto } from './dto/updateGroupedQuestion.dto';
-import { UpdateQuestionDto } from './dto/updateQuestion.dto';
 import { GroupedQuestionService } from './groupedQuestion.service';
-import { QuestionService } from './question.service';
 
 @Controller()
 export class GroupedQuestionController {
