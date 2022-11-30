@@ -8,6 +8,7 @@ import { ExamCategoryService } from './exam-category.service';
   controllers: [ExamCategoryController],
   providers: [ExamCategoryService],
   imports: [TypeOrmModule.forFeature([ExamCategoryEntity])],
+  exports: [ExamCategoryService],
 })
 export class ExamCategoryModule {}
 //Entrance Coc Bank
