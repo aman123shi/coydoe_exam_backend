@@ -5,6 +5,7 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { UnprocessableEntityExceptionFilter } from './exception-handlers/unprocessableEntity-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,8 @@ async function bootstrap() {
       transform: true, //this will transform json object to JS class
     }),
   );
+
+  app.useGlobalFilters(new UnprocessableEntityExceptionFilter());
   await app.listen(3000);
 }
 bootstrap();

@@ -8,6 +8,7 @@ import { CourseModule } from './course/course.module';
 import { ExamCategoryModule } from './exam-category/exam-category.module';
 import { SubExamCategoryModule } from './sub-exam-category/sub-exam-category.module';
 import { AdminModule } from './admin/admin.module';
+import { UnprocessableEntityExceptionFilter } from './exception-handlers/unprocessableEntity-exception.filter';
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import { AdminModule } from './admin/admin.module';
     AdminModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, UnprocessableEntityExceptionFilter],
 })
 export class AppModule {}

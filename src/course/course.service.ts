@@ -1,10 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { CourseEntity } from '@app/course/course.entity';
 import { ExamCategoryService } from '@app/exam-category/exam-category.service';
 import { CreateCourseDto } from '@app/course/dtos/createCourse.dto';
 import { UpdateCourseDto } from '@app/course/dtos/updateCourse.dto';
+import { BadEntityException } from '@app/exception-handlers/bad-request.exception';
 
 @Injectable()
 export class CourseService {
@@ -33,7 +39,7 @@ export class CourseService {
     let newCourse = new CourseEntity();
     Object.assign(newCourse, createCourseDto);
     let examCategory = await this.examCategoryService.getExamCategoryById(
-      createCourseDto.examCategoryId,
+      createCourseDto.examCategory,
     );
     if (!examCategory) {
       throw new HttpException('Invalid ExamCategory', HttpStatus.BAD_REQUEST);
@@ -43,7 +49,12 @@ export class CourseService {
 
   async updateCourse(id: number, updateCourseDto: UpdateCourseDto) {
     //:TODO if exam-category will be  updated check it's existence before update
-    return await this.courseRepository.update({ id: id }, updateCourseDto);
+    try {
+      return await this.courseRepository.update({ id: id }, updateCourseDto);
+    } catch (error) {
+      console.log('error object logged  ' + JSON.stringify(error.message));
+      return new UnprocessableEntityException(error);
+    }
   }
 
   async deleteCourse(id: number): Promise<DeleteResult> {

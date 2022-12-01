@@ -10,5 +10,5 @@ export class CreateCourseDto {
 
   @IsNotEmpty()
   @IsInt()
-  readonly examCategoryId: number; //Entrance COC
+  readonly examCategory: number; //Entrance COC
 }
