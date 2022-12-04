@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateQuestionDto {
   @IsNotEmpty()
@@ -20,6 +20,7 @@ export class CreateQuestionDto {
   readonly answer: string;
 
   @IsNotEmpty()
+  @IsOptional()
   readonly image?: string;
 
   @IsNotEmpty()
@@ -35,5 +36,19 @@ export class CreateQuestionDto {
 
   @IsNotEmpty()
   @IsInt()
+  @IsOptional()
   readonly subExamCategory?: number; //natural social
 }
+/*
+{
+  "questionText":"",
+  "option_a":"",
+  "option_b":"",
+  "option_c":"",
+  "option_d":"",
+  "answer":"",
+  "description":"",
+  "year":2015,
+  "course":3
+}
+*/

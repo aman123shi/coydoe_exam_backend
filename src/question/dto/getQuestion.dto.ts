@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class GetQuestionDto {
   @IsNotEmpty()
@@ -9,15 +9,15 @@ export class GetQuestionDto {
   @IsInt()
   readonly year: number;
 
-  @IsNotEmpty()
   @IsInt()
+  @IsOptional()
   readonly subCategory?: number;
 
-  @IsNotEmpty()
   @IsInt()
+  @IsOptional({})
   readonly page?: number;
 
-  @IsNotEmpty()
   @IsInt()
+  @IsOptional()
   readonly limit?: number;
 }

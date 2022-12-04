@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateGroupedQuestionDto {
   @IsNotEmpty()
@@ -20,6 +20,7 @@ export class CreateGroupedQuestionDto {
   readonly answer: string;
 
   @IsNotEmpty()
+  @IsOptional()
   readonly image?: string;
 
   @IsNotEmpty()
@@ -38,6 +39,7 @@ export class CreateGroupedQuestionDto {
   readonly direction: number; //to which direction it belongs
 
   @IsNotEmpty()
+  @IsOptional()
   @IsInt()
   readonly subExamCategory?: number; //natural social
 }

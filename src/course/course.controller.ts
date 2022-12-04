@@ -6,9 +6,6 @@ import {
   Param,
   Post,
   Put,
-  UseFilters,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { CourseEntity } from '@app/course/course.entity';
 import { CourseService } from '@app/course/course.service';

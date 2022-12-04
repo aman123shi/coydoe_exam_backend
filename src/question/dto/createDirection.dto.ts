@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateDirectionDto {
   @IsNotEmpty()
@@ -28,5 +28,6 @@ export class CreateDirectionDto {
   readonly courseYear: number;
 
   @IsNotEmpty()
+  @IsOptional()
   readonly passage?: string;
 }

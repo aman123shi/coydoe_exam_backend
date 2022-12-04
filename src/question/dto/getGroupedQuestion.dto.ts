@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class GetGroupedQuestionDto {
   @IsNotEmpty()
@@ -7,9 +7,11 @@ export class GetGroupedQuestionDto {
 
   @IsNotEmpty()
   @IsInt()
+  @IsOptional()
   readonly startQuestion?: number;
 
   @IsNotEmpty()
   @IsInt()
+  @IsOptional()
   readonly endQuestion?: number;
 }

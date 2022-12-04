@@ -25,7 +25,7 @@ export class GroupedQuestionEntity {
   @Column({ type: 'longtext' })
   answer: string;
 
-  @Column({ type: 'longtext' })
+  @Column({ type: 'longtext', nullable: true })
   image: string;
 
   @Column({ type: 'longtext' })
