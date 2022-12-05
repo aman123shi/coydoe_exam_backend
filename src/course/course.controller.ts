@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { CourseEntity } from '@app/course/course.entity';
 import { CourseService } from '@app/course/course.service';
@@ -14,12 +15,15 @@ import { UpdateCourseDto } from '@app/course/dtos/updateCourse.dto';
 import { GetCoursesDto } from './dtos/getCourses.dto';
 import { UpdateResult } from 'typeorm';
 import { responseBuilder } from '@app/utils/http-response-builder';
+import { AdminGuard } from '@app/admin/guards/admin.guard';
+import { Public } from '@app/admin/decorators/publicRoute.decorators';
 
 @Controller()
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
   @Get('courses')
+  @Public()
   async getCourses(
     @Body() getCoursesDto: GetCoursesDto,
   ): Promise<CourseEntity[]> {

@@ -4,11 +4,15 @@ import { Repository } from 'typeorm';
 import { AdminEntity } from './admin.entity';
 import { CreateAdminDTo } from './dto/createAdmin.dto';
 import * as bcrypt from 'bcrypt';
-import { AdminLoginDto } from './dto/AdminLogin.dto';
+import { AdminLoginDto } from './dto/adminLogin.dto';
 import { responseBuilder } from '@app/utils/http-response-builder';
+import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class AdminService {
-  constructor(private readonly adminRepository: Repository<AdminEntity>) {}
+  constructor(
+    @InjectRepository(AdminEntity)
+    private readonly adminRepository: Repository<AdminEntity>,
+  ) {}
 
   generateJWT(phone: string): string {
     return sign({ phone }, 'JWT_SECRET');
@@ -17,7 +21,7 @@ export class AdminService {
   async signUp(createAdminDTo: CreateAdminDTo) {
     let newAdmin = new AdminEntity();
     Object.assign(newAdmin, createAdminDTo);
-    let adminExist = await this.adminRepository.find({
+    let adminExist = await this.adminRepository.findOne({
       where: [{ phone: newAdmin.phone }],
     });
     if (adminExist) {

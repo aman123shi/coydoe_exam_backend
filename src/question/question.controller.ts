@@ -1,3 +1,5 @@
+import { Public } from '@app/admin/decorators/publicRoute.decorators';
+import { AdminGuard } from '@app/admin/guards/admin.guard';
 import {
   Body,
   Controller,
@@ -17,10 +19,12 @@ export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
   @Get('questions')
+  @Public()
   async getQuestion(@Body() getQuestionDto: GetQuestionDto) {
     return await this.questionService.getQuestion(getQuestionDto);
   }
   @Get('questions/free')
+  @Public()
   async getFreeQuestion(@Body() getQuestionDto: GetQuestionDto) {
     return await this.questionService.getRandomQuestion(getQuestionDto);
   }

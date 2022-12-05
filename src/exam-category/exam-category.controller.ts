@@ -1,3 +1,4 @@
+import { Public } from '@app/admin/decorators/publicRoute.decorators';
 import {
   Body,
   Controller,
@@ -6,8 +7,6 @@ import {
   Param,
   Post,
   Put,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ExamCategoryDto } from './dto/exam-category.dto';
 import { ExamCategoryService } from './exam-category.service';
@@ -17,6 +16,7 @@ export class ExamCategoryController {
   constructor(private readonly examCategoryService: ExamCategoryService) {}
 
   @Get('exam-categories')
+  @Public()
   async getExamCategory() {
     return await this.examCategoryService.getExamCategory();
   }
