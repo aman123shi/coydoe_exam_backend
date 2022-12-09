@@ -1,6 +1,8 @@
 import {
+  forwardRef,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -10,13 +12,13 @@ import { CourseEntity } from '@app/course/course.entity';
 import { ExamCategoryService } from '@app/exam-category/exam-category.service';
 import { CreateCourseDto } from '@app/course/dtos/createCourse.dto';
 import { UpdateCourseDto } from '@app/course/dtos/updateCourse.dto';
-import { BadEntityException } from '@app/exception-handlers/bad-request.exception';
 
 @Injectable()
 export class CourseService {
   constructor(
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
+    @Inject(forwardRef(() => ExamCategoryService))
     private readonly examCategoryService: ExamCategoryService,
   ) {}
 

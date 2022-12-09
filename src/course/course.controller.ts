@@ -22,12 +22,12 @@ import { Public } from '@app/admin/decorators/publicRoute.decorators';
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
-  @Get('courses')
+  @Get('courses/:examCategoryId')
   @Public()
   async getCourses(
-    @Body() getCoursesDto: GetCoursesDto,
+    @Param('examCategoryId') examCategoryId: number,
   ): Promise<CourseEntity[]> {
-    return await this.courseService.getCourses(getCoursesDto.examCategoryId);
+    return await this.courseService.getCourses(examCategoryId);
   }
 
   @Post('courses')

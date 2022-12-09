@@ -21,6 +21,11 @@ export class ExamCategoryController {
     return await this.examCategoryService.getExamCategory();
   }
 
+  @Get('exam-categories-with-courses')
+  @Public()
+  async getExamCategoriesWithCourses() {
+    return await this.examCategoryService.getExamCategoriesWithCourses();
+  }
   @Post('exam-categories')
   async createExamCategory(@Body() examCategoryDto: ExamCategoryDto) {
     return await this.examCategoryService.createExamCategory(examCategoryDto);

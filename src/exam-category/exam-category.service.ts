@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { CourseService } from '@app/course/course.service';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ExamCategoryDto } from './dto/exam-category.dto';
@@ -9,10 +10,26 @@ export class ExamCategoryService {
   constructor(
     @InjectRepository(ExamCategoryEntity)
     private readonly examCategoryRepository: Repository<ExamCategoryEntity>,
+    @Inject(forwardRef(() => CourseService))
+    private readonly courseService: CourseService,
   ) {}
 
   async getExamCategory(): Promise<ExamCategoryEntity[]> {
     return await this.examCategoryRepository.find();
+  }
+  async getExamCategoriesWithCourses() {
+    let examCategories = await this.examCategoryRepository.find();
+    let response = [];
+    for (const examCat of examCategories) {
+      let courses = await this.courseService.getCourses(examCat.id);
+      let examCategoryWithCourses = {
+        id: examCat.id,
+        name: examCat.name,
+        courses,
+      };
+      response.push(examCategoryWithCourses);
+    }
+    return response;
   }
   async getExamCategoryById(id: number): Promise<ExamCategoryEntity> {
     return await this.examCategoryRepository.findOne({ where: [{ id: id }] });
