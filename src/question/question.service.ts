@@ -1,4 +1,3 @@
-import { biology, physics } from '@app/question';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -13,14 +12,7 @@ export class QuestionService {
     @InjectRepository(QuestionEntity)
     private readonly questionRepository: Repository<QuestionEntity>,
   ) {}
-  async createSampleQuestion() {
-    for (const question of physics) {
-      let newQuestion = new QuestionEntity();
-      Object.assign(newQuestion, question);
-      await this.questionRepository.save(newQuestion);
-    }
-    return 'sample question inserted !!!';
-  }
+
   async getQuestion(getQuestionDto: GetQuestionDto): Promise<QuestionEntity[]> {
     let limit = getQuestionDto.limit || 5;
     let page = ((getQuestionDto.page || 1) - 1) * limit;

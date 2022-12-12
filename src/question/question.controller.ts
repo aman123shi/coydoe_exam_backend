@@ -28,10 +28,7 @@ export class QuestionController {
   async getFreeQuestion(@Body() getQuestionDto: GetQuestionDto) {
     return await this.questionService.getRandomQuestion(getQuestionDto);
   }
-  @Post('questions/insert')
-  async insertQuestion() {
-    return await this.questionService.createSampleQuestion();
-  }
+
   @Post('questions')
   async createQuestion(@Body() createQuestionDto: CreateQuestionDto) {
     return await this.questionService.createQuestion(createQuestionDto);

@@ -1,6 +1,10 @@
 if (!process.env.IS_TS_NODE) {
   require('module-alias/register');
 }
+import moduleAlias from 'module-alias';
+moduleAlias.addAliases({
+  '@app': `${__dirname}`,
+});
 import 'reflect-metadata';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -9,7 +13,7 @@ import { UnprocessableEntityExceptionFilter } from './exception-handlers/unproce
 import { AdminGuard } from './admin/guards/admin.guard';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule,{cors:true});
+  const app = await NestFactory.create(AppModule, { cors: true });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -19,8 +23,8 @@ async function bootstrap() {
   );
 
   app.useGlobalFilters(new UnprocessableEntityExceptionFilter());
- // const reflector = app.get(Reflector);
- // app.useGlobalGuards(new AdminGuard(reflector));
+  // const reflector = app.get(Reflector);
+  // app.useGlobalGuards(new AdminGuard(reflector));
   await app.listen(3000);
 }
 bootstrap();
