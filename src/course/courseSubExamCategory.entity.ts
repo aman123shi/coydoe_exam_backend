@@ -1,7 +1,7 @@
 import { ExamCategoryEntity } from '@app/exam-category/exam-category.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 
-@Entity({ name: 'courseSubExamCategoryEntity' })
+@Entity({ name: 'course-sub-exam-category-entity' })
 export class CourseSubExamCategoryEntity {
   @PrimaryGeneratedColumn()
   id: number;
