@@ -8,6 +8,7 @@ import { SubExamCategoryService } from './sub-exam-category.service';
   controllers: [SubExamCategoryController],
   providers: [SubExamCategoryService],
   imports: [TypeOrmModule.forFeature([SubExamCategoryEntity])],
+  exports: [SubExamCategoryService],
 })
 export class SubExamCategoryModule {}
 //natural social

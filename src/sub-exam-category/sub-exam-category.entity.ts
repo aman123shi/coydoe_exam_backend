@@ -7,4 +7,9 @@ export class SubExamCategoryEntity {
   //social natural
   @Column()
   name: string;
+  
+  
+  //which exam category it belongs 
+  @Column()
+  examCategory: number;
 }

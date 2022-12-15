@@ -32,6 +32,9 @@ export class GroupedQuestionEntity {
   description: string;
 
   @Column()
+  courseId: number;
+
+  @Column()
   year: number;
 
   @Column()

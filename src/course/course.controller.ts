@@ -30,6 +30,10 @@ export class CourseController {
     return await this.courseService.getCourses(examCategoryId);
   }
 
+  @Get('courses/get/sub-exam-categories/:id')
+  async getSubCategories(@Param('id') id: number) {
+    return await this.courseService.getSubExamCategories(id);
+  }
   @Post('courses')
   async createCourse(
     @Body() createCourseDto: CreateCourseDto,

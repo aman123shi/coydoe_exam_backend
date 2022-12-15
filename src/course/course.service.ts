@@ -12,14 +12,20 @@ import { CourseEntity } from '@app/course/course.entity';
 import { ExamCategoryService } from '@app/exam-category/exam-category.service';
 import { CreateCourseDto } from '@app/course/dtos/createCourse.dto';
 import { UpdateCourseDto } from '@app/course/dtos/updateCourse.dto';
+import { CourseSubExamCategoryEntity } from './courseSubExamCategory.entity';
+import { SubExamCategoryService } from '@app/sub-exam-category/sub-exam-category.service';
 
 @Injectable()
 export class CourseService {
   constructor(
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
+    @InjectRepository(CourseSubExamCategoryEntity)
+    private readonly courseSubExamRepository: Repository<CourseSubExamCategoryEntity>,
     @Inject(forwardRef(() => ExamCategoryService))
     private readonly examCategoryService: ExamCategoryService,
+
+    private readonly subExamCategoryService: SubExamCategoryService,
   ) {}
 
   // get all courses under specified exam-categories
@@ -58,7 +64,15 @@ export class CourseService {
       return new UnprocessableEntityException(error);
     }
   }
-
+  async getSubExamCategories(id: number) {
+    let subExamCategories = await this.courseSubExamRepository.find({
+      select: ['subExamCategory'],
+      where: [{ course: id }],
+    });
+    let ids = subExamCategories.map((sub) => sub.subExamCategory);
+    console.log(ids);
+    return await this.subExamCategoryService.getSubExamCategoriesById(ids);
+  }
   async deleteCourse(id: number): Promise<DeleteResult> {
     return await this.courseRepository.delete({ id: id });
   }

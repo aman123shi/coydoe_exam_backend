@@ -1,21 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { CourseService } from '@app/course/course.service';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateQuestionDto } from './dto/createQuestion.dto';
 import { GetQuestionDto } from './dto/getQuestion.dto';
 import { UpdateQuestionDto } from './dto/updateQuestion.dto';
+import { GroupedQuestionService } from './groupedQuestion.service';
 import { QuestionEntity } from './question.entity';
-
+//import { biology } from '@app/question';
 @Injectable()
 export class QuestionService {
   constructor(
     @InjectRepository(QuestionEntity)
     private readonly questionRepository: Repository<QuestionEntity>,
+    private readonly courseService: CourseService,
+    private readonly groupedQuestionService: GroupedQuestionService,
   ) {}
 
   async getQuestion(getQuestionDto: GetQuestionDto): Promise<QuestionEntity[]> {
     let limit = getQuestionDto.limit || 5;
     let page = ((getQuestionDto.page || 1) - 1) * limit;
+    // await this.insertSample();
     return await this.questionRepository.find({
       where: [
         {
@@ -33,7 +38,43 @@ export class QuestionService {
     Object.assign(newQuestion, createQuestionDto);
     return await this.questionRepository.save(newQuestion);
   }
+  // async insertSample() {
+  //   for (const q of biology) {
+  //     let newQuestion = new QuestionEntity();
+  //     Object.assign(newQuestion, q);
+  //     await this.questionRepository.save(newQuestion);
+  //   }
+  //   return 'boom';
+  // }
+  async getAvailableYears(courseId: number) {
+    let course = await this.courseService.getCourseById(courseId);
+    if (!course) {
+      throw new HttpException(
+        'invalid Course ID ',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
 
+    try {
+      let years = [];
+      if (course.hasDirections == false)
+        years = await this.questionRepository
+          .createQueryBuilder('q')
+          .select('q.year', 'year')
+          .where('q.courseId=:id', { id: courseId })
+          .distinct(true)
+          .getRawMany();
+      else {
+        years = await this.groupedQuestionService.getYearsOfGroupedQuestions(
+          courseId,
+        );
+      }
+      console.log(years);
+      return years;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+  }
   async updateQuestion(id: number, updateQuestionDto: UpdateQuestionDto) {
     return await this.questionRepository.update({ id: id }, updateQuestionDto);
   }

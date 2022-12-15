@@ -1,10 +1,7 @@
 if (!process.env.IS_TS_NODE) {
   require('module-alias/register');
 }
-import moduleAlias from 'module-alias';
-moduleAlias.addAliases({
-  '@app': `${__dirname}`,
-});
+
 import 'reflect-metadata';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';

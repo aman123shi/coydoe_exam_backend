@@ -9,6 +9,7 @@ import { GroupedQuestionService } from '@app/question/groupedQuestion.service';
 import { QuestionController } from '@app/question/question.controller';
 import { QuestionEntity } from '@app/question/question.entity';
 import { QuestionService } from '@app/question/question.service';
+import { CourseModule } from '@app/course/course.module';
 
 @Module({
   controllers: [
@@ -23,6 +24,7 @@ import { QuestionService } from '@app/question/question.service';
       DirectionEntity,
       GroupedQuestionEntity,
     ]),
+    CourseModule,
   ],
 })
 export class QuestionModule {}

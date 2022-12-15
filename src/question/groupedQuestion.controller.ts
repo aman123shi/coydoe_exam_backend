@@ -18,7 +18,7 @@ export class GroupedQuestionController {
     private readonly groupedQuestionService: GroupedQuestionService,
   ) {}
 
-  @Get('grouped-questions')
+  @Post('grouped-questions')
   async getGroupedQuestion(
     @Body() getGroupedQuestionDto: GetGroupedQuestionDto,
   ) {
@@ -27,7 +27,7 @@ export class GroupedQuestionController {
     );
   }
 
-  @Post('grouped-questions')
+  @Post('grouped-questions/create')
   async createGroupedQuestion(
     @Body() createGroupedQuestionDto: CreateGroupedQuestionDto,
   ) {

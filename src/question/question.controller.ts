@@ -18,7 +18,7 @@ import { QuestionService } from './question.service';
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @Get('questions')
+  @Post('questions')
   @Public()
   async getQuestion(@Body() getQuestionDto: GetQuestionDto) {
     return await this.questionService.getQuestion(getQuestionDto);
@@ -28,7 +28,10 @@ export class QuestionController {
   async getFreeQuestion(@Body() getQuestionDto: GetQuestionDto) {
     return await this.questionService.getRandomQuestion(getQuestionDto);
   }
-
+  @Get('questions/courses/get-years/:id')
+  async getAvailableYears(@Param('id') courseId: number) {
+    return await this.questionService.getAvailableYears(courseId);
+  }
   @Post('questions')
   async createQuestion(@Body() createQuestionDto: CreateQuestionDto) {
     return await this.questionService.createQuestion(createQuestionDto);

@@ -16,12 +16,12 @@ import { UpdateQuestionDto } from '@app/question/dto/updateQuestion.dto';
 export class DirectionController {
   constructor(private readonly directionService: DirectionService) {}
 
-  @Get('directions')
+  @Post('directions')
   async getDirection(@Body() getDirectionDto: GetDirectionDto) {
     return await this.directionService.getDirections(getDirectionDto);
   }
 
-  @Post('directions')
+  @Post('directions/create')
   async createQuestion(@Body() createDirectionDto: CreateDirectionDto) {
     return await this.directionService.createDirection(createDirectionDto);
   }

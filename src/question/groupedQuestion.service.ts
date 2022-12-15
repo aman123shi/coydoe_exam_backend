@@ -24,6 +24,15 @@ export class GroupedQuestionService {
       ],
     });
   }
+  async getYearsOfGroupedQuestions(courseId: number) {
+    let years = await this.groupedQuestionRepository
+      .createQueryBuilder('q')
+      .select('q.year', 'year')
+      .where('q.courseId=:id', { id: courseId })
+      .distinct(true)
+      .getRawMany();
+    return years;
+  }
   async createGroupedQuestion(
     createGroupedQuestionDto: CreateGroupedQuestionDto,
   ) {

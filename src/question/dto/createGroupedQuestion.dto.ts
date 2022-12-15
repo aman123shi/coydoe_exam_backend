@@ -32,6 +32,10 @@ export class CreateGroupedQuestionDto {
 
   @IsNotEmpty()
   @IsInt()
+  readonly courseId: number;
+
+  @IsNotEmpty()
+  @IsInt()
   readonly questionNumber: number;
 
   @IsNotEmpty()

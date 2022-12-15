@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { SubExamCategoryDto } from '@app/sub-exam-category/dto/sub-exam-category.dto';
 import { SubExamCategoryEntity } from '@app/sub-exam-category/sub-exam-category.entity';
 
@@ -14,7 +14,13 @@ export class SubExamCategoryService {
   async getSubExamCategory(): Promise<SubExamCategoryEntity[]> {
     return await this.subExamCategoryRepository.find();
   }
-
+  async getSubExamCategoriesById(
+    ids: number[],
+  ): Promise<SubExamCategoryEntity[]> {
+    return await this.subExamCategoryRepository.find({
+      where: [{ id: In(ids) }],
+    });
+  }
   async createSubExamCategory(
     subExamCategoryDto: SubExamCategoryDto,
   ): Promise<SubExamCategoryEntity> {
