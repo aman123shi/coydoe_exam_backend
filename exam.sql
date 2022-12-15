@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 15, 2022 at 11:51 AM
+-- Generation Time: Dec 15, 2022 at 02:40 PM
 -- Server version: 8.0.31-0ubuntu0.22.04.1
 -- PHP Version: 8.1.2-1ubuntu2.8
 
@@ -45,6 +45,29 @@ INSERT INTO `admins` (`id`, `firstName`, `lastName`, `phone`, `password`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `course-sub-exam-category-entity`
+--
+
+CREATE TABLE `course-sub-exam-category-entity` (
+  `id` int NOT NULL,
+  `course` int NOT NULL,
+  `subExamCategory` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `course-sub-exam-category-entity`
+--
+
+INSERT INTO `course-sub-exam-category-entity` (`id`, `course`, `subExamCategory`) VALUES
+(1, 1, 1),
+(2, 2, 1),
+(3, 2, 2),
+(4, 3, 1),
+(5, 4, 3);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `courses`
 --
 
@@ -65,29 +88,6 @@ INSERT INTO `courses` (`id`, `name`, `examCategory`, `examCategoryId`, `hasDirec
 (2, '12th Maths', 1, 1, 0),
 (3, 'Physics', 1, 1, 0),
 (4, 'English', 1, 1, 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `courseSubExamCategoryEntity`
---
-
-CREATE TABLE `courseSubExamCategoryEntity` (
-  `id` int NOT NULL,
-  `course` int NOT NULL,
-  `subExamCategory` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `courseSubExamCategoryEntity`
---
-
-INSERT INTO `courseSubExamCategoryEntity` (`id`, `course`, `subExamCategory`) VALUES
-(1, 1, 1),
-(2, 2, 1),
-(3, 2, 2),
-(4, 3, 1),
-(5, 4, 3);
 
 -- --------------------------------------------------------
 
@@ -258,17 +258,17 @@ ALTER TABLE `admins`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `course-sub-exam-category-entity`
+--
+ALTER TABLE `course-sub-exam-category-entity`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `courses`
 --
 ALTER TABLE `courses`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FK_acddb5643658b0a24785755b260` (`examCategoryId`);
-
---
--- Indexes for table `courseSubExamCategoryEntity`
---
-ALTER TABLE `courseSubExamCategoryEntity`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `directions`
@@ -315,16 +315,16 @@ ALTER TABLE `admins`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `course-sub-exam-category-entity`
+--
+ALTER TABLE `course-sub-exam-category-entity`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT for table `courseSubExamCategoryEntity`
---
-ALTER TABLE `courseSubExamCategoryEntity`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `directions`
