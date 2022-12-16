@@ -7,6 +7,7 @@ import { GetQuestionDto } from './dto/getQuestion.dto';
 import { UpdateQuestionDto } from './dto/updateQuestion.dto';
 import { GroupedQuestionService } from './groupedQuestion.service';
 import { QuestionEntity } from './question.entity';
+import { QuestionsWithCount } from './types/questionsWithCount';
 //import { biology } from '@app/question';
 @Injectable()
 export class QuestionService {
@@ -17,11 +18,13 @@ export class QuestionService {
     private readonly groupedQuestionService: GroupedQuestionService,
   ) {}
 
-  async getQuestion(getQuestionDto: GetQuestionDto): Promise<QuestionEntity[]> {
+  async getQuestion(
+    getQuestionDto: GetQuestionDto,
+  ): Promise<QuestionsWithCount> {
     let limit = getQuestionDto.limit || 5;
     let page = ((getQuestionDto.page || 1) - 1) * limit;
     // await this.insertSample();
-    return await this.questionRepository.find({
+    const [questions, count] = await this.questionRepository.findAndCount({
       where: [
         {
           course: getQuestionDto.course,
@@ -32,6 +35,7 @@ export class QuestionService {
       skip: page,
       take: limit,
     });
+    return { questions, count };
   }
   async createQuestion(createQuestionDto: CreateQuestionDto) {
     let newQuestion = new QuestionEntity();
