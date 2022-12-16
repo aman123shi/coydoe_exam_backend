@@ -44,12 +44,12 @@ USER node
 # PRODUCTION
 ###################
 
-FROM node:18-alpine As production 
+# FROM node:18-alpine As production 
 
-EXPOSE 3000
+# EXPOSE 3000
 
-COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+# COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+# COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
 CMD [ "node", "dist/main.js" ]
 
