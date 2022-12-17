@@ -9,6 +9,7 @@ import { ExamCategoryModule } from './exam-category/exam-category.module';
 import { SubExamCategoryModule } from './sub-exam-category/sub-exam-category.module';
 import { AdminModule } from './admin/admin.module';
 import { UnprocessableEntityExceptionFilter } from './exception-handlers/unprocessableEntity-exception.filter';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UnprocessableEntityExceptionFilter } from './exception-handlers/unproce
     ExamCategoryModule,
     SubExamCategoryModule,
     AdminModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService, UnprocessableEntityExceptionFilter],
