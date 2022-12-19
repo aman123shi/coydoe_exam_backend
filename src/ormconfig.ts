@@ -8,7 +8,7 @@ export const DBconfig: DataSourceOptions = {
   password: '1199',
   database: 'exam',
   synchronize: true,
-  logging: true,
+  logging: false,
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   subscribers: [],
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],

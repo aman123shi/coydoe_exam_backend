@@ -1,5 +1,13 @@
 import { CourseService } from '@app/course/course.service';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { PagesService } from '@app/progress/pages.service';
+import { ProgressService } from '@app/progress/progress.service';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateQuestionDto } from './dto/createQuestion.dto';
@@ -16,27 +24,65 @@ export class QuestionService {
     private readonly questionRepository: Repository<QuestionEntity>,
     private readonly courseService: CourseService,
     private readonly groupedQuestionService: GroupedQuestionService,
+    private readonly pagesService: PagesService,
+    @Inject(forwardRef(() => ProgressService))
+    private readonly progressService: ProgressService,
   ) {}
-
+  async getQuestionById(id: number) {
+    let question = await this.questionRepository.findOne({
+      where: [{ id: id }],
+    });
+    return question;
+  }
   async getQuestion(
     getQuestionDto: GetQuestionDto,
+    userId: number,
   ): Promise<QuestionsWithCount> {
     let limit = getQuestionDto.limit || 5;
-    let page = ((getQuestionDto.page || 1) - 1) * limit;
-    // await this.insertSample();
+    let page = getQuestionDto.page || 1;
+    const course = getQuestionDto.course;
+    const year = getQuestionDto.year;
+    const subExamCategory = getQuestionDto.subCategory;
+    let visitedPage = await this.pagesService.findPage({
+      courseId: course,
+      year,
+      userId,
+      page,
+    });
+
     const [questions, count] = await this.questionRepository.findAndCount({
       where: [
         {
-          course: getQuestionDto.course,
-          year: getQuestionDto.year,
-          subExamCategory: getQuestionDto.subCategory,
+          course,
+          year,
+          subExamCategory,
         },
       ],
-      skip: page,
+      skip: (page - 1) * limit,
       take: limit,
     });
+    if (!visitedPage) {
+      await this.pagesService.createNewPage({
+        courseId: course,
+        year,
+        userId: 1,
+        page,
+        pageSize: limit,
+        isSubmitted: false,
+        startTime: Date.now(),
+      });
+      if (page === 1)
+        await this.progressService.createNewProgress({
+          courseId: course,
+          year,
+          userId: 1,
+          totalQuestions: count,
+          lastPage: page,
+        });
+    }
     return { questions, count };
   }
+
   async createQuestion(createQuestionDto: CreateQuestionDto) {
     let newQuestion = new QuestionEntity();
     Object.assign(newQuestion, createQuestionDto);
@@ -50,6 +96,17 @@ export class QuestionService {
   //   }
   //   return 'boom';
   // }
+  async getCourseQuestionCount({
+    courseId,
+    year,
+  }: {
+    courseId: number;
+    year: number;
+  }) {
+    return await this.questionRepository.count({
+      where: [{ course: courseId, year }],
+    });
+  }
   async getAvailableYears(courseId: number) {
     let course = await this.courseService.getCourseById(courseId);
     if (!course) {

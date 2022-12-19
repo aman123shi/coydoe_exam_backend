@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from '@app/app.controller';
 import { AppService } from '@app/app.service';
 import { DBconfig } from '@app/ormconfig';
@@ -10,6 +15,8 @@ import { SubExamCategoryModule } from './sub-exam-category/sub-exam-category.mod
 import { AdminModule } from './admin/admin.module';
 import { UnprocessableEntityExceptionFilter } from './exception-handlers/unprocessableEntity-exception.filter';
 import { UserModule } from './user/user.module';
+import { ProgressModule } from './progress/progress.module';
+import { UserAuthMiddleware } from './user/middlewares/userAuth.middleware';
 
 @Module({
   imports: [
@@ -20,8 +27,19 @@ import { UserModule } from './user/user.module';
     SubExamCategoryModule,
     AdminModule,
     UserModule,
+    ProgressModule,
   ],
   controllers: [AppController],
   providers: [AppService, UnprocessableEntityExceptionFilter],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserAuthMiddleware)
+      .forRoutes(
+        { path: 'questions', method: RequestMethod.POST },
+        { path: 'submit-answer', method: RequestMethod.POST },
+        { path: 'get-progress', method: RequestMethod.POST },
+      );
+  }
+}

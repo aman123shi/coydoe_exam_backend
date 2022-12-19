@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DirectionController } from '@app/question/direction.controller';
 import { DirectionEntity } from '@app/question/direction.entity';
@@ -10,6 +10,7 @@ import { QuestionController } from '@app/question/question.controller';
 import { QuestionEntity } from '@app/question/question.entity';
 import { QuestionService } from '@app/question/question.service';
 import { CourseModule } from '@app/course/course.module';
+import { ProgressModule } from '@app/progress/progress.module';
 
 @Module({
   controllers: [
@@ -25,6 +26,8 @@ import { CourseModule } from '@app/course/course.module';
       GroupedQuestionEntity,
     ]),
     CourseModule,
+    forwardRef(() => ProgressModule),
   ],
+  exports: [QuestionService],
 })
 export class QuestionModule {}

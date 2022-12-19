@@ -1,5 +1,6 @@
 import { Public } from '@app/admin/decorators/publicRoute.decorators';
 import { AdminGuard } from '@app/admin/guards/admin.guard';
+import { ExpressRequest } from '@app/user/types/expressRequest.interface';
 import {
   Body,
   Controller,
@@ -8,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
 } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/createQuestion.dto';
 import { GetQuestionDto } from './dto/getQuestion.dto';
@@ -20,8 +22,14 @@ export class QuestionController {
 
   @Post('questions')
   @Public()
-  async getQuestion(@Body() getQuestionDto: GetQuestionDto) {
-    return await this.questionService.getQuestion(getQuestionDto);
+  async getQuestion(
+    @Body() getQuestionDto: GetQuestionDto,
+    @Req() request: ExpressRequest,
+  ) {
+    return await this.questionService.getQuestion(
+      getQuestionDto,
+      request.userId,
+    );
   }
   @Get('questions/free')
   @Public()
@@ -32,7 +40,7 @@ export class QuestionController {
   async getAvailableYears(@Param('id') courseId: number) {
     return await this.questionService.getAvailableYears(courseId);
   }
-  @Post('questions')
+  @Post('questions/create')
   async createQuestion(@Body() createQuestionDto: CreateQuestionDto) {
     return await this.questionService.createQuestion(createQuestionDto);
   }

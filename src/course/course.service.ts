@@ -64,6 +64,7 @@ export class CourseService {
       return new UnprocessableEntityException(error);
     }
   }
+
   async getSubExamCategories(id: number) {
     let subExamCategories = await this.courseSubExamRepository.find({
       select: ['subExamCategory'],

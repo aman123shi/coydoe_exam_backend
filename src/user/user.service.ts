@@ -7,6 +7,8 @@ import * as bcrypt from 'bcrypt';
 import { UserLoginDto } from './dto/loginUser.dto';
 import { responseBuilder } from '@app/utils/http-response-builder';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JWT_SECRET } from '@app/config';
+
 @Injectable()
 export class UserService {
   constructor(
@@ -14,8 +16,8 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  generateJWT(phone: string): string {
-    return sign({ phone }, 'JWT_SECRET');
+  generateJWT(data: any): string {
+    return sign({ data }, JWT_SECRET);
   }
 
   async signUp(createUserDTo: CreateUserDto) {
@@ -36,16 +38,16 @@ export class UserService {
     delete newUser.password;
     let response = {
       ...newUser,
-      token: this.generateJWT(newUser.phone),
+      token: this.generateJWT({ id: newUser.id, phone: newUser.phone }),
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
 
   async login(loginDto: UserLoginDto) {
-    let admin = await this.userRepository.findOne({
+    let user = await this.userRepository.findOne({
       where: [{ phone: loginDto.phone }],
     });
-    if (!admin) {
+    if (!user) {
       throw new HttpException(
         'Incorrect Phone or Password',
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -53,7 +55,7 @@ export class UserService {
     }
     const isPasswordCorrect = await bcrypt.compare(
       loginDto.password,
-      admin.password,
+      user.password,
     );
 
     if (!isPasswordCorrect) {
@@ -62,10 +64,10 @@ export class UserService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-    delete admin.password;
+    delete user.password;
     let response = {
-      ...admin,
-      token: this.generateJWT(admin.phone),
+      ...user,
+      token: this.generateJWT({ id: user.id, phone: user.phone }),
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
