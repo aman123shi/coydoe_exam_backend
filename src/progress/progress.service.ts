@@ -1,3 +1,6 @@
+import { GroupedQuestionEntity } from '@app/question/groupedQuestion.entity';
+import { GroupedQuestionService } from '@app/question/groupedQuestion.service';
+import { QuestionEntity } from '@app/question/question.entity';
 import { QuestionService } from '@app/question/question.service';
 import { responseBuilder } from '@app/utils/http-response-builder';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
@@ -17,6 +20,8 @@ export class ProgressService {
     private readonly pagesService: PagesService,
     @Inject(forwardRef(() => QuestionService))
     private readonly questionService: QuestionService,
+    @Inject(forwardRef(() => GroupedQuestionService))
+    private readonly groupedQuestionService: GroupedQuestionService,
   ) {}
   async createNewProgress(createProgressDto: CreateProgressDto) {
     let newProgress = new ProgressEntity();
@@ -46,9 +51,17 @@ export class ProgressService {
         skippedQuestions++;
         continue;
       }
-      let question = await this.questionService.getQuestionById(
-        submittedAnswer.questionID,
-      );
+      let question: QuestionEntity | GroupedQuestionEntity = null;
+      if (submitAnswerDto.isGrouped) {
+        question = await this.groupedQuestionService.getGroupedQuestionById(
+          submittedAnswer.questionID,
+        );
+      } else {
+        question = await this.questionService.getQuestionById(
+          submittedAnswer.questionID,
+        );
+      }
+
       if (submittedAnswer.answer == question.answer) {
         correctAnswers++;
       } else {

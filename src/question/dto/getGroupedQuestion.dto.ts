@@ -8,10 +8,15 @@ export class GetGroupedQuestionDto {
   @IsNotEmpty()
   @IsInt()
   @IsOptional()
-  readonly startQuestion?: number;
+  readonly courseId?: number;
 
   @IsNotEmpty()
   @IsInt()
   @IsOptional()
-  readonly endQuestion?: number;
+  readonly year?: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  @IsOptional()
+  readonly directionNumber?: number;
 }

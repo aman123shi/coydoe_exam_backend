@@ -65,7 +65,7 @@ export class QuestionService {
       await this.pagesService.createNewPage({
         courseId: course,
         year,
-        userId: 1,
+        userId,
         page,
         pageSize: limit,
         isSubmitted: false,
@@ -75,7 +75,7 @@ export class QuestionService {
         await this.progressService.createNewProgress({
           courseId: course,
           year,
-          userId: 1,
+          userId,
           totalQuestions: count,
           lastPage: page,
         });

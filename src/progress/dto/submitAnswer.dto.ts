@@ -17,4 +17,5 @@ export class SubmitAnswerDto {
   }[];
 
   submittedPage: number;
+  isGrouped: boolean = false;
 }

@@ -28,6 +28,6 @@ import { ProgressModule } from '@app/progress/progress.module';
     CourseModule,
     forwardRef(() => ProgressModule),
   ],
-  exports: [QuestionService],
+  exports: [QuestionService, GroupedQuestionService],
 })
 export class QuestionModule {}
