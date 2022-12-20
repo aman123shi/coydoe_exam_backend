@@ -7,11 +7,16 @@ import * as bcrypt from 'bcrypt';
 import { AdminLoginDto } from './dto/adminLogin.dto';
 import { responseBuilder } from '@app/utils/http-response-builder';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Admin, AdminDocument } from './schemas/admin.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
 @Injectable()
 export class AdminService {
   constructor(
     @InjectRepository(AdminEntity)
     private readonly adminRepository: Repository<AdminEntity>,
+    @InjectModel(Admin.name) private adminModel: Model<AdminDocument>,
   ) {}
 
   generateJWT(phone: string): string {
@@ -19,11 +24,12 @@ export class AdminService {
   }
 
   async signUp(createAdminDTo: CreateAdminDTo) {
-    let newAdmin = new AdminEntity();
+    let newAdmin = new Admin();
     Object.assign(newAdmin, createAdminDTo);
-    let adminExist = await this.adminRepository.findOne({
-      where: [{ phone: newAdmin.phone }],
-    });
+    let adminExist = await this.adminModel.findOne({ phone: newAdmin.phone });
+    // let adminExist = await this.adminRepository.findOne({
+    //   where: [{ phone: newAdmin.phone }],
+    // });
     if (adminExist) {
       throw new HttpException(
         'Admin already exist',

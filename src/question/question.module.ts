@@ -11,6 +11,13 @@ import { QuestionEntity } from '@app/question/question.entity';
 import { QuestionService } from '@app/question/question.service';
 import { CourseModule } from '@app/course/course.module';
 import { ProgressModule } from '@app/progress/progress.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Question, QuestionSchema } from './schemas/question.schema';
+import {
+  GroupedQuestion,
+  GroupedQuestionSchema,
+} from './schemas/groupedQuestion.schema';
+import { Direction, DirectionSchema } from './schemas/direction.schema';
 
 @Module({
   controllers: [
@@ -24,6 +31,11 @@ import { ProgressModule } from '@app/progress/progress.module';
       QuestionEntity,
       DirectionEntity,
       GroupedQuestionEntity,
+    ]),
+    MongooseModule.forFeature([
+      { name: Question.name, schema: QuestionSchema },
+      { name: GroupedQuestion.name, schema: GroupedQuestionSchema },
+      { name: Direction.name, schema: DirectionSchema },
     ]),
     CourseModule,
     forwardRef(() => ProgressModule),

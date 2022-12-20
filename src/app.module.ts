@@ -17,7 +17,7 @@ import { UnprocessableEntityExceptionFilter } from './exception-handlers/unproce
 import { UserModule } from './user/user.module';
 import { ProgressModule } from './progress/progress.module';
 import { UserAuthMiddleware } from './user/middlewares/userAuth.middleware';
-
+import { MongooseModule } from '@nestjs/mongoose';
 @Module({
   imports: [
     TypeOrmModule.forRoot(DBconfig),
@@ -28,6 +28,7 @@ import { UserAuthMiddleware } from './user/middlewares/userAuth.middleware';
     AdminModule,
     UserModule,
     ProgressModule,
+    MongooseModule.forRoot('mongodb://localhost/exam'),
   ],
   controllers: [AppController],
   providers: [AppService, UnprocessableEntityExceptionFilter],
