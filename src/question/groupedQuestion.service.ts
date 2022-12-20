@@ -13,6 +13,7 @@ export class GroupedQuestionService {
   constructor(
     @InjectRepository(GroupedQuestionEntity)
     private readonly groupedQuestionRepository: Repository<GroupedQuestionEntity>,
+    @Inject(forwardRef(() => PagesService))
     private readonly pagesService: PagesService,
     @Inject(forwardRef(() => ProgressService))
     private readonly progressService: ProgressService,

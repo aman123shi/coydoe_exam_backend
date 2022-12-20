@@ -23,10 +23,13 @@ export class QuestionService {
     @InjectRepository(QuestionEntity)
     private readonly questionRepository: Repository<QuestionEntity>,
     private readonly courseService: CourseService,
-    private readonly groupedQuestionService: GroupedQuestionService,
+
+    @Inject(forwardRef(() => PagesService))
     private readonly pagesService: PagesService,
     @Inject(forwardRef(() => ProgressService))
     private readonly progressService: ProgressService,
+    @Inject(forwardRef(() => GroupedQuestionService))
+    private readonly groupedQuestionService: GroupedQuestionService,
   ) {}
   async getQuestionById(id: number) {
     let question = await this.questionRepository.findOne({
