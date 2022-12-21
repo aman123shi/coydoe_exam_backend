@@ -3,7 +3,6 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { ExamCategoryDto } from './dto/exam-category.dto';
-import { ExamCategoryEntity } from './exam-category.entity';
 import {
   ExamCategory,
   ExamCategoryDocument,

@@ -9,7 +9,7 @@ export const biology = [
     description:
       ' Robert Hooke is an English scientist who has first seen dead cork cells. He is also the first person to coin the name cell.',
     image: 'img/some-image.jpg',
-    course: 1,
+    course: '63a2f0190c7e74b2338abda7',
     year: '2014',
   },
   {
@@ -23,7 +23,7 @@ export const biology = [
     description:
       'Pentose sugar is a 5 - carbon sugar which contains deoxy ribose sugar.',
     image: 'img/some-image.jpg',
-    course: 1,
+    course: '63a2f0190c7e74b2338abda7',
     year: '2014',
   },
   {
@@ -37,7 +37,7 @@ export const biology = [
     description:
       'The energy content in a food chain decreases as trophic level increases.',
     image: 'img/some-image.jpg',
-    course: 1,
+    course: '63a2f0190c7e74b2338abda7',
     year: '2014',
   },
   {
@@ -50,7 +50,7 @@ export const biology = [
     description:
       'Mutation is a sudden change in a genetic make-up of an organism. It results in genetic variation after successive generation.',
     image: 'img/some-image.jpg',
-    course: 1,
+    course: '63a2f0190c7e74b2338abda7',
     year: '2014',
   },
   {
@@ -64,7 +64,7 @@ export const biology = [
     description:
       'Accepting or rejecting the hypothesi Drawing conclusion on a solution retadeol to a problem',
     image: 'img/some-image.jpg',
-    course: 1,
+    course: '63a2f0190c7e74b2338abda7',
     year: '2014',
   },
   {
@@ -77,7 +77,7 @@ export const biology = [
     description:
       'cellulose is a component of plant cell wall and not prokaryotic organisms',
     image: 'img/some-image.jpg',
-    course: 1,
+    course: '63a2f0190c7e74b2338abda7',
     year: '2014',
   },
   {
@@ -91,7 +91,7 @@ export const biology = [
     description:
       'Chemosynthetic nutrition is decomposition of dead bodies of organisms carried out by bacterium and fungi',
     image: 'img/some-image.jpg',
-    course: 1,
+    course: '63a2f0190c7e74b2338abda7',
     year: '2014',
   },
   {
@@ -105,7 +105,7 @@ export const biology = [
     description:
       'Growing only high yielding varieties of crops may reduce the biodiversity of an ecosystem.',
     image: 'img/some-image.jpg',
-    course: 1,
+    course: '63a2f0190c7e74b2338abda7',
     year: '2014',
   },
   {
@@ -118,7 +118,7 @@ export const biology = [
     answer: 'option_d',
     description: 'The process of translation takes place in the cytoplasm.',
     image: 'img/some-image.jpg',
-    course: 1,
+    course: '63a2f0190c7e74b2338abda7',
     year: '2014',
   },
   {
@@ -132,7 +132,7 @@ export const biology = [
     description:
       ' 1 molecule of triglyceride has 3 fatty acid and 1 glycerol molecules. Thus, 100 molecules of triglyceride has 100',
     image: 'img/some-image.jpg',
-    course: 1,
+    course: '63a2f0190c7e74b2338abda7',
     year: '2014',
   },
 ];
@@ -148,7 +148,7 @@ export const physics = [
     description:
       ' During measurement errors can be avoided by using modern measuring instruments',
     image: 'img/some-image.jpg',
-    course: 3,
+    course: '63a2f0660c7e74b2338abdaa',
     year: '2014',
   },
   {
@@ -162,7 +162,7 @@ export const physics = [
     description:
       ' when the number of significant figures increases during measurement the measured value is very close to the actual value and the measurement is more accurate or accuracy increases',
     image: 'img/some-image.jpg',
-    course: 3,
+    course: '63a2f0660c7e74b2338abdaa',
     year: '2014',
   },
 
@@ -176,7 +176,7 @@ export const physics = [
     answer: 'option_d',
     description: ' The magnitude of the resultant force is  = 15N and 370',
     image: 'img/some-image.jpg',
-    course: 3,
+    course: '63a2f0660c7e74b2338abdaa',
     year: '2014',
   },
   {
@@ -189,7 +189,7 @@ export const physics = [
     description:
       ' magnetic field lines are closed lines without beginning and end.',
     image: 'img/some-image.jpg',
-    course: 3,
+    course: '63a2f0660c7e74b2338abdaa',
     year: '2014',
   },
   {
@@ -203,7 +203,7 @@ export const physics = [
     description:
       'The average speed of the car during this time is Vave = Stot/t = 34m/6sec = 5.67m/',
     image: 'img/some-image.jpg',
-    course: 3,
+    course: '63a2f0660c7e74b2338abdaa',
     year: '2014',
   },
   {
@@ -220,7 +220,7 @@ export const physics = [
     description:
       'the centripetal force for a body moving in either vertical or horizontal circle is directed toward the center.',
     image: 'img/some-image.jpg',
-    course: 3,
+    course: '63a2f0660c7e74b2338abdaa',
     year: '2014',
   },
   {
@@ -234,7 +234,7 @@ export const physics = [
     description:
       'as the bullet reaches the max height (point A) its acceleration in the Y-axis is 10m/s2 in magnitude and direction down ward. Since the horizontal motion is uniform through ax = 0.',
     image: 'img/some-image.jpg',
-    course: 3,
+    course: '63a2f0660c7e74b2338abdaa',
     year: '2014',
   },
   {
@@ -250,7 +250,7 @@ export const physics = [
     description:
       'when student A pushes student B by exerting a force F to the right student B reacts by the same force in the opposite direction according to the statement of Newton’s third law of motion. Since they exert the same force on each other with mA > mB student B will have more acceleration after impact.',
     image: 'img/some-image.jpg',
-    course: 3,
+    course: '63a2f0660c7e74b2338abdaa',
     year: '2014',
   },
   {
@@ -264,7 +264,7 @@ export const physics = [
     description:
       'the impulse imparted by a Constance force F on is given by J = ∆p = F. ∆t . The impulse imparted is large when the contact or impact time is large because F is constant.',
     image: 'img/some-image.jpg',
-    course: 3,
+    course: '63a2f0660c7e74b2338abdaa',
     year: '2014',
   },
   {
@@ -279,7 +279,8 @@ export const physics = [
     description:
       'the collision between the open trolley of mass m1 and the mass of a vertical downward of rain m2 is in elastic momentum is conserved..',
     image: 'img/some-image.jpg',
-    course: 3,
+    course: '63a2f0660c7e74b2338abdaa',
     year: '2014',
   },
 ];
+export const directions = [];

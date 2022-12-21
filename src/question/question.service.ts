@@ -16,7 +16,7 @@ import { UpdateQuestionDto } from './dto/updateQuestion.dto';
 import { GroupedQuestionService } from './groupedQuestion.service';
 import { Question, QuestionDocument } from './schemas/question.schema';
 import { QuestionsWithCount } from './types/questionsWithCount';
-//import { biology } from '@app/question';
+import { physics } from '@app/question';
 @Injectable()
 export class QuestionService {
   constructor(
@@ -91,14 +91,15 @@ export class QuestionService {
     Object.assign(newQuestion, createQuestionDto);
     return await newQuestion.save();
   }
-  // async insertSample() {
-  //   for (const q of biology) {
-  //     let newQuestion = new QuestionEntity();
-  //     Object.assign(newQuestion, q);
-  //     await this.questionRepository.save(newQuestion);
-  //   }
-  //   return 'boom';
-  // }
+  async insertSample() {
+    for (const q of physics) {
+      let newQuestion = new this.questionModel();
+      // this.questionModel.insertMany()
+      Object.assign(newQuestion, q);
+      await newQuestion.save();
+    }
+    return 'boom';
+  }
   async getCourseQuestionCount({
     courseId,
     year,

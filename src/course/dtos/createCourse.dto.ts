@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsNotEmpty } from 'class-validator';
+import { IsBoolean, IsInt, IsMongoId, IsNotEmpty } from 'class-validator';
 import mongoose from 'mongoose';
 
 export class CreateCourseDto {
@@ -10,6 +10,6 @@ export class CreateCourseDto {
   readonly hasDirections: boolean;
 
   @IsNotEmpty()
-  @IsInt()
+  @IsMongoId()
   readonly examCategory: mongoose.Schema.Types.ObjectId; //Entrance COC
 }

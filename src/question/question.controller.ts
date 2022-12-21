@@ -37,6 +37,11 @@ export class QuestionController {
   async getFreeQuestion(@Body() getQuestionDto: GetQuestionDto) {
     return await this.questionService.getRandomQuestion(getQuestionDto);
   }
+  @Get('questions/sample')
+  @Public()
+  async insertSample() {
+    return await this.questionService.insertSample();
+  }
   @Get('questions/courses/get-years/:id')
   async getAvailableYears(
     @Param('id') courseId: mongoose.Schema.Types.ObjectId,
