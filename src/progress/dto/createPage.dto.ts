@@ -1,7 +1,9 @@
+import mongoose from 'mongoose';
+
 export class CreatePageDto {
-  courseId?: number;
+  courseId?: mongoose.Schema.Types.ObjectId;
   year?: number;
-  userId?: number;
+  userId?: mongoose.Schema.Types.ObjectId;
   page?: number;
   isSubmitted?: boolean;
   pageSize?: number;

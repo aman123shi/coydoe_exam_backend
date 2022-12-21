@@ -1,5 +1,6 @@
+import { ExamCategory } from '@app/exam-category/schemas/examCategory.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 export type CourseDocument = HydratedDocument<Course>;
 
@@ -11,9 +12,8 @@ export class Course {
   @Prop({ default: false })
   hasDirections: boolean;
 
-  @Prop({ nullable: false })
-  //   @ManyToOne((type) => ExamCategoryEntity)
-  examCategory: number; //Entrance COC
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ExamCategory' })
+  examCategory: mongoose.Schema.Types.ObjectId | ExamCategory; //Entrance COC
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

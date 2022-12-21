@@ -1,45 +1,48 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
 import { SubExamCategoryDto } from '@app/sub-exam-category/dto/sub-exam-category.dto';
-import { SubExamCategoryEntity } from '@app/sub-exam-category/sub-exam-category.entity';
+import mongoose, { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import {
+  SubExamCategory,
+  SubExamCategoryDocument,
+} from './schemas/subExamCategory.schema';
 
 @Injectable()
 export class SubExamCategoryService {
   constructor(
-    @InjectRepository(SubExamCategoryEntity)
-    private readonly subExamCategoryRepository: Repository<SubExamCategoryEntity>,
+    @InjectModel(SubExamCategory.name)
+    private subExamCategoryModel: Model<SubExamCategoryDocument>,
   ) {}
 
-  async getSubExamCategory(): Promise<SubExamCategoryEntity[]> {
-    return await this.subExamCategoryRepository.find();
+  async getSubExamCategory(): Promise<SubExamCategory[]> {
+    return await this.subExamCategoryModel.find();
   }
   async getSubExamCategoriesById(
-    ids: number[],
-  ): Promise<SubExamCategoryEntity[]> {
-    return await this.subExamCategoryRepository.find({
-      where: [{ id: In(ids) }],
-    });
+    ids: mongoose.Schema.Types.ObjectId[],
+  ): Promise<SubExamCategory[]> {
+    return await this.subExamCategoryModel.find({ _id: { $in: ids } });
   }
   async createSubExamCategory(
     subExamCategoryDto: SubExamCategoryDto,
-  ): Promise<SubExamCategoryEntity> {
-    let newExamCategory = new SubExamCategoryEntity();
+  ): Promise<SubExamCategory> {
+    let newExamCategory = new this.subExamCategoryModel();
     Object.assign(newExamCategory, subExamCategoryDto);
-    return await this.subExamCategoryRepository.save(newExamCategory);
+    return await newExamCategory.save();
   }
 
   async updateSubExamCategory(
-    id: number,
+    id: mongoose.Schema.Types.ObjectId,
     subExamCategoryDto: SubExamCategoryDto,
-  ) {
-    return await this.subExamCategoryRepository.update(
-      { id: id },
+  ): Promise<any> {
+    return await this.subExamCategoryModel.updateOne(
+      { _id: id },
       subExamCategoryDto,
     );
   }
 
-  async deleteSubExamCategory(id: number) {
-    return await this.subExamCategoryRepository.delete({ id: id });
+  async deleteSubExamCategory(
+    id: mongoose.Schema.Types.ObjectId,
+  ): Promise<any> {
+    return await this.subExamCategoryModel.deleteOne({ _id: id });
   }
 }

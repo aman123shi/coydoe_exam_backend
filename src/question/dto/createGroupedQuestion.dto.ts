@@ -1,4 +1,5 @@
 import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import mongoose from 'mongoose';
 
 export class CreateGroupedQuestionDto {
   @IsNotEmpty()
@@ -32,7 +33,7 @@ export class CreateGroupedQuestionDto {
 
   @IsNotEmpty()
   @IsInt()
-  readonly courseId: number;
+  readonly courseId: mongoose.Schema.Types.ObjectId;
 
   @IsNotEmpty()
   @IsInt()
@@ -40,7 +41,7 @@ export class CreateGroupedQuestionDto {
 
   @IsNotEmpty()
   @IsInt()
-  readonly direction: number; //to which direction it belongs
+  readonly direction: mongoose.Schema.Types.ObjectId; //to which direction it belongs
 
   @IsNotEmpty()
   @IsOptional()

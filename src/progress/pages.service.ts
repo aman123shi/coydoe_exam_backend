@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CreatePageDto } from './dto/createPage.dto';
-import { PageEntity } from './page.entity';
+import { Page, PageDocument } from './schemas/page.schema';
 
 @Injectable()
 export class PagesService {
   constructor(
-    @InjectRepository(PageEntity)
-    private readonly pagesRepository: Repository<PageEntity>,
+    @InjectModel(Page.name) private pagesModel: Model<PageDocument>,
   ) {}
 
   async createNewPage(createPageDto: CreatePageDto) {
-    let newPage = new PageEntity();
+    let newPage = new this.pagesModel();
     Object.assign(newPage, createPageDto);
-    return await this.pagesRepository.save(newPage);
+    return await newPage.save();
   }
 
   async findPage({
@@ -23,14 +22,12 @@ export class PagesService {
     userId,
     page,
   }: {
-    courseId: number;
+    courseId: mongoose.Schema.Types.ObjectId;
     year: number;
-    userId: number;
+    userId: mongoose.Schema.Types.ObjectId;
     page: number;
   }) {
-    return await this.pagesRepository.findOne({
-      where: [{ courseId, year, userId, page }],
-    });
+    return await this.pagesModel.findOne({ courseId, year, userId, page });
   }
 
   async updatePage(createPageDto: CreatePageDto) {}

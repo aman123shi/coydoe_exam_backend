@@ -1,7 +1,9 @@
+import mongoose from 'mongoose';
+
 export class CreateProgressDto {
-  courseId?: number;
+  courseId?: mongoose.Schema.Types.ObjectId;
   year?: number;
-  userId?: number;
+  userId?: mongoose.Schema.Types.ObjectId;
   totalQuestions?: number;
   correctAnswers?: number;
   wrongAnswers?: number;

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 export type SubExamCategoryDocument = HydratedDocument<SubExamCategory>;
 
@@ -11,7 +11,7 @@ export class SubExamCategory {
 
   //which exam category it belongs
   @Prop()
-  examCategory: number;
+  examCategory: mongoose.Schema.Types.ObjectId;
 }
 
 export const SubExamCategorySchema =

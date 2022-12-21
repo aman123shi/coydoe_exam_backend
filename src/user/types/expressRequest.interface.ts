@@ -1,6 +1,6 @@
 import { Request } from 'express';
-import { UserEntity } from '../user.entity';
+import mongoose from 'mongoose';
 
 export interface ExpressRequest extends Request {
-  userId: number;
+  userId: mongoose.Schema.Types.ObjectId;
 }

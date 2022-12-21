@@ -9,7 +9,6 @@ import { UserService } from './user.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity]),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UserController],

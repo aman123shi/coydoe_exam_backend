@@ -8,20 +8,20 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CreateQuestionDto } from './dto/createQuestion.dto';
 import { GetQuestionDto } from './dto/getQuestion.dto';
 import { UpdateQuestionDto } from './dto/updateQuestion.dto';
 import { GroupedQuestionService } from './groupedQuestion.service';
-import { QuestionEntity } from './question.entity';
+import { Question, QuestionDocument } from './schemas/question.schema';
 import { QuestionsWithCount } from './types/questionsWithCount';
 //import { biology } from '@app/question';
 @Injectable()
 export class QuestionService {
   constructor(
-    @InjectRepository(QuestionEntity)
-    private readonly questionRepository: Repository<QuestionEntity>,
+    @InjectModel(Question.name)
+    private questionModel: Model<QuestionDocument>,
     private readonly courseService: CourseService,
 
     @Inject(forwardRef(() => PagesService))
@@ -31,15 +31,13 @@ export class QuestionService {
     @Inject(forwardRef(() => GroupedQuestionService))
     private readonly groupedQuestionService: GroupedQuestionService,
   ) {}
-  async getQuestionById(id: number) {
-    let question = await this.questionRepository.findOne({
-      where: [{ id: id }],
-    });
+  async getQuestionById(id: mongoose.Schema.Types.ObjectId) {
+    let question = await this.questionModel.findOne({ _id: id });
     return question;
   }
   async getQuestion(
     getQuestionDto: GetQuestionDto,
-    userId: number,
+    userId: mongoose.Schema.Types.ObjectId,
   ): Promise<QuestionsWithCount> {
     let limit = getQuestionDto.limit || 5;
     let page = getQuestionDto.page || 1;
@@ -53,16 +51,18 @@ export class QuestionService {
       page,
     });
 
-    const [questions, count] = await this.questionRepository.findAndCount({
-      where: [
-        {
-          course,
-          year,
-          subExamCategory,
-        },
-      ],
-      skip: (page - 1) * limit,
-      take: limit,
+    const questions = await this.questionModel
+      .find({
+        course,
+        year,
+        subExamCategory,
+      })
+      .skip((page - 1) * limit)
+      .limit(limit);
+    const count = await this.questionModel.count({
+      course,
+      year,
+      subExamCategory,
     });
     if (!visitedPage) {
       await this.pagesService.createNewPage({
@@ -87,9 +87,9 @@ export class QuestionService {
   }
 
   async createQuestion(createQuestionDto: CreateQuestionDto) {
-    let newQuestion = new QuestionEntity();
+    let newQuestion = new this.questionModel();
     Object.assign(newQuestion, createQuestionDto);
-    return await this.questionRepository.save(newQuestion);
+    return await newQuestion.save();
   }
   // async insertSample() {
   //   for (const q of biology) {
@@ -103,14 +103,12 @@ export class QuestionService {
     courseId,
     year,
   }: {
-    courseId: number;
+    courseId: mongoose.Schema.Types.ObjectId;
     year: number;
   }) {
-    return await this.questionRepository.count({
-      where: [{ course: courseId, year }],
-    });
+    return await this.questionModel.count({ course: courseId, year });
   }
-  async getAvailableYears(courseId: number) {
+  async getAvailableYears(courseId: mongoose.Schema.Types.ObjectId) {
     let course = await this.courseService.getCourseById(courseId);
     if (!course) {
       throw new HttpException(
@@ -122,12 +120,10 @@ export class QuestionService {
     try {
       let years = [];
       if (course.hasDirections == false)
-        years = await this.questionRepository
-          .createQueryBuilder('q')
-          .select('q.year', 'year')
-          .where('q.courseId=:id', { id: courseId })
-          .distinct(true)
-          .getRawMany();
+        years = await this.questionModel
+          .find({ _id: courseId })
+          .select('year')
+          .distinct('year');
       else {
         years = await this.groupedQuestionService.getYearsOfGroupedQuestions(
           courseId,
@@ -139,26 +135,19 @@ export class QuestionService {
       throw new HttpException(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }
-  async updateQuestion(id: number, updateQuestionDto: UpdateQuestionDto) {
-    return await this.questionRepository.update({ id: id }, updateQuestionDto);
+  async updateQuestion(
+    id: mongoose.Schema.Types.ObjectId,
+    updateQuestionDto: UpdateQuestionDto,
+  ): Promise<any> {
+    return await this.questionModel.updateOne({ _id: id }, updateQuestionDto);
   }
-  async deleteQuestion(id: number) {
-    return await this.questionRepository.delete({ id: id });
+  async deleteQuestion(id: mongoose.Schema.Types.ObjectId): Promise<any> {
+    return await this.questionModel.deleteOne({ _id: id });
   }
   async getRandomQuestion(getQuestionDto: GetQuestionDto) {
     console.log('subcategory ' + getQuestionDto.subCategory);
 
-    return await this.questionRepository.find({
-      where: [
-        {
-          course: getQuestionDto.course,
-          year: getQuestionDto.year,
-          subExamCategory: getQuestionDto.subCategory,
-        },
-      ],
-
-      take: 5,
-    });
+    return await this.questionModel.find();
   }
 }
 

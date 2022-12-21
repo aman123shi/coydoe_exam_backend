@@ -17,6 +17,8 @@ import { UpdateResult } from 'typeorm';
 import { responseBuilder } from '@app/utils/http-response-builder';
 import { AdminGuard } from '@app/admin/guards/admin.guard';
 import { Public } from '@app/admin/decorators/publicRoute.decorators';
+import { Course } from './schemas/course.schema';
+import mongoose from 'mongoose';
 
 @Controller()
 export class CourseController {
@@ -25,26 +27,26 @@ export class CourseController {
   @Get('courses/:examCategoryId')
   @Public()
   async getCourses(
-    @Param('examCategoryId') examCategoryId: number,
-  ): Promise<CourseEntity[]> {
+    @Param('examCategoryId') examCategoryId: mongoose.Schema.Types.ObjectId,
+  ): Promise<Course[]> {
     return await this.courseService.getCourses(examCategoryId);
   }
 
   @Get('courses/get/sub-exam-categories/:id')
-  async getSubCategories(@Param('id') id: number) {
+  async getSubCategories(@Param('id') id: mongoose.Schema.Types.ObjectId) {
     return await this.courseService.getSubExamCategories(id);
   }
   @Post('courses')
   async createCourse(
     @Body() createCourseDto: CreateCourseDto,
-  ): Promise<CourseEntity> {
+  ): Promise<Course> {
     return await this.courseService.createCourse(createCourseDto);
   }
 
   @Put('courses/:id')
   async updateCourse(
     @Body() updateCourseDto: UpdateCourseDto,
-    @Param('id') id: number,
+    @Param('id') id: mongoose.Schema.Types.ObjectId,
   ) {
     let updateResult = await this.courseService.updateCourse(
       id,
@@ -57,7 +59,7 @@ export class CourseController {
     throw updateResult;
   }
   @Delete('courses/:id')
-  async deleteCourse(@Param('id') id: number) {
+  async deleteCourse(@Param('id') id: mongoose.Schema.Types.ObjectId) {
     return await this.courseService.deleteCourse(id);
   }
 }

@@ -1,22 +1,22 @@
-import { GroupedQuestionEntity } from '@app/question/groupedQuestion.entity';
 import { GroupedQuestionService } from '@app/question/groupedQuestion.service';
-import { QuestionEntity } from '@app/question/question.entity';
 import { QuestionService } from '@app/question/question.service';
+import { GroupedQuestion } from '@app/question/schemas/groupedQuestion.schema';
+import { Question } from '@app/question/schemas/question.schema';
 import { responseBuilder } from '@app/utils/http-response-builder';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CreateProgressDto } from './dto/createProgress.dto';
 import { GetProgressDto } from './dto/getProgress.dto';
 import { SubmitAnswerDto } from './dto/submitAnswer.dto';
 import { PagesService } from './pages.service';
-import { ProgressEntity } from './progress.entity';
+import { Progress, ProgressDocument } from './schemas/progress.schema';
 
 @Injectable()
 export class ProgressService {
   constructor(
-    @InjectRepository(ProgressEntity)
-    private readonly progressRepository: Repository<ProgressEntity>,
+    @InjectModel(Progress.name) private progressModel: Model<ProgressDocument>,
+
     private readonly pagesService: PagesService,
     @Inject(forwardRef(() => QuestionService))
     private readonly questionService: QuestionService,
@@ -24,12 +24,15 @@ export class ProgressService {
     private readonly groupedQuestionService: GroupedQuestionService,
   ) {}
   async createNewProgress(createProgressDto: CreateProgressDto) {
-    let newProgress = new ProgressEntity();
+    let newProgress = new this.progressModel();
     Object.assign(newProgress, createProgressDto);
-    return await this.progressRepository.save(newProgress);
+    return await newProgress.save();
   }
 
-  async submitAnswer(userId: number, submitAnswerDto: SubmitAnswerDto) {
+  async submitAnswer(
+    userId: mongoose.Schema.Types.ObjectId,
+    submitAnswerDto: SubmitAnswerDto,
+  ) {
     const courseId = submitAnswerDto.courseId;
 
     const year = submitAnswerDto.year;
@@ -51,7 +54,7 @@ export class ProgressService {
         skippedQuestions++;
         continue;
       }
-      let question: QuestionEntity | GroupedQuestionEntity = null;
+      let question: Question | GroupedQuestion = null;
       if (submitAnswerDto.isGrouped) {
         question = await this.groupedQuestionService.getGroupedQuestionById(
           submittedAnswer.questionID,
@@ -67,35 +70,30 @@ export class ProgressService {
       } else {
         wrongAnswers++;
       }
-      let progress = await this.progressRepository.findOne({
-        where: [
-          {
-            courseId,
-            year,
-            userId,
-          },
-        ],
+      let progress = await this.progressModel.findOne({
+        courseId,
+        year,
+        userId,
       });
       progress.correctAnswers += correctAnswers;
       progress.wrongAnswers += wrongAnswers;
       progress.skippedQuestions += skippedQuestions;
       progress.totalTime += Date.now() - page.startTime;
       progress.lastPage = submitAnswerDto.submittedPage;
-      await this.progressRepository.save(progress);
+      await progress.save();
       return responseBuilder({ statusCode: 200, body: progress });
     }
   }
 
-  async getProgress(userId: number, { courseId, year }: GetProgressDto) {
+  async getProgress(
+    userId: mongoose.Schema.Types.ObjectId,
+    { courseId, year }: GetProgressDto,
+  ) {
     //TODO return default if its empty construct all data dynamically
-    let progress = await this.progressRepository.findOne({
-      where: [
-        {
-          courseId,
-          year,
-          userId,
-        },
-      ],
+    let progress = await this.progressModel.findOne({
+      courseId,
+      year,
+      userId,
     });
     if (progress) {
       return responseBuilder({ statusCode: 200, body: progress });

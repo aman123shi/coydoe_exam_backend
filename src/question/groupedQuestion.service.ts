@@ -1,18 +1,21 @@
 import { PagesService } from '@app/progress/pages.service';
 import { ProgressService } from '@app/progress/progress.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CreateGroupedQuestionDto } from './dto/createGroupedQuestion.dto';
 import { GetGroupedQuestionDto } from './dto/getGroupedQuestion.dto';
 import { UpdateGroupedQuestionDto } from './dto/updateGroupedQuestion.dto';
-import { GroupedQuestionEntity } from './groupedQuestion.entity';
+import {
+  GroupedQuestion,
+  GroupedQuestionDocument,
+} from './schemas/groupedQuestion.schema';
 
 @Injectable()
 export class GroupedQuestionService {
   constructor(
-    @InjectRepository(GroupedQuestionEntity)
-    private readonly groupedQuestionRepository: Repository<GroupedQuestionEntity>,
+    @InjectModel(GroupedQuestion.name)
+    private groupedQuestionModel: Model<GroupedQuestionDocument>,
     @Inject(forwardRef(() => PagesService))
     private readonly pagesService: PagesService,
     @Inject(forwardRef(() => ProgressService))
@@ -21,7 +24,7 @@ export class GroupedQuestionService {
 
   async getGroupedQuestion(
     getGroupedQuestionDto: GetGroupedQuestionDto,
-  ): Promise<GroupedQuestionEntity[]> {
+  ): Promise<GroupedQuestion[]> {
     const courseId = getGroupedQuestionDto.courseId,
       year = getGroupedQuestionDto.year,
       page = getGroupedQuestionDto.directionNumber;
@@ -29,22 +32,18 @@ export class GroupedQuestionService {
     let visitedPage = await this.pagesService.findPage({
       courseId,
       year,
-      userId: 1,
+      userId: null,
       page,
     });
-    const totalQuestions = await this.groupedQuestionRepository.count({
-      where: [
-        {
-          courseId: getGroupedQuestionDto.courseId,
-          year: getGroupedQuestionDto.year,
-        },
-      ],
+    const totalQuestions = await this.groupedQuestionModel.count({
+      courseId: getGroupedQuestionDto.courseId,
+      year: getGroupedQuestionDto.year,
     });
     if (!visitedPage) {
       await this.pagesService.createNewPage({
         courseId,
         year,
-        userId: 1,
+        userId: null,
         page,
         pageSize: 5,
         isSubmitted: false,
@@ -54,53 +53,46 @@ export class GroupedQuestionService {
         await this.progressService.createNewProgress({
           courseId,
           year,
-          userId: 1,
+          userId: null,
           totalQuestions,
           lastPage: page,
         });
     }
-    return await this.groupedQuestionRepository.find({
-      where: [
-        {
-          direction: getGroupedQuestionDto.directionId,
-        },
-      ],
+    return await this.groupedQuestionModel.findOne({
+      direction: getGroupedQuestionDto.directionId,
     });
   }
 
-  async getYearsOfGroupedQuestions(courseId: number) {
-    let years = await this.groupedQuestionRepository
-      .createQueryBuilder('q')
-      .select('q.year', 'year')
-      .where('q.courseId=:id', { id: courseId })
-      .distinct(true)
-      .getRawMany();
-    return years;
+  async getYearsOfGroupedQuestions(courseId: mongoose.Schema.Types.ObjectId) {
+    return await this.groupedQuestionModel
+      .find({ _id: courseId })
+      .select('year')
+      .distinct('year');
   }
 
-  async getGroupedQuestionById(id: number) {
-    return await this.groupedQuestionRepository.findOne({
-      where: [{ id: id }],
-    });
+  async getGroupedQuestionById(id: mongoose.Schema.Types.ObjectId) {
+    return await this.groupedQuestionModel.findOne({ _id: id });
   }
   async createGroupedQuestion(
     createGroupedQuestionDto: CreateGroupedQuestionDto,
   ) {
-    let newGroupedQuestion = new GroupedQuestionEntity();
+    let newGroupedQuestion = new this.groupedQuestionModel();
     Object.assign(newGroupedQuestion, createGroupedQuestionDto);
-    return await this.groupedQuestionRepository.save(newGroupedQuestion);
+    return await newGroupedQuestion.save();
   }
 
   async updateGroupedQuestion(
-    id: number,
+    id: mongoose.Schema.Types.ObjectId,
     updateGroupedQuestionDto: UpdateGroupedQuestionDto,
-  ) {
-    return await this.groupedQuestionRepository.update(
-      { id: id },
+  ): Promise<any> {
+    return await this.groupedQuestionModel.updateOne(
+      { _id: id },
       updateGroupedQuestionDto,
     );
   }
-  async deleteGroupedQuestion(id: number) {
-    return await this.groupedQuestionRepository.delete({ id: id });
+  async deleteGroupedQuestion(
+    id: mongoose.Schema.Types.ObjectId,
+  ): Promise<any> {
+    return await this.groupedQuestionModel.deleteOne({ _id: id });
   }
 }

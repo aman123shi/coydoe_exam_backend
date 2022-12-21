@@ -1,4 +1,5 @@
 import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import mongoose from 'mongoose';
 
 export class CreateQuestionDto {
   @IsNotEmpty()
@@ -32,12 +33,12 @@ export class CreateQuestionDto {
 
   @IsNotEmpty()
   @IsInt()
-  readonly course: number; //Biology Math
+  readonly course: mongoose.Schema.Types.ObjectId; //Biology Math
 
   @IsNotEmpty()
   @IsInt()
   @IsOptional()
-  readonly subExamCategory?: number; //natural social
+  readonly subExamCategory?: mongoose.Schema.Types.ObjectId; //natural social
 }
 /*
 {

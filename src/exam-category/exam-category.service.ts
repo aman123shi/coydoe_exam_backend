@@ -1,29 +1,33 @@
 import { CourseService } from '@app/course/course.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import mongoose, { Model } from 'mongoose';
 import { ExamCategoryDto } from './dto/exam-category.dto';
 import { ExamCategoryEntity } from './exam-category.entity';
+import {
+  ExamCategory,
+  ExamCategoryDocument,
+} from './schemas/examCategory.schema';
 
 @Injectable()
 export class ExamCategoryService {
   constructor(
-    @InjectRepository(ExamCategoryEntity)
-    private readonly examCategoryRepository: Repository<ExamCategoryEntity>,
+    @InjectModel(ExamCategory.name)
+    private examCategoryModel: Model<ExamCategoryDocument>,
     @Inject(forwardRef(() => CourseService))
     private readonly courseService: CourseService,
   ) {}
 
-  async getExamCategory(): Promise<ExamCategoryEntity[]> {
-    return await this.examCategoryRepository.find();
+  async getExamCategory(): Promise<ExamCategory[]> {
+    return await this.examCategoryModel.find();
   }
   async getExamCategoriesWithCourses() {
-    let examCategories = await this.examCategoryRepository.find();
+    let examCategories = await this.examCategoryModel.find();
     let response = [];
     for (const examCat of examCategories) {
       let courses = await this.courseService.getCourses(examCat.id);
       let examCategoryWithCourses = {
-        id: examCat.id,
+        _id: examCat.id,
         name: examCat.name,
         courses,
       };
@@ -31,25 +35,31 @@ export class ExamCategoryService {
     }
     return response;
   }
-  async getExamCategoryById(id: number): Promise<ExamCategoryEntity> {
-    return await this.examCategoryRepository.findOne({ where: [{ id: id }] });
+  async getExamCategoryById(
+    id: mongoose.Schema.Types.ObjectId,
+  ): Promise<ExamCategory> {
+    return await this.examCategoryModel.findOne({ id: id });
   }
   async createExamCategory(
     examCategoryDto: ExamCategoryDto,
-  ): Promise<ExamCategoryEntity> {
-    let newExamCategory = new ExamCategoryEntity();
+  ): Promise<ExamCategory> {
+    let newExamCategory = new this.examCategoryModel();
     Object.assign(newExamCategory, examCategoryDto);
-    return await this.examCategoryRepository.save(newExamCategory);
+    return await newExamCategory.save();
   }
 
-  async updateExamCategory(id: number, examCategoryDto: ExamCategoryDto) {
-    return await this.examCategoryRepository.update(
-      { id: id },
+  async updateExamCategory(
+    id: mongoose.Schema.Types.ObjectId,
+    examCategoryDto: ExamCategoryDto,
+  ): Promise<any> {
+    return await this.examCategoryModel.updateOne(
+      { _id: id },
       examCategoryDto,
+      { new: true },
     );
   }
 
-  async deleteExamCategory(id: number) {
-    return await this.examCategoryRepository.delete({ id: id });
+  async deleteExamCategory(id: mongoose.Schema.Types.ObjectId): Promise<any> {
+    return await this.examCategoryModel.deleteOne({ _id: id });
   }
 }

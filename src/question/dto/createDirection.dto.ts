@@ -1,4 +1,5 @@
 import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import mongoose from 'mongoose';
 
 export class CreateDirectionDto {
   @IsNotEmpty()
@@ -21,7 +22,7 @@ export class CreateDirectionDto {
 
   @IsNotEmpty()
   @IsInt()
-  readonly course: number;
+  readonly course: mongoose.Schema.Types.ObjectId;
 
   @IsNotEmpty()
   @IsInt()

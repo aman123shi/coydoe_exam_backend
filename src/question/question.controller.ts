@@ -11,6 +11,7 @@ import {
   Put,
   Req,
 } from '@nestjs/common';
+import mongoose from 'mongoose';
 import { CreateQuestionDto } from './dto/createQuestion.dto';
 import { GetQuestionDto } from './dto/getQuestion.dto';
 import { UpdateQuestionDto } from './dto/updateQuestion.dto';
@@ -37,7 +38,9 @@ export class QuestionController {
     return await this.questionService.getRandomQuestion(getQuestionDto);
   }
   @Get('questions/courses/get-years/:id')
-  async getAvailableYears(@Param('id') courseId: number) {
+  async getAvailableYears(
+    @Param('id') courseId: mongoose.Schema.Types.ObjectId,
+  ) {
     return await this.questionService.getAvailableYears(courseId);
   }
   @Post('questions/create')
@@ -48,12 +51,12 @@ export class QuestionController {
   @Put('questions/:id')
   async updateQuestion(
     @Body() updateQuestionDto: UpdateQuestionDto,
-    @Param('id') id: number,
+    @Param('id') id: mongoose.Schema.Types.ObjectId,
   ) {
     return await this.questionService.updateQuestion(id, updateQuestionDto);
   }
   @Delete('questions/:id')
-  async DeleteQuestion(@Param('id') id: number) {
+  async DeleteQuestion(@Param('id') id: mongoose.Schema.Types.ObjectId) {
     return await this.questionService.deleteQuestion(id);
   }
 }

@@ -1,6 +1,6 @@
-import { QuestionEntity } from '../question.entity';
+import { Question } from '../schemas/question.schema';
 
 export type QuestionsWithCount = {
-  questions: QuestionEntity[];
+  questions: Question[];
   count: number;
 };

@@ -1,19 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { sign } from 'jsonwebtoken';
-import { Repository } from 'typeorm';
-import { UserEntity } from './user.entity';
 import { CreateUserDto } from './dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
 import { UserLoginDto } from './dto/loginUser.dto';
 import { responseBuilder } from '@app/utils/http-response-builder';
-import { InjectRepository } from '@nestjs/typeorm';
 import { JWT_SECRET } from '@app/config';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    @InjectModel(User.name)
+    private userModel: Model<UserDocument>,
   ) {}
 
   generateJWT(data: any): string {
@@ -21,11 +21,9 @@ export class UserService {
   }
 
   async signUp(createUserDTo: CreateUserDto) {
-    let newUser = new UserEntity();
+    let newUser = new this.userModel();
     Object.assign(newUser, createUserDTo);
-    let userExist = await this.userRepository.findOne({
-      where: [{ phone: newUser.phone }],
-    });
+    let userExist = await this.userModel.findOne({ phone: newUser.phone });
     if (userExist) {
       throw new HttpException(
         'User already exist',
@@ -34,7 +32,7 @@ export class UserService {
     }
     const salt = await bcrypt.genSalt(10);
     newUser.password = await bcrypt.hash(newUser.password, salt);
-    await this.userRepository.save(newUser);
+    await newUser.save();
     delete newUser.password;
     let response = {
       ...newUser,
@@ -44,9 +42,7 @@ export class UserService {
   }
 
   async login(loginDto: UserLoginDto) {
-    let user = await this.userRepository.findOne({
-      where: [{ phone: loginDto.phone }],
-    });
+    let user = await this.userModel.findOne({ phone: loginDto.phone });
     if (!user) {
       throw new HttpException(
         'Incorrect Phone or Password',

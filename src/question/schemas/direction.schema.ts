@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 export type DirectionDocument = HydratedDocument<Direction>;
 
@@ -20,8 +20,8 @@ export class Direction {
   @Prop()
   endQuestionNumber: number;
 
-  @Prop()
-  course: number;
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  course: mongoose.Schema.Types.ObjectId;
 
   @Prop()
   courseYear: number;

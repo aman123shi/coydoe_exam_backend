@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 export type GroupedQuestionDocument = HydratedDocument<GroupedQuestion>;
 
@@ -30,7 +30,7 @@ export class GroupedQuestion {
   description: string;
 
   @Prop()
-  courseId: number;
+  courseId: mongoose.Schema.Types.ObjectId;
 
   @Prop()
   year: number;
@@ -38,13 +38,13 @@ export class GroupedQuestion {
   @Prop()
   questionNumber: number;
 
-  @Prop()
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
   //@ManyToOne((type) => DirectionEntity)
-  direction: number; //Biology Math
+  direction: mongoose.Schema.Types.ObjectId; //Biology Math
 
-  @Prop({ nullable: true })
+  @Prop({ nullable: true, type: mongoose.Schema.Types.ObjectId })
   //@ManyToOne((type) => SubExamCategoryEntity)
-  subExamCategory: number; //natural social
+  subExamCategory: mongoose.Schema.Types.ObjectId; //natural social
 }
 
 export const GroupedQuestionSchema =

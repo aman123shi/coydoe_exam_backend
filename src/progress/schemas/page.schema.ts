@@ -1,18 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 export type PageDocument = HydratedDocument<Page>;
 
 @Schema({ timestamps: true })
 export class Page {
   @Prop()
-  courseId: number;
+  courseId: mongoose.Schema.Types.ObjectId;
 
   @Prop()
   year: number;
 
   @Prop()
-  userId: number;
+  userId: mongoose.Schema.Types.ObjectId;
 
   @Prop()
   page: number;

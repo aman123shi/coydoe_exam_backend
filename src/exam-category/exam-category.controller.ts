@@ -8,6 +8,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import mongoose from 'mongoose';
 import { ExamCategoryDto } from './dto/exam-category.dto';
 import { ExamCategoryService } from './exam-category.service';
 
@@ -34,7 +35,7 @@ export class ExamCategoryController {
   @Put('exam-categories/:id')
   async updateExamCategory(
     @Body() examCategoryDto: ExamCategoryDto,
-    @Param('id') id: number,
+    @Param('id') id: mongoose.Schema.Types.ObjectId,
   ) {
     return await this.examCategoryService.updateExamCategory(
       id,
@@ -43,7 +44,7 @@ export class ExamCategoryController {
   }
 
   @Delete('exam-categories/:id')
-  async deleteExamCategory(@Param('id') id: number) {
+  async deleteExamCategory(@Param('id') id: mongoose.Schema.Types.ObjectId) {
     return await this.examCategoryService.deleteExamCategory(id);
   }
 }

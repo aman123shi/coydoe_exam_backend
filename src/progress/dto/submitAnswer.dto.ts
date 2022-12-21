@@ -1,9 +1,10 @@
 import { IsInt, IsNotEmpty } from 'class-validator';
+import mongoose from 'mongoose';
 
 export class SubmitAnswerDto {
   @IsNotEmpty()
   @IsInt()
-  readonly courseId: number;
+  readonly courseId: mongoose.Schema.Types.ObjectId;
 
   @IsNotEmpty()
   @IsInt()
@@ -11,7 +12,7 @@ export class SubmitAnswerDto {
 
   @IsNotEmpty()
   answers: {
-    questionID: number;
+    questionID: mongoose.Schema.Types.ObjectId;
     skipped: boolean;
     answer?: string;
   }[];

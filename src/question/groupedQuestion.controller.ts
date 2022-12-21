@@ -7,6 +7,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import mongoose from 'mongoose';
 import { CreateGroupedQuestionDto } from './dto/createGroupedQuestion.dto';
 import { GetGroupedQuestionDto } from './dto/getGroupedQuestion.dto';
 import { UpdateGroupedQuestionDto } from './dto/updateGroupedQuestion.dto';
@@ -39,7 +40,7 @@ export class GroupedQuestionController {
   @Put('grouped-questions/:id')
   async updateGroupedQuestion(
     @Body() updateGroupedQuestionDto: UpdateGroupedQuestionDto,
-    @Param('id') id: number,
+    @Param('id') id: mongoose.Schema.Types.ObjectId,
   ) {
     return await this.groupedQuestionService.updateGroupedQuestion(
       id,
@@ -47,7 +48,7 @@ export class GroupedQuestionController {
     );
   }
   @Delete('grouped-questions/:id')
-  async DeleteGroupedQuestion(@Param('id') id: number) {
+  async DeleteGroupedQuestion(@Param('id') id: mongoose.Schema.Types.ObjectId) {
     return await this.groupedQuestionService.deleteGroupedQuestion(id);
   }
 }

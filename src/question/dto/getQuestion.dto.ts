@@ -1,9 +1,10 @@
 import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import mongoose from 'mongoose';
 
 export class GetQuestionDto {
   @IsNotEmpty()
   @IsInt()
-  readonly course: number;
+  readonly course: mongoose.Schema.Types.ObjectId;
 
   @IsNotEmpty()
   @IsInt()
@@ -11,7 +12,7 @@ export class GetQuestionDto {
 
   @IsInt()
   @IsOptional()
-  readonly subCategory?: number;
+  readonly subCategory?: mongoose.Schema.Types.ObjectId;
 
   @IsInt()
   @IsOptional({})
