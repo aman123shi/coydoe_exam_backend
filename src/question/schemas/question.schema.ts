@@ -5,28 +5,28 @@ export type QuestionDocument = HydratedDocument<Question>;
 
 @Schema({ timestamps: true })
 export class Question {
-  @Prop({ type: 'longtext' })
+  @Prop()
   questionText: string;
 
-  @Prop({ type: 'longtext' })
+  @Prop()
   option_a: string;
 
-  @Prop({ type: 'longtext' })
+  @Prop()
   option_b: string;
 
-  @Prop({ type: 'longtext' })
+  @Prop()
   option_c: string;
 
-  @Prop({ type: 'longtext' })
+  @Prop()
   option_d: string;
 
-  @Prop({ type: 'longtext' })
+  @Prop()
   answer: string;
 
-  @Prop({ type: 'longtext', nullable: true })
+  @Prop()
   image: string;
 
-  @Prop({ type: 'longtext' })
+  @Prop()
   description: string;
 
   @Prop()

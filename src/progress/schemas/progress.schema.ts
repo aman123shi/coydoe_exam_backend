@@ -23,7 +23,7 @@ export class Progress {
   @Prop({ default: 0 })
   wrongAnswers: number;
 
-  @Prop({ default: 0, type: 'bigint' })
+  @Prop({ default: 0 })
   totalTime: number;
 
   @Prop({ default: 0 })

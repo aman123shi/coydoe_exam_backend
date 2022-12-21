@@ -5,28 +5,28 @@ export type GroupedQuestionDocument = HydratedDocument<GroupedQuestion>;
 
 @Schema({ timestamps: true })
 export class GroupedQuestion {
-  @Prop({ type: 'longtext' })
+  @Prop()
   questionText: string;
 
-  @Prop({ type: 'longtext' })
+  @Prop()
   option_a: string;
 
-  @Prop({ type: 'longtext' })
+  @Prop()
   option_b: string;
 
-  @Prop({ type: 'longtext' })
+  @Prop()
   option_c: string;
 
-  @Prop({ type: 'longtext' })
+  @Prop()
   option_d: string;
 
-  @Prop({ type: 'longtext' })
+  @Prop()
   answer: string;
 
-  @Prop({ type: 'longtext', nullable: true })
+  @Prop()
   image: string;
 
-  @Prop({ type: 'longtext' })
+  @Prop()
   description: string;
 
   @Prop()
@@ -42,7 +42,7 @@ export class GroupedQuestion {
   //@ManyToOne((type) => DirectionEntity)
   direction: mongoose.Schema.Types.ObjectId; //Biology Math
 
-  @Prop({ nullable: true, type: mongoose.Schema.Types.ObjectId })
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
   //@ManyToOne((type) => SubExamCategoryEntity)
   subExamCategory: mongoose.Schema.Types.ObjectId; //natural social
 }

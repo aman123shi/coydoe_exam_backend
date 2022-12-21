@@ -23,10 +23,10 @@ export class Page {
   @Prop()
   pageSize: number;
   //to be modified to timestamps
-  @Prop({ default: 0, type: 'bigint' })
+  @Prop({ default: 0 })
   startTime: number;
 
-  @Prop({ default: Date.now(), type: 'bigint' })
+  @Prop({ default: Date.now() })
   submittedTime: number;
 }
 

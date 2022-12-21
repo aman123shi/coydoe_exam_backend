@@ -5,10 +5,10 @@ export type DirectionDocument = HydratedDocument<Direction>;
 
 @Schema({ timestamps: true })
 export class Direction {
-  @Prop({ type: 'longtext' })
+  @Prop()
   directionText: string;
 
-  @Prop({ type: 'longtext', nullable: true })
+  @Prop({ nullable: true })
   sectionName: string; //section three grammar
 
   @Prop()
@@ -26,7 +26,7 @@ export class Direction {
   @Prop()
   courseYear: number;
 
-  @Prop({ type: 'longtext', nullable: true })
+  @Prop({})
   passage: string;
 }
 

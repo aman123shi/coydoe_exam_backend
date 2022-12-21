@@ -6,8 +6,6 @@ import {
 } from '@nestjs/common';
 import { AppController } from '@app/app.controller';
 import { AppService } from '@app/app.service';
-import { DBconfig } from '@app/ormconfig';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuestionModule } from './question/question.module';
 import { CourseModule } from './course/course.module';
 import { ExamCategoryModule } from './exam-category/exam-category.module';
@@ -20,7 +18,6 @@ import { UserAuthMiddleware } from './user/middlewares/userAuth.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
 @Module({
   imports: [
-    TypeOrmModule.forRoot(DBconfig),
     QuestionModule,
     CourseModule,
     ExamCategoryModule,
@@ -28,7 +25,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     AdminModule,
     UserModule,
     ProgressModule,
-    MongooseModule.forRoot('mongodb://localhost/exam'),
+    MongooseModule.forRoot('mongodb://localhost/coydoe_exam_mongodb'),
   ],
   controllers: [AppController],
   providers: [AppService, UnprocessableEntityExceptionFilter],

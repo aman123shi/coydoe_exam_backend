@@ -10,7 +10,7 @@ export class SubExamCategory {
   name: string;
 
   //which exam category it belongs
-  @Prop()
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
   examCategory: mongoose.Schema.Types.ObjectId;
 }
 
