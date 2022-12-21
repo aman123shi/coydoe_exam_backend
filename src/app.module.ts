@@ -16,6 +16,7 @@ import { UserModule } from './user/user.module';
 import { ProgressModule } from './progress/progress.module';
 import { UserAuthMiddleware } from './user/middlewares/userAuth.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
+import { mongoDB_URI } from './config';
 @Module({
   imports: [
     QuestionModule,
@@ -25,7 +26,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     AdminModule,
     UserModule,
     ProgressModule,
-    MongooseModule.forRoot('mongodb://localhost/coydoe_exam_mongodb'),
+    MongooseModule.forRoot(mongoDB_URI),
   ],
   controllers: [AppController],
   providers: [AppService, UnprocessableEntityExceptionFilter],
