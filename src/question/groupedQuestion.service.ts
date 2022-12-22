@@ -66,7 +66,7 @@ export class GroupedQuestionService {
 
   async getYearsOfGroupedQuestions(courseId: mongoose.Schema.Types.ObjectId) {
     return await this.groupedQuestionModel
-      .find({ _id: courseId })
+      .find({ courseId: courseId })
       .select('year')
       .distinct('year');
   }

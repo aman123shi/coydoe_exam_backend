@@ -110,6 +110,13 @@ export class QuestionService {
     return await this.questionModel.count({ course: courseId, year });
   }
   async getAvailableYears(courseId: mongoose.Schema.Types.ObjectId) {
+    if (!mongoose.isValidObjectId(courseId)) {
+      throw new HttpException(
+        'invalid Course ID ',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
     let course = await this.courseService.getCourseById(courseId);
     if (!course) {
       throw new HttpException(
@@ -122,7 +129,7 @@ export class QuestionService {
       let years = [];
       if (course.hasDirections == false)
         years = await this.questionModel
-          .find({ _id: courseId })
+          .find({ course: courseId })
           .select('year')
           .distinct('year');
       else {
@@ -131,7 +138,7 @@ export class QuestionService {
         );
       }
       console.log(years);
-      return years;
+      return years.map((year) => ({ year: year }));
     } catch (error) {
       throw new HttpException(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
