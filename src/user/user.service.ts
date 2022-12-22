@@ -17,7 +17,7 @@ export class UserService {
   ) {}
 
   generateJWT(data: any): string {
-    return sign({ data }, JWT_SECRET);
+    return sign(data, JWT_SECRET);
   }
 
   async signUp(createUserDTo: CreateUserDto) {
@@ -33,10 +33,11 @@ export class UserService {
     const salt = await bcrypt.genSalt(10);
     newUser.password = await bcrypt.hash(newUser.password, salt);
     await newUser.save();
-    delete newUser.password;
+    let user = newUser.toObject({ getters: true });
+    delete user.password;
     let response = {
-      ...newUser,
-      token: this.generateJWT({ id: newUser.id, phone: newUser.phone }),
+      ...user,
+      token: this.generateJWT({ id: newUser._id, phone: newUser.phone }),
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
@@ -60,10 +61,11 @@ export class UserService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-    delete user.password;
+    let loggedInUser = user.toObject({ getters: true });
+    delete loggedInUser.password;
     let response = {
-      ...user,
-      token: this.generateJWT({ id: user.id, phone: user.phone }),
+      ...loggedInUser,
+      token: this.generateJWT({ id: loggedInUser._id, phone: user.phone }),
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }

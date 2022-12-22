@@ -283,4 +283,16 @@ export const physics = [
     year: '2014',
   },
 ];
-export const directions = [];
+export const directions = [
+  {
+    directionText:
+      'when put in the correct order, sentences a – e/f in each of the questions 6-8 make up a complete paragraph. From the given alternative A-D given for each question, choose the letter that contains the correct order of the sentence',
+    sectionName: 'paragraph coherence',
+    directionNumber: 2,
+    startQuestionNumber: 6,
+    endQuestionNumber: 9,
+    course: '63a2f1080c7e74b2338abdb0',
+    courseYear: 2014,
+  },
+];
+export const groupedQuestion = {};

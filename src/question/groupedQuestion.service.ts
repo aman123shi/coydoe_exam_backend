@@ -24,6 +24,7 @@ export class GroupedQuestionService {
 
   async getGroupedQuestion(
     getGroupedQuestionDto: GetGroupedQuestionDto,
+    userId: mongoose.Schema.Types.ObjectId,
   ): Promise<GroupedQuestion[]> {
     const courseId = getGroupedQuestionDto.courseId,
       year = getGroupedQuestionDto.year,
@@ -32,7 +33,7 @@ export class GroupedQuestionService {
     let visitedPage = await this.pagesService.findPage({
       courseId,
       year,
-      userId: null,
+      userId,
       page,
     });
     const totalQuestions = await this.groupedQuestionModel.count({
@@ -43,7 +44,7 @@ export class GroupedQuestionService {
       await this.pagesService.createNewPage({
         courseId,
         year,
-        userId: null,
+        userId,
         page,
         pageSize: 5,
         isSubmitted: false,
@@ -53,12 +54,12 @@ export class GroupedQuestionService {
         await this.progressService.createNewProgress({
           courseId,
           year,
-          userId: null,
+          userId,
           totalQuestions,
           lastPage: page,
         });
     }
-    return await this.groupedQuestionModel.findOne({
+    return await this.groupedQuestionModel.find({
       direction: getGroupedQuestionDto.directionId,
     });
   }

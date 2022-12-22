@@ -1,3 +1,4 @@
+import { ExpressRequest } from '@app/user/types/expressRequest.interface';
 import {
   Body,
   Controller,
@@ -6,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
 } from '@nestjs/common';
 import mongoose from 'mongoose';
 import { CreateGroupedQuestionDto } from './dto/createGroupedQuestion.dto';
@@ -22,9 +24,11 @@ export class GroupedQuestionController {
   @Post('grouped-questions')
   async getGroupedQuestion(
     @Body() getGroupedQuestionDto: GetGroupedQuestionDto,
+    @Req() req: ExpressRequest,
   ) {
     return await this.groupedQuestionService.getGroupedQuestion(
       getGroupedQuestionDto,
+      req.userId,
     );
   }
 

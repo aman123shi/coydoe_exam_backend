@@ -37,6 +37,7 @@ export class AppModule implements NestModule {
       .apply(UserAuthMiddleware)
       .forRoutes(
         { path: 'questions', method: RequestMethod.POST },
+        { path: 'grouped-questions', method: RequestMethod.POST },
         { path: 'submit-answer', method: RequestMethod.POST },
         { path: 'get-progress', method: RequestMethod.POST },
       );

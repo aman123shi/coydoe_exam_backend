@@ -1,9 +1,9 @@
-import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsInt, IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
 import mongoose from 'mongoose';
 
 export class GetQuestionDto {
   @IsNotEmpty()
-  @IsInt()
+  @IsMongoId()
   readonly course: mongoose.Schema.Types.ObjectId;
 
   @IsNotEmpty()

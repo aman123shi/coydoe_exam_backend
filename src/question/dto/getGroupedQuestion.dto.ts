@@ -1,13 +1,13 @@
-import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsInt, IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
 import mongoose from 'mongoose';
 
 export class GetGroupedQuestionDto {
   @IsNotEmpty()
-  @IsInt()
+  @IsMongoId()
   readonly directionId: mongoose.Schema.Types.ObjectId;
 
   @IsNotEmpty()
-  @IsInt()
+  @IsMongoId()
   @IsOptional()
   readonly courseId?: mongoose.Schema.Types.ObjectId;
 
