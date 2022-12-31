@@ -20,6 +20,10 @@ export class UserService {
     return sign(data, JWT_SECRET);
   }
 
+  async getOnlineUsers() {
+    return await this.userModel.find();
+  }
+
   async signUp(createUserDTo: CreateUserDto) {
     let newUser = new this.userModel();
     Object.assign(newUser, createUserDTo);
