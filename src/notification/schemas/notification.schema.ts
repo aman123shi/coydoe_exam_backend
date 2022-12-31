@@ -1,4 +1,3 @@
-import { ExamCategory } from '@app/exam-category/schemas/examCategory.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 
@@ -8,6 +7,9 @@ export type NotificationDocument = HydratedDocument<Notification>;
 export class Notification {
   @Prop()
   notificationType: string; //['challenge','message','learn ']
+
+  @Prop()
+  message: string; //John challenge you for biology
 
   @Prop({ default: false })
   isViewed: boolean;

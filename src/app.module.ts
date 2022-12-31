@@ -18,6 +18,7 @@ import { UserAuthMiddleware } from './user/middlewares/userAuth.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
 import { mongoDB_URI } from './config';
 import { NotificationModule } from './notification/notification.module';
+import { ChallengeModule } from './challenge/challenge.module';
 @Module({
   imports: [
     QuestionModule,
@@ -28,6 +29,7 @@ import { NotificationModule } from './notification/notification.module';
     UserModule,
     ProgressModule,
     NotificationModule,
+    ChallengeModule,
     MongooseModule.forRoot(mongoDB_URI),
   ],
   controllers: [AppController],
