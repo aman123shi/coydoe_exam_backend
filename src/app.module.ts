@@ -17,6 +17,7 @@ import { ProgressModule } from './progress/progress.module';
 import { UserAuthMiddleware } from './user/middlewares/userAuth.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
 import { mongoDB_URI } from './config';
+import { NotificationModule } from './notification/notification.module';
 @Module({
   imports: [
     QuestionModule,
@@ -26,6 +27,7 @@ import { mongoDB_URI } from './config';
     AdminModule,
     UserModule,
     ProgressModule,
+    NotificationModule,
     MongooseModule.forRoot(mongoDB_URI),
   ],
   controllers: [AppController],
