@@ -1,24 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import { NotificationService } from '@app/notification/notification.service';
+import { QuestionService } from '@app/question/question.service';
+import { UserService } from '@app/user/user.service';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import { CreateChallengeDto } from './dto/createChallenge.dto';
+import { CreateChallengeDto, QuestionInfo } from './dto/createChallenge.dto';
 import { UpdateChallengeDto } from './dto/updateChallenge.dto';
 import { Challenge, ChallengeDocument } from './schema/challenge.schema';
+import { SubmitChallenge } from './types/submitChallenge.type';
 
 @Injectable()
 export class ChallengeService {
   constructor(
     @InjectModel(Challenge.name)
     private challengeModel: Model<ChallengeDocument>,
+    private questionService: QuestionService,
+    private notificationService: NotificationService,
+    private userService: UserService,
   ) {}
   async createChallenge({ courseId, userId, opponentId }) {
     let newChallenge = new this.challengeModel();
     // Object.assign(newChallenge, createChallengeDto);
-    //get random question s
-    //iterate and save question ids with their answer
-    //send questions to the user with
-    //{challengeId,and questions with challenge points  }
-    return await newChallenge.save();
+    let questionsInfo: QuestionInfo[] = [];
+    const rewardPoint = 15;
+    let randomQuestions = await this.questionService.getRandomQuestion(
+      courseId,
+    );
+    for (const question of randomQuestions) {
+      questionsInfo.push({ id: question._id, answer: question.answer });
+    }
+    newChallenge.questions = questionsInfo;
+    newChallenge.opponent = opponentId;
+    newChallenge.createdBy = userId;
+    newChallenge.courseId = courseId;
+    newChallenge.assignedPoint = rewardPoint;
+    newChallenge.hasGroupedQuestions = false;
+    await newChallenge.save();
+
+    //notification for challenger  user
+    await this.notificationService.createNotification({
+      userId,
+      message: 'waiting for opponent to complete the challenge',
+      referenceId: newChallenge._id,
+      notificationType: 'challenge',
+      isViewed: false,
+    });
+    //notification for opponent user
+    await this.notificationService.createNotification({
+      userId,
+      message: 'user x is challenging you to solve biology',
+      referenceId: newChallenge._id,
+      notificationType: 'challenge',
+      isViewed: false,
+    });
+
+    return { challengeId: newChallenge._id, randomQuestions, rewardPoint };
   }
 
   async getChallengeById(id: mongoose.Schema.Types.ObjectId) {
@@ -34,5 +70,123 @@ export class ChallengeService {
       updateChallengeDto,
     );
     return updatedChallenge;
+  }
+
+  async submitChallenge({
+    challengeId,
+    userId,
+    questionsInfo,
+  }: SubmitChallenge) {
+    //:TODO
+    //on submit identify if the submitter is a challenger or opponent
+    // calculate answered questions and assign its score
+    //identify if the other side already submitted
+    //if submitted identify the winner and award the point to the winner
+    //then create notification for both side and push
+    //*else* if not submitted by other side calculate answered question and update user score,submittedByChallenger or Challenger
+    let challenge = await this.challengeModel.findById(challengeId);
+
+    let isChallenger = false,
+      submitterScore = 0,
+      challengerReward = 0,
+      opponentReward = 0;
+    if (!challenge) {
+      throw new UnprocessableEntityException("can't find specified Challenge");
+    }
+    if (challenge.createdBy == userId) isChallenger = true;
+
+    if (
+      (isChallenger && challenge.isSubmittedByChallenger) ||
+      (!isChallenger && challenge.isSubmittedByOpponent)
+    ) {
+      throw new UnprocessableEntityException('Challenge Already Submitted ');
+    }
+    //calculate answered questions
+    for (let i = 0; i < questionsInfo.length; i++) {
+      let question = challenge.questions.find(
+        (q) => q.id == questionsInfo[i].id,
+      );
+      if (question && question.answer == questionsInfo[i].answer)
+        submitterScore++;
+    }
+
+    if (isChallenger) {
+      challenge.isSubmittedByChallenger = true;
+      challenge.challengerScore = submitterScore;
+      //if submitted by opponent determine the winner and reward the point to the winner
+      //create notification for both sides
+
+      if (challenge.isSubmittedByOpponent) {
+        processMatchWinner({
+          challengerId: userId,
+          opponentId: challenge.opponent,
+          winnerMessage: 'you win the challenge with mr x in course x',
+          loserMessage: 'you lose the challenge with mr x in course x',
+        });
+      } else {
+        //if not submitted by opponent
+        challenge.save();
+        return ' successfully submitted answer';
+      }
+    } else {
+      //if not challenger who is submitting
+      challenge.isSubmittedByOpponent = true;
+      challenge.opponentScore = submitterScore;
+      if (challenge.isSubmittedByChallenger) {
+        processMatchWinner({
+          challengerId: challenge.createdBy,
+          opponentId: userId,
+          winnerMessage: 'you win the challenge with mr x in course x',
+          loserMessage: 'you lose the challenge with mr x in course x',
+        });
+      } else {
+        //if not submitted by challenger
+        challenge.save();
+        return ' successfully submitted answer';
+      }
+    }
+
+    // process match winner give reward and prepare notifications
+
+    async function processMatchWinner({
+      challengerId,
+      opponentId,
+      winnerMessage,
+      loserMessage,
+    }) {
+      const challengerNotification =
+        await this.notificationService.getNotificationByChallengeIdAndUserId(
+          challenge._id,
+          challengerId,
+        );
+      const opponentNotification =
+        await this.notificationService.getNotificationByChallengeIdAndUserId(
+          challenge._id,
+          opponentId,
+        );
+      if (challenge.challengerScore > challenge.opponentScore) {
+        challengerReward = challenge.assignedPoint;
+        let challengerUser = await this.userService.getUserById(challengerId);
+        challengerUser.rewardPoint += challengerReward;
+        challengerNotification.message = winnerMessage;
+        challengerNotification.isViewed = false;
+        opponentNotification.message = loserMessage;
+        opponentNotification.isViewed = false;
+        await opponentNotification.save();
+        await challengerNotification.save();
+        await challengerUser.save();
+      } else {
+        opponentReward = challenge.assignedPoint;
+        let opponentUser = await this.userService.getUserById(opponentId);
+        opponentUser.rewardPoint += opponentReward;
+        challengerNotification.message = loserMessage;
+        challengerNotification.isViewed = false;
+        opponentNotification.message = winnerMessage;
+        opponentNotification.isViewed = false;
+        await opponentNotification.save();
+        await challengerNotification.save();
+        await opponentUser.save();
+      }
+    }
   }
 }

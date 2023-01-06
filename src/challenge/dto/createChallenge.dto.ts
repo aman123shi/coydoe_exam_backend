@@ -1,6 +1,12 @@
-import { IsBoolean, IsMongoId, IsNotEmpty } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsMongoId,
+  IsNotEmpty,
+  IsOptional,
+} from 'class-validator';
 import mongoose from 'mongoose';
-export type Question = {
+export type QuestionInfo = {
   id: mongoose.Schema.Types.ObjectId;
   answer: string;
 };
@@ -15,7 +21,7 @@ export class CreateChallengeDto {
   assignedPoint: number;
 
   @IsNotEmpty()
-  readonly questions: Question[];
+  readonly questions: QuestionInfo[];
 
   @IsBoolean({})
   readonly isAcceptedByOpponent: boolean;
@@ -28,4 +34,16 @@ export class CreateChallengeDto {
 
   @IsMongoId()
   readonly opponent: mongoose.Schema.Types.ObjectId;
+
+  @IsBoolean()
+  @IsOptional()
+  isSubmittedByChallenger?: boolean;
+
+  @IsInt()
+  @IsOptional()
+  challengerScore?: number;
+
+  @IsInt()
+  @IsOptional()
+  opponentScore?: number;
 }

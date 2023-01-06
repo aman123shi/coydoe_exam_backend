@@ -1,6 +1,6 @@
 import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { Question } from '../dto/createChallenge.dto';
+import { QuestionInfo } from '../dto/createChallenge.dto';
 
 export type ChallengeDocument = HydratedDocument<Challenge>;
 
@@ -24,7 +24,7 @@ export class Challenge {
       answer: { type: String },
     }),
   )
-  questions: Question[];
+  questions: QuestionInfo[];
 
   @Prop({ default: false })
   isAcceptedByOpponent: boolean;
@@ -34,6 +34,20 @@ export class Challenge {
 
   @Prop({ default: false })
   isSubmittedByOpponent: boolean;
+
+  @Prop({ default: false })
+  isSubmittedByChallenger: boolean;
+
+  @Prop({ default: 0 })
+  challengerScore: number;
+  @Prop({ default: 0 })
+  opponentScore: number;
+  //:TODO
+  //on submit identify if the submitter is a challenger or opponent
+  //identify if the other side already submitted
+  //if submitted identify the winner and award the point to the winner
+  //then create notification for both side and push
+  //*else* if not submitted by other side calculate answered question and update user score,submittedByChallenger or Challenger
 }
 
 export const ChallengeSchema = SchemaFactory.createForClass(Challenge);

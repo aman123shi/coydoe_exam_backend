@@ -6,7 +6,7 @@ import { UserLoginDto } from './dto/loginUser.dto';
 import { responseBuilder } from '@app/utils/http-response-builder';
 import { JWT_SECRET } from '@app/config';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
@@ -72,5 +72,9 @@ export class UserService {
       token: this.generateJWT({ id: loggedInUser._id, phone: user.phone }),
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
+  }
+
+  async getUserById(id: mongoose.Schema.Types.ObjectId) {
+    return await this.userModel.findById(id);
   }
 }

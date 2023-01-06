@@ -152,10 +152,22 @@ export class QuestionService {
   async deleteQuestion(id: mongoose.Schema.Types.ObjectId): Promise<any> {
     return await this.questionModel.deleteOne({ _id: id });
   }
-  async getRandomQuestion(getQuestionDto: GetQuestionDto) {
-    console.log('subcategory ' + getQuestionDto.subCategory);
 
-    return await this.questionModel.find();
+  async getRandomQuestion(
+    courseId: mongoose.Schema.Types.ObjectId,
+    limit: number = 5,
+  ) {
+    let count = await this.questionModel.find({ course: courseId }).count();
+    let questions = [];
+    for (let i = 0; i < limit; i++) {
+      let randomSkip = Math.floor(Math.random() * count);
+      if (randomSkip == count) randomSkip -= 1; //subtract one if it reaches limit
+      let question = await this.questionModel
+        .findOne({ course: courseId })
+        .skip(randomSkip);
+      questions.push(question);
+    }
+    return questions as (Question & { _id: mongoose.Schema.Types.ObjectId })[];
   }
 }
 

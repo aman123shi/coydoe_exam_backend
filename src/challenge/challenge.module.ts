@@ -1,4 +1,6 @@
+import { NotificationModule } from '@app/notification/notification.module';
 import { QuestionModule } from '@app/question/question.module';
+import { UserModule } from '@app/user/user.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ChallengeController } from './challenge.controller';
@@ -10,6 +12,8 @@ import { Challenge, ChallengeSchema } from './schema/challenge.schema';
   providers: [ChallengeService],
   imports: [
     QuestionModule,
+    NotificationModule,
+    UserModule,
     MongooseModule.forFeature([
       { name: Challenge.name, schema: ChallengeSchema },
     ]),

@@ -32,10 +32,12 @@ export class QuestionController {
       request.userId,
     );
   }
-  @Get('questions/free')
+  @Get('questions/free/:courseId')
   @Public()
-  async getFreeQuestion(@Body() getQuestionDto: GetQuestionDto) {
-    return await this.questionService.getRandomQuestion(getQuestionDto);
+  async getFreeQuestion(
+    @Param('courseId') courseId: mongoose.Schema.Types.ObjectId,
+  ) {
+    return await this.questionService.getRandomQuestion(courseId);
   }
   @Get('questions/sample')
   @Public()

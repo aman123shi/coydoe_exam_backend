@@ -30,6 +30,9 @@ export class User {
 
   @Prop()
   password: string;
+
+  @Prop({ default: 0 })
+  rewardPoint: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
