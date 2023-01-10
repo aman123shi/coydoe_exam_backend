@@ -1,3 +1,4 @@
+import { NotificationGateway } from '@app/notification/notification.gateway';
 import { NotificationService } from '@app/notification/notification.service';
 import { QuestionService } from '@app/question/question.service';
 import { UserService } from '@app/user/user.service';
@@ -17,6 +18,7 @@ export class ChallengeService {
     private questionService: QuestionService,
     private notificationService: NotificationService,
     private userService: UserService,
+    private readonly notificationGateway: NotificationGateway,
   ) {}
   async createChallenge({ courseId, userId, opponentId }) {
     let newChallenge = new this.challengeModel();
@@ -167,6 +169,7 @@ export class ChallengeService {
       if (challenge.challengerScore > challenge.opponentScore) {
         challengerReward = challenge.assignedPoint;
         let challengerUser = await this.userService.getUserById(challengerId);
+        let opponentUser = await this.userService.getUserStatus(opponentId);
         challengerUser.rewardPoint += challengerReward;
         challengerNotification.message = winnerMessage;
         challengerNotification.isViewed = false;
@@ -175,9 +178,22 @@ export class ChallengeService {
         await opponentNotification.save();
         await challengerNotification.save();
         await challengerUser.save();
+        //sending socket notifications if users are online
+        if (challengerUser.isOnline) {
+          this.notificationGateway.sendNotification({
+            socketId: challengerUser.socketId,
+            data: challengerNotification,
+          });
+        } else if (opponentUser.isOnline) {
+          this.notificationGateway.sendNotification({
+            socketId: opponentUser.socketId,
+            data: opponentNotification,
+          });
+        }
       } else {
         opponentReward = challenge.assignedPoint;
         let opponentUser = await this.userService.getUserById(opponentId);
+        let challengerUser = await this.userService.getUserStatus(challengerId);
         opponentUser.rewardPoint += opponentReward;
         challengerNotification.message = loserMessage;
         challengerNotification.isViewed = false;
@@ -186,6 +202,18 @@ export class ChallengeService {
         await opponentNotification.save();
         await challengerNotification.save();
         await opponentUser.save();
+        //sending socket notifications if users are online
+        if (opponentUser.isOnline) {
+          this.notificationGateway.sendNotification({
+            socketId: opponentUser.socketId,
+            data: opponentNotification,
+          });
+        } else if (challengerUser.isOnline) {
+          this.notificationGateway.sendNotification({
+            socketId: challengerUser.socketId,
+            data: challengerNotification,
+          });
+        }
       }
     }
   }

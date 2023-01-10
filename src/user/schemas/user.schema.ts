@@ -33,6 +33,12 @@ export class User {
 
   @Prop({ default: 0 })
   rewardPoint: number;
+
+  @Prop({ default: false })
+  isOnline: boolean;
+
+  @Prop({ nullable: true })
+  socketId: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

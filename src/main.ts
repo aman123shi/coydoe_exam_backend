@@ -8,6 +8,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { UnprocessableEntityExceptionFilter } from './exception-handlers/unprocessableEntity-exception.filter';
 import { AdminGuard } from './admin/guards/admin.guard';
+import { SocketIOAdapter } from './socket-io.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -22,6 +23,8 @@ async function bootstrap() {
   app.useGlobalFilters(new UnprocessableEntityExceptionFilter());
   // const reflector = app.get(Reflector);
   // app.useGlobalGuards(new AdminGuard(reflector));
+  app.useWebSocketAdapter(new SocketIOAdapter(app));
+
   await app.listen(3000);
 }
 bootstrap();

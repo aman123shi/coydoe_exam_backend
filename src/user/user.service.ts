@@ -8,6 +8,7 @@ import { JWT_SECRET } from '@app/config';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
+import { UpdateUserStatus } from './types/updateUserstatus.types';
 
 @Injectable()
 export class UserService {
@@ -21,9 +22,20 @@ export class UserService {
   }
 
   async getOnlineUsers() {
-    return await this.userModel.find();
+    return await this.userModel.find({ isOnline: true });
   }
-
+  async updateUserStatus({ userId, isOnline, socketId }: UpdateUserStatus) {
+    return await this.userModel.findByIdAndUpdate(
+      userId,
+      { isOnline, socketId },
+      { new: true },
+    );
+  }
+  async getUserStatus(userId: string) {
+    return await this.userModel
+      .findById(userId)
+      .select(['isOnline', 'socketId']);
+  }
   async signUp(createUserDTo: CreateUserDto) {
     let newUser = new this.userModel();
     Object.assign(newUser, createUserDTo);
