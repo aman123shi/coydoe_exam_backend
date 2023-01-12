@@ -21,8 +21,20 @@ export class UserService {
     return sign(data, JWT_SECRET);
   }
 
-  async getOnlineUsers() {
-    return await this.userModel.find({ isOnline: true });
+  async getAllOnlineUsers() {
+    return await this.userModel.find({ isOnline: false });
+  }
+  async getUsersByRegion(countryId: string, regionId: string) {
+    return await this.userModel
+      .find({ country: countryId, region: regionId })
+      .limit(10);
+  }
+  async getUsersByOrder(order: string) {
+    //1 for ascending order -1 for descending order
+    let sortIN: 1 | -1 = 1;
+    if (order == 'dsc') sortIN = -1;
+
+    return await this.userModel.find().sort({ rewardPoint: sortIN }).limit(10);
   }
   async updateUserStatus({ userId, isOnline, socketId }: UpdateUserStatus) {
     return await this.userModel.findByIdAndUpdate(

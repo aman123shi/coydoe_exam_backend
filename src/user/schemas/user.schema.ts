@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
@@ -13,11 +13,11 @@ export class User {
   @Prop()
   phone: string;
 
-  @Prop()
-  country: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  country: mongoose.Schema.Types.ObjectId;
 
-  @Prop()
-  region: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  region: mongoose.Schema.Types.ObjectId;
 
   @Prop()
   email: string;

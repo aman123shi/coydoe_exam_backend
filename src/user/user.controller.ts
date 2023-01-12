@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UserLoginDto } from './dto/loginUser.dto';
@@ -7,11 +7,21 @@ import { UserLoginDto } from './dto/loginUser.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
+  @Get('/all')
   async getAllUsers() {
-    return await this.userService.getOnlineUsers();
+    return await this.userService.getAllOnlineUsers();
   }
-
+  @Get('/by-region/:countryId/:regionId')
+  async getUsersByRegion(
+    @Param('countryId') countryId: string,
+    @Param('regionId') regionId: string,
+  ) {
+    return await this.userService.getUsersByRegion(countryId, regionId);
+  }
+  @Get('/get-by-order/:order')
+  async getUsersByOrder(@Param('order') order: string) {
+    return await this.userService.getUsersByOrder(order);
+  }
   @Post('signup')
   async signup(@Body() createUserDto: CreateUserDto) {
     return await this.userService.signUp(createUserDto);
