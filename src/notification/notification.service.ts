@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { CreateNotificationDto } from './dto/createNotification.dto';
 import { UpdateNotificationDto } from './dto/updateNotification.dto';
-import { NotificationGateway } from './notification.gateway';
+
 import {
   NotificationDocument,
   Notification,
@@ -16,7 +16,7 @@ export class NotificationService {
     private notificationModel: Model<NotificationDocument>,
   ) {}
   //get notifications of a user by his id
-  async getNotification(id: mongoose.Schema.Types.ObjectId) {
+  async getNotification(id: mongoose.Schema.Types.ObjectId | string) {
     return await this.notificationModel.find({ userId: id });
   }
   async getNotificationByChallengeIdAndUserId(

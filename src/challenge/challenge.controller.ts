@@ -1,4 +1,42 @@
-import { Controller } from '@nestjs/common';
+import { ExpressRequest } from '@app/user/types/expressRequest.interface';
+import { Body, Controller, Post, Req } from '@nestjs/common';
+import { ChallengeService } from './challenge.service';
+import { createChallengeParamsDto } from './dto/createChallengeParams.dto';
+import { GetChallengeDto } from './dto/getChallange.dto';
+import { SubmitChallengeDto } from './dto/submitChallenge.dto';
 
 @Controller()
-export class ChallengeController {}
+export class ChallengeController {
+  constructor(private challengeService: ChallengeService) {}
+
+  @Post('create-challenge')
+  async createChallenge(
+    @Body() createChallengeDto: createChallengeParamsDto,
+    @Req() req: ExpressRequest,
+  ) {
+    return await this.challengeService.createChallenge({
+      courseId: createChallengeDto.courseId,
+      opponentId: createChallengeDto.opponentId,
+      userId: req.userId,
+    });
+  }
+
+  @Post('submit-challenge')
+  async submitChallenge(
+    @Body() submitChallengeDto: SubmitChallengeDto,
+    @Req() req: ExpressRequest,
+  ) {
+    return await this.challengeService.submitChallenge({
+      challengeId: submitChallengeDto.challengeId,
+      questionsInfo: submitChallengeDto.questionsInfo,
+      userId: req.userId,
+    });
+  }
+
+  @Post('get-challenge-questions')
+  async getChallengeQuestions(@Body() getChallengeDto: GetChallengeDto) {
+    return await this.challengeService.getChallengeQuestions(
+      getChallengeDto.challengeId,
+    );
+  }
+}

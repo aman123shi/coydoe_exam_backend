@@ -18,12 +18,12 @@ export class Challenge {
   @Prop({ default: 0 })
   assignedPoint: number;
 
-  @Prop(
-    raw({
+  @Prop([
+    {
       id: { type: mongoose.Schema.Types.ObjectId, ref: 'Question' },
-      answer: { type: String },
-    }),
-  )
+      answer: String,
+    },
+  ])
   questions: QuestionInfo[];
 
   @Prop({ default: false })

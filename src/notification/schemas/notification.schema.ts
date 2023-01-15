@@ -14,6 +14,12 @@ export class Notification {
   @Prop({ default: false })
   isViewed: boolean;
 
+  @Prop({ default: false })
+  isOpened: boolean;
+
+  @Prop({ default: false })
+  isLink: boolean;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId })
   userId: mongoose.Schema.Types.ObjectId; // to which users it belongs
 

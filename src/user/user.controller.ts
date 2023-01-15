@@ -1,15 +1,16 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UserLoginDto } from './dto/loginUser.dto';
+import { ExpressRequest } from './types/expressRequest.interface';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('/all')
-  async getAllUsers() {
-    return await this.userService.getAllOnlineUsers();
+  async getAllUsers(@Req() request: ExpressRequest) {
+    return await this.userService.getAllOnlineUsers(request.userId);
   }
   @Get('/by-region/:countryId/:regionId')
   async getUsersByRegion(

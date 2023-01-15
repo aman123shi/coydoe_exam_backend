@@ -20,6 +20,23 @@ export class ChallengeService {
     private userService: UserService,
     private readonly notificationGateway: NotificationGateway,
   ) {}
+  async getChallengeQuestions(challengeId: string) {
+    let challenge = await this.challengeModel.findById(challengeId);
+    let questions = [];
+    if (!challenge) {
+      throw new UnprocessableEntityException();
+    }
+    if (challenge.isSubmittedByOpponent) {
+      return { status: 'expired', questions };
+    }
+    for (const questionInfo of challenge.questions) {
+      let question = await this.questionService.getQuestionById(
+        questionInfo.id,
+      );
+      questions.push(question);
+    }
+    return { status: 'waiting', questions };
+  }
   async createChallenge({ courseId, userId, opponentId }) {
     let newChallenge = new this.challengeModel();
     // Object.assign(newChallenge, createChallengeDto);
@@ -38,31 +55,48 @@ export class ChallengeService {
     newChallenge.assignedPoint = rewardPoint;
     newChallenge.hasGroupedQuestions = false;
     await newChallenge.save();
+    //get both users
+    let challengerUser = await this.userService.getUserById(userId);
+    let opponentUser = await this.userService.getUserById(opponentId);
+    console.log('========> userId ' + userId + ' opponentId ' + opponentId);
 
     //notification for challenger  user
-    await this.notificationService.createNotification({
-      userId,
-      message: 'waiting for opponent to complete the challenge',
-      referenceId: newChallenge._id,
-      notificationType: 'challenge',
-      isViewed: false,
-    });
+    let challengerNotification =
+      await this.notificationService.createNotification({
+        userId,
+        message: `waiting for ${opponentUser?.fullName} to complete the challenge`,
+        referenceId: newChallenge._id,
+        notificationType: 'challenge',
+        isViewed: false,
+      });
     //notification for opponent user
-    await this.notificationService.createNotification({
-      userId,
-      message: 'user x is challenging you to solve biology',
-      referenceId: newChallenge._id,
-      notificationType: 'challenge',
-      isViewed: false,
-    });
-
+    let opponentNotification =
+      await this.notificationService.createNotification({
+        userId: opponentId,
+        message: `${challengerUser?.fullName} is challenging you to solve biology`,
+        referenceId: newChallenge._id,
+        notificationType: 'challenge',
+        isViewed: false,
+        isLink: true,
+      });
+    //send socket notification to opponent if it is online
+    if (opponentUser.isOnline)
+      this.notificationGateway.sendNotification({
+        socketId: opponentUser.socketId,
+        data: opponentNotification,
+      });
+    //send socket notification to challenger if it is online
+    if (challengerUser.isOnline)
+      this.notificationGateway.sendNotification({
+        socketId: challengerUser.socketId,
+        data: challengerNotification,
+      });
     return { challengeId: newChallenge._id, randomQuestions, rewardPoint };
   }
 
   async getChallengeById(id: mongoose.Schema.Types.ObjectId) {
     return await this.challengeModel.findById(id);
   }
-  async getChallengeQuestions(challengeId: mongoose.Schema.Types.ObjectId) {}
   async updateChallenge(
     id: mongoose.Schema.Types.ObjectId,
     updateChallengeDto: UpdateChallengeDto,
@@ -125,6 +159,8 @@ export class ChallengeService {
           winnerMessage: 'you win the challenge with mr x in course x',
           loserMessage: 'you lose the challenge with mr x in course x',
         });
+        challenge.save();
+        return ' successfully submitted answer';
       } else {
         //if not submitted by opponent
         challenge.save();
@@ -141,6 +177,8 @@ export class ChallengeService {
           winnerMessage: 'you win the challenge with mr x in course x',
           loserMessage: 'you lose the challenge with mr x in course x',
         });
+        challenge.save();
+        return ' successfully submitted answer';
       } else {
         //if not submitted by challenger
         challenge.save();

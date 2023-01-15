@@ -40,10 +40,10 @@ export class NotificationGateway
       isOnline: true,
       socketId: client.id,
     });
-    this.sendNotification({
-      socketId: client.id,
-      data: 'private message only to you',
-    });
+  //  this.sendNotification({
+    //  socketId: client.id,
+ //     data: 'private message only to you',
+  //  });
   }
 
   handleDisconnect(client: SocketWithAuth) {
@@ -56,5 +56,6 @@ export class NotificationGateway
   }
   sendNotification({ socketId, data }) {
     this.server.to(socketId).emit('newNotification', data);
+    console.log('newNotifcation fired for socketId '+socketId);
   }
 }

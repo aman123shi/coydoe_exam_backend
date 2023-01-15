@@ -13,7 +13,7 @@ export class SocketIOAdapter extends IoAdapter {
 
   createIOServer(port: number, options?: ServerOptions) {
     const cors = {
-      origin: ['*'], //add other cors option here
+      origin: ['*','http://127.0.0.1:5173','http://localhost:5173','**'], //add other cors option here
     };
 
     this.logger.log('Configuring SocketIO server with custom CORS options', {
@@ -48,7 +48,7 @@ const createTokenMiddleware =
         phone: string;
       };
       socket.userId = payload.id;
-
+ logger.debug(`token valid proceed to connection========= : ${token}`);
       next();
     } catch {
       next(new Error('FORBIDDEN PLEASE PROVIDE VALID SOCKET TOKEN'));

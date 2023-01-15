@@ -162,6 +162,8 @@ export class QuestionService {
     for (let i = 0; i < limit; i++) {
       let randomSkip = Math.floor(Math.random() * count);
       if (randomSkip == count) randomSkip -= 1; //subtract one if it reaches limit
+
+      if (randomSkip <  0) randomSkip = 0;                        
       let question = await this.questionModel
         .findOne({ course: courseId })
         .skip(randomSkip);

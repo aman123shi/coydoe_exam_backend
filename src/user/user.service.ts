@@ -21,8 +21,8 @@ export class UserService {
     return sign(data, JWT_SECRET);
   }
 
-  async getAllOnlineUsers() {
-    return await this.userModel.find({ isOnline: false });
+  async getAllOnlineUsers(userId: mongoose.Schema.Types.ObjectId) {
+    return await this.userModel.find({ _id: { $nin: [userId] } });
   }
   async getUsersByRegion(countryId: string, regionId: string) {
     return await this.userModel

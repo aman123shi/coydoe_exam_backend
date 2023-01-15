@@ -8,7 +8,15 @@ export class CreateNotificationDto {
 
   @IsBoolean()
   @IsOptional()
-  readonly isViewed: boolean;
+  readonly isViewed?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  readonly isOpened?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  readonly isLink?: boolean;
 
   @IsMongoId()
   readonly userId: mongoose.Schema.Types.ObjectId;
