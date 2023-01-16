@@ -1,3 +1,4 @@
+import { CourseModule } from '@app/course/course.module';
 import { NotificationModule } from '@app/notification/notification.module';
 import { QuestionModule } from '@app/question/question.module';
 import { UserModule } from '@app/user/user.module';
@@ -17,6 +18,7 @@ import { Challenge, ChallengeSchema } from './schema/challenge.schema';
     MongooseModule.forFeature([
       { name: Challenge.name, schema: ChallengeSchema },
     ]),
+    CourseModule,
   ],
 })
 export class ChallengeModule {}

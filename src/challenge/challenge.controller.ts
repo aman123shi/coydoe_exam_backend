@@ -2,7 +2,9 @@ import { ExpressRequest } from '@app/user/types/expressRequest.interface';
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { ChallengeService } from './challenge.service';
 import { createChallengeParamsDto } from './dto/createChallengeParams.dto';
+import { GetAdditionalQuestionDto } from './dto/getAdditionalQuestion.dto';
 import { GetChallengeDto } from './dto/getChallange.dto';
+import { SubmitAdditionalQuestionsDto } from './dto/submitAdditionalQuestion.dto';
 import { SubmitChallengeDto } from './dto/submitChallenge.dto';
 
 @Controller()
@@ -37,6 +39,26 @@ export class ChallengeController {
   async getChallengeQuestions(@Body() getChallengeDto: GetChallengeDto) {
     return await this.challengeService.getChallengeQuestions(
       getChallengeDto.challengeId,
+    );
+  }
+  @Post('get-additional-questions')
+  async getAdditionalChallengeQuestions(
+    @Body() getAdditionalQuestionDto: GetAdditionalQuestionDto,
+  ) {
+    return await this.challengeService.getAdditionalQuestions(
+      getAdditionalQuestionDto.challengeId,
+    );
+  }
+
+  @Post('submit-additional-questions')
+  async submitAdditionalQuestions(
+    @Body() submitAdditionalQuestion: SubmitAdditionalQuestionsDto,
+    @Req() req: ExpressRequest,
+  ) {
+    return await this.challengeService.submitAdditionalQuestions(
+      submitAdditionalQuestion.challengeId,
+      req.userId,
+      submitAdditionalQuestion.questionsInfo,
     );
   }
 }

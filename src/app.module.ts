@@ -48,6 +48,8 @@ export class AppModule implements NestModule {
         { path: 'get-progress', method: RequestMethod.POST },
         { path: 'create-challenge', method: RequestMethod.POST },
         { path: 'submit-challenge', method: RequestMethod.POST },
+        { path: 'submit-additional-questions', method: RequestMethod.POST },
+        { path: 'get-additional-questions', method: RequestMethod.POST },
         { path: 'notifications', method: RequestMethod.GET },
       );
   }
