@@ -6,7 +6,7 @@ export type NotificationDocument = HydratedDocument<Notification>;
 @Schema({ timestamps: true })
 export class Notification {
   @Prop()
-  notificationType: string; //['challenge','message','learn ']
+  notificationType: string; //['challenge','message','learn ','next-challenge']
 
   @Prop()
   message: string; //John challenge you for biology

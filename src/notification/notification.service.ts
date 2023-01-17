@@ -47,4 +47,17 @@ export class NotificationService {
     Object.assign(notification, updateNotificationDto);
     return await notification.save();
   }
+  async submitViewedNotification(notificationIds: string[]): Promise<any> {
+    return await this.notificationModel.updateMany({
+      _id: { $in: notificationIds },
+      isViewed: true,
+    });
+  }
+  async submitOpenedNotification(notificationId: string) {
+    return await this.notificationModel.findByIdAndUpdate(
+      notificationId,
+      { isOpened: true },
+      { new: true },
+    );
+  }
 }
