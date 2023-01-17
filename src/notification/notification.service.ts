@@ -49,14 +49,12 @@ export class NotificationService {
   }
   //
   async submitViewedNotification(notificationIds: string[]): Promise<any> {
-    let castedIds = [];
-    for (const id of notificationIds) {
-      castedIds.push(new mongoose.Types.ObjectId(id));
-    }
-    return await this.notificationModel.updateMany({_id:{$in:castedIds}},{$set:{isViewed:true}}
+    return await this.notificationModel.updateMany(
+      { _id: { $in: notificationIds } },
+      { $set: { isViewed: true } },
     );
   }
-  async submitOpenedNotification(notificationId: mongoose.Schema.Types.ObjectId) {
+  async submitOpenedNotification(notificationId: string) {
     return await this.notificationModel.findByIdAndUpdate(
       notificationId,
       { isOpened: true },
