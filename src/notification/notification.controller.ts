@@ -28,7 +28,7 @@ export class NotificationController {
   async submitOpenedNotification(
     @Body()
     notificationDto: {
-      notificationId: string;
+      notificationId: mongoose.Schema.Types.ObjectId;
     },
   ) {
     return await this.notificationService.submitOpenedNotification(
