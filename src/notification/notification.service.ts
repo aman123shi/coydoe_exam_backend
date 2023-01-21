@@ -19,6 +19,14 @@ export class NotificationService {
   async getNotification(id: mongoose.Schema.Types.ObjectId | string) {
     return await this.notificationModel.find({ userId: id });
   }
+
+  async getNewNotificationsCount(id: mongoose.Schema.Types.ObjectId | string) {
+    let count = await this.notificationModel
+      .find({ userId: id, isViewed: false })
+      .count();
+    return { count };
+  }
+
   async getNotificationByChallengeIdAndUserId(
     challengeId: mongoose.Types.ObjectId,
     userId: mongoose.Schema.Types.ObjectId,
@@ -47,6 +55,7 @@ export class NotificationService {
     Object.assign(notification, updateNotificationDto);
     return await notification.save();
   }
+
   //
   async submitViewedNotification(notificationIds: string[]): Promise<any> {
     return await this.notificationModel.updateMany(
@@ -54,6 +63,7 @@ export class NotificationService {
       { $set: { isViewed: true } },
     );
   }
+
   async submitOpenedNotification(notificationId: string) {
     return await this.notificationModel.findByIdAndUpdate(
       notificationId,

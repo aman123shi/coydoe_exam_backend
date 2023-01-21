@@ -1,4 +1,5 @@
 import { CourseModule } from '@app/course/course.module';
+import { LeaderBoardModule } from '@app/leaderboard/leaderboard.module';
 import { NotificationModule } from '@app/notification/notification.module';
 import { QuestionModule } from '@app/question/question.module';
 import { UserModule } from '@app/user/user.module';
@@ -15,6 +16,7 @@ import { Challenge, ChallengeSchema } from './schema/challenge.schema';
     QuestionModule,
     NotificationModule,
     UserModule,
+    LeaderBoardModule,
     MongooseModule.forFeature([
       { name: Challenge.name, schema: ChallengeSchema },
     ]),

@@ -24,6 +24,7 @@ export class NotificationController {
       notificationDto.notificationIds,
     );
   }
+
   @Post('submit-opened')
   async submitOpenedNotification(
     @Body()
@@ -34,5 +35,10 @@ export class NotificationController {
     return await this.notificationService.submitOpenedNotification(
       notificationDto.notificationId,
     );
+  }
+
+  @Get('get-new-count')
+  async getNewNotificationCount(@Req() req: ExpressRequest) {
+    return await this.notificationService.getNewNotificationsCount(req.userId);
   }
 }

@@ -4,6 +4,7 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from '@app/app.controller';
 import { AppService } from '@app/app.service';
 import { QuestionModule } from './question/question.module';
@@ -20,8 +21,10 @@ import { mongoDB_URI } from './config';
 import { NotificationModule } from './notification/notification.module';
 import { ChallengeModule } from './challenge/challenge.module';
 import { CountryModule } from './country/country.module';
+import { LeaderBoardModule } from './leaderboard/leaderboard.module';
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     QuestionModule,
     CourseModule,
     ExamCategoryModule,
@@ -32,6 +35,7 @@ import { CountryModule } from './country/country.module';
     NotificationModule,
     ChallengeModule,
     CountryModule,
+    LeaderBoardModule,
     MongooseModule.forRoot(mongoDB_URI),
   ],
   controllers: [AppController],
@@ -51,6 +55,9 @@ export class AppModule implements NestModule {
         { path: 'submit-additional-questions', method: RequestMethod.POST },
         { path: 'get-additional-questions', method: RequestMethod.POST },
         { path: 'notifications', method: RequestMethod.GET },
+        { path: 'notifications/get-new-count', method: RequestMethod.GET },
+        { path: 'users/all', method: RequestMethod.GET },
+        { path: 'users/get-reward-point', method: RequestMethod.GET },
       );
   }
 }

@@ -1,4 +1,5 @@
 import { CourseService } from '@app/course/course.service';
+import { LeaderBoardService } from '@app/leaderboard/leaderBoard.service';
 import { NotificationGateway } from '@app/notification/notification.gateway';
 import { NotificationService } from '@app/notification/notification.service';
 import { QuestionService } from '@app/question/question.service';
@@ -21,7 +22,9 @@ export class ChallengeService {
     private userService: UserService,
     private courseService: CourseService,
     private readonly notificationGateway: NotificationGateway,
+    private leaderBoardService: LeaderBoardService,
   ) {}
+
   async getChallengeQuestions(challengeId: string) {
     let challenge = await this.challengeModel.findById(challengeId);
     let questions = [];
@@ -39,7 +42,15 @@ export class ChallengeService {
     }
     return { status: 'waiting', questions };
   }
+
   async createChallenge({ courseId, userId, opponentId }) {
+    let challengerUser = await this.userService.getUserById(userId);
+    //5 is a minimum point required to create a challenge
+    if (challengerUser.rewardPoint < 5) {
+      return new UnprocessableEntityException(
+        "you don't have sufficient point to create a challenge",
+      );
+    }
     let newChallenge = new this.challengeModel();
     // Object.assign(newChallenge, createChallengeDto);
     let questionsInfo: QuestionInfo[] = [];
@@ -58,7 +69,7 @@ export class ChallengeService {
     newChallenge.hasGroupedQuestions = false;
     await newChallenge.save();
     //get both users
-    let challengerUser = await this.userService.getUserById(userId);
+
     let opponentUser = await this.userService.getUserById(opponentId);
     console.log('========> userId ' + userId + ' opponentId ' + opponentId);
 
@@ -215,6 +226,16 @@ export class ChallengeService {
         );
         let opponentUser = await context.userService.getUserStatus(opponentId);
         challengerUser.rewardPoint += challengerReward;
+        opponentUser.rewardPoint -= challenge.assignedPoint;
+        //inserting to leaderBoard
+        context.leaderBoardService.insertNewUserPointAndUpdateUserRank(
+          challengerUser._id,
+          challenge.assignedPoint,
+        );
+        context.leaderBoardService.insertNewUserPointAndUpdateUserRank(
+          opponentUser._id,
+          -challenge.assignedPoint, //negative to subtract
+        );
         challengerNotification.message = winnerMessage;
         challengerNotification.isViewed = false;
         opponentNotification.message = loserMessage;
@@ -288,6 +309,16 @@ export class ChallengeService {
           challengerId,
         );
         opponentUser.rewardPoint += opponentReward;
+        challengerUser.rewardPoint -= challenge.assignedPoint;
+        //inserting to leaderBoard
+        context.leaderBoardService.insertNewUserPointAndUpdateUserRank(
+          opponentUser._id,
+          challenge.assignedPoint,
+        );
+        context.leaderBoardService.insertNewUserPointAndUpdateUserRank(
+          challengerUser._id,
+          -challenge.assignedPoint, //negative to subtract
+        );
         challengerNotification.message = loserMessage;
         challengerNotification.isViewed = false;
         opponentNotification.message = winnerMessage;
@@ -310,6 +341,7 @@ export class ChallengeService {
       }
     }
   }
+
   async getAdditionalQuestions(challengeId: string) {
     let challenge = await this.challengeModel.findById(challengeId);
     if (!challenge) {
@@ -369,22 +401,32 @@ export class ChallengeService {
       if (answeredCorrectly) {
         challenge.status = 'completed';
         challengerUser.rewardPoint += challenge.assignedPoint;
+        opponentUser.rewardPoint -= challenge.assignedPoint;
+        //save to leader board
+        this.leaderBoardService.insertNewUserPointAndUpdateUserRank(
+          challengerUser._id,
+          challenge.assignedPoint,
+        );
+        this.leaderBoardService.insertNewUserPointAndUpdateUserRank(
+          opponentUser._id,
+          -challenge.assignedPoint,
+        );
         await challenge.save();
         await challengerUser.save();
-        let submitterNotification =
-          await this.notificationService.createNotification({
-            message: `2you win the challenge with ${opponentUser.fullName} in ${course.name}`,
-            notificationType: 'challenge',
-            userId,
-            referenceId: challenge._id,
-          });
-        let otherUserNotification =
-          await this.notificationService.createNotification({
-            message: `3you lose the challenge with ${challengerUser.fullName} in ${course.name}`,
-            notificationType: 'challenge',
-            userId: opponentUser._id,
-            referenceId: challenge._id,
-          });
+
+        await this.notificationService.createNotification({
+          message: `2you win the challenge with ${opponentUser.fullName} in ${course.name}`,
+          notificationType: 'challenge',
+          userId,
+          referenceId: challenge._id,
+        });
+
+        await this.notificationService.createNotification({
+          message: `3you lose the challenge with ${challengerUser.fullName} in ${course.name}`,
+          notificationType: 'challenge',
+          userId: opponentUser._id,
+          referenceId: challenge._id,
+        });
 
         return 'submit success ';
       } else {
@@ -394,6 +436,7 @@ export class ChallengeService {
           challenge.courseId,
           1,
         );
+
         let challengerNotification =
           await this.notificationService.createNotification({
             notificationType: 'next-challenge',
@@ -402,6 +445,7 @@ export class ChallengeService {
             userId: challenge.createdBy,
             referenceId: challenge._id,
           });
+
         let opponentNotification =
           await this.notificationService.createNotification({
             notificationType: 'next-challenge',
@@ -438,14 +482,25 @@ export class ChallengeService {
       if (answeredCorrectly) {
         challenge.status = 'completed';
         challengerUser.rewardPoint += challenge.assignedPoint;
+        //leader board
+        this.leaderBoardService.insertNewUserPointAndUpdateUserRank(
+          challengerUser._id,
+          challenge.assignedPoint,
+        );
+        this.leaderBoardService.insertNewUserPointAndUpdateUserRank(
+          opponentUser._id,
+          -challenge.assignedPoint,
+        );
         await challenge.save();
         await challengerUser.save();
-        let notification = await this.notificationService.createNotification({
+
+        await this.notificationService.createNotification({
           message: `6you win the challenge with ${opponentUser.fullName} in ${course.name}`,
           notificationType: 'challenge',
           userId,
           referenceId: challenge._id,
         });
+
         await this.notificationService.createNotification({
           message: `7you lose the challenge with ${challengerUser.fullName} in ${course.name}`,
           notificationType: 'challenge',
