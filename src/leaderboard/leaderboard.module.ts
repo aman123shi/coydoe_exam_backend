@@ -28,6 +28,6 @@ import { UserPointsCleanupService } from './userPointsClean.scheduled';
       { name: MonthlyLeaderBoard.name, schema: MonthlyLeaderBoardSchema },
     ]),
   ],
-  exports: [LeaderBoardService],
+  exports: [LeaderBoardService, UserPointsCleanupService],
 })
 export class LeaderBoardModule {}

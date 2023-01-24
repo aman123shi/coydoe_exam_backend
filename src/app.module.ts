@@ -2,6 +2,7 @@ import {
   MiddlewareConsumer,
   Module,
   NestModule,
+  OnModuleInit,
   RequestMethod,
 } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -22,6 +23,9 @@ import { NotificationModule } from './notification/notification.module';
 import { ChallengeModule } from './challenge/challenge.module';
 import { CountryModule } from './country/country.module';
 import { LeaderBoardModule } from './leaderboard/leaderboard.module';
+import { UserPointsCleanupService } from './leaderboard/userPointsClean.scheduled';
+import { AuthModule } from './auth/auth.module';
+
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -36,12 +40,13 @@ import { LeaderBoardModule } from './leaderboard/leaderboard.module';
     ChallengeModule,
     CountryModule,
     LeaderBoardModule,
+    AuthModule,
     MongooseModule.forRoot(mongoDB_URI),
   ],
   controllers: [AppController],
   providers: [AppService, UnprocessableEntityExceptionFilter],
 })
-export class AppModule implements NestModule {
+export class AppModule implements NestModule, OnModuleInit {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(UserAuthMiddleware)
@@ -59,5 +64,12 @@ export class AppModule implements NestModule {
         { path: 'users/all', method: RequestMethod.GET },
         { path: 'users/get-reward-point', method: RequestMethod.GET },
       );
+  }
+  constructor(private usersPointCleanUp: UserPointsCleanupService) {}
+  onModuleInit() {
+    this.usersPointCleanUp.dropAndInitLeaderBoard();
+    console.log(
+      'drop and init leader board called -----------------------------',
+    );
   }
 }

@@ -9,10 +9,7 @@ import mongoose from 'mongoose';
 export class UserAuthMiddleware implements NestMiddleware {
   constructor() {}
   async use(req: ExpressRequest, res: Response, next: NextFunction) {
-    console.log('auth middleware kicked ...................');
     if (!req.headers['authorization']) {
-      console.log('no auth token provided ---');
-
       return res.status(403).json({
         status: 'error',
         success: false,
@@ -25,11 +22,9 @@ export class UserAuthMiddleware implements NestMiddleware {
         id: mongoose.Schema.Types.ObjectId;
         phone: string;
       };
-      console.log('decoded token ' + decoded);
 
       const userId = decoded.id;
       req.userId = userId;
-      console.log('the user from db ====> ' + JSON.stringify(decoded));
       next();
     } catch (err) {
       return res.status(403).json({

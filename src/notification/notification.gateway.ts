@@ -31,23 +31,15 @@ export class NotificationGateway
   }
 
   handleConnection(client: SocketWithAuth, ...args: any[]) {
-    console.log(
-      `Connected with socket id  ${client.id} and with user id ${client.userId}`,
-    );
     //change user online status and save notification push socket.id
     this.userService.updateUserStatus({
       userId: client.userId,
       isOnline: true,
       socketId: client.id,
     });
-  //  this.sendNotification({
-    //  socketId: client.id,
- //     data: 'private message only to you',
-  //  });
   }
 
   handleDisconnect(client: SocketWithAuth) {
-    console.log(`Disconnected: ${client.id} and userID ${client.userId}`);
     //change user online status when disconnected
     this.userService.updateUserStatus({
       userId: client.userId,
@@ -56,6 +48,8 @@ export class NotificationGateway
   }
   sendNotification({ socketId, data }) {
     this.server.to(socketId).emit('newNotification', data);
-    console.log('newNotifcation fired for socketId '+socketId);
+  }
+  sendUserPointNotification({ socketId, data }) {
+    this.server.to(socketId).emit('userPoint', data);
   }
 }

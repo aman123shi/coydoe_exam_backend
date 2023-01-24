@@ -26,6 +26,9 @@ export class User {
   gender: string;
 
   @Prop()
+  image: string;
+
+  @Prop()
   studentType: string;
 
   @Prop()

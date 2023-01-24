@@ -54,7 +54,7 @@ export class ChallengeService {
     let newChallenge = new this.challengeModel();
     // Object.assign(newChallenge, createChallengeDto);
     let questionsInfo: QuestionInfo[] = [];
-    const rewardPoint = 15;
+    const rewardPoint = 5;
     let randomQuestions = await this.questionService.getRandomQuestion(
       courseId,
     );
@@ -219,12 +219,12 @@ export class ChallengeService {
           challenge._id,
           opponentId,
         );
+
       if (challenge.challengerScore > challenge.opponentScore) {
-        challengerReward = challenge.assignedPoint;
         let challengerUser = await context.userService.getUserById(
           challengerId,
         );
-        let opponentUser = await context.userService.getUserStatus(opponentId);
+        let opponentUser = await context.userService.getUserById(opponentId);
         challengerUser.rewardPoint += challengerReward;
         opponentUser.rewardPoint -= challenge.assignedPoint;
         //inserting to leaderBoard
@@ -240,19 +240,30 @@ export class ChallengeService {
         challengerNotification.isViewed = false;
         opponentNotification.message = loserMessage;
         opponentNotification.isViewed = false;
+
         await opponentNotification.save();
         await challengerNotification.save();
         await challengerUser.save();
+        await opponentUser.save();
         //sending socket notifications if users are online
         if (challengerUser.isOnline) {
           context.notificationGateway.sendNotification({
             socketId: challengerUser.socketId,
             data: challengerNotification,
           });
-        } else if (opponentUser.isOnline) {
+          context.notificationGateway.sendUserPointNotification({
+            socketId: challengerUser.socketId,
+            data: challengerUser.rewardPoint,
+          });
+        }
+        if (opponentUser.isOnline) {
           context.notificationGateway.sendNotification({
             socketId: opponentUser.socketId,
             data: opponentNotification,
+          });
+          context.notificationGateway.sendUserPointNotification({
+            socketId: opponentUser.socketId,
+            data: opponentUser.rewardPoint,
           });
         }
         //if their result is Equal
@@ -305,7 +316,7 @@ export class ChallengeService {
       } else {
         opponentReward = challenge.assignedPoint;
         let opponentUser = await context.userService.getUserById(opponentId);
-        let challengerUser = await context.userService.getUserStatus(
+        let challengerUser = await context.userService.getUserById(
           challengerId,
         );
         opponentUser.rewardPoint += opponentReward;
@@ -326,16 +337,26 @@ export class ChallengeService {
         await opponentNotification.save();
         await challengerNotification.save();
         await opponentUser.save();
+        await challengerUser.save();
         //sending socket notifications if users are online
         if (opponentUser.isOnline) {
           context.notificationGateway.sendNotification({
             socketId: opponentUser.socketId,
             data: opponentNotification,
           });
-        } else if (challengerUser.isOnline) {
+          context.notificationGateway.sendUserPointNotification({
+            socketId: challengerUser.socketId,
+            data: challengerUser.rewardPoint,
+          });
+        }
+        if (challengerUser.isOnline) {
           context.notificationGateway.sendNotification({
             socketId: challengerUser.socketId,
             data: challengerNotification,
+          });
+          context.notificationGateway.sendUserPointNotification({
+            socketId: opponentUser.socketId,
+            data: opponentUser.rewardPoint,
           });
         }
       }
@@ -373,9 +394,10 @@ export class ChallengeService {
 
     //calculate answered questions
     for (let i = 0; i < challenge.additionalQuestions.length; i++) {
-      let question = challenge.questions.find(
+      let question = challenge.additionalQuestions.find(
         (q) => q.id == questionsInfo[i].id,
       );
+
       if (question && question.answer == questionsInfo[i].answer)
         answeredCorrectly = true;
     }
@@ -385,12 +407,13 @@ export class ChallengeService {
       challenge.status == 'completed'
     ) {
       // notification you lose this challenge
-      let notification = await this.notificationService.createNotification({
+      await this.notificationService.createNotification({
         message: `1you lose the challenge with ${opponentUser.fullName} in ${course.name} because of late submission`,
         notificationType: 'challenge',
         userId,
         referenceId: challenge._id,
       });
+      //socket fire todo
       return 'submit success ';
     } else if (
       challenge.isAdditionalQuestionSubmitted &&
@@ -413,21 +436,43 @@ export class ChallengeService {
         );
         await challenge.save();
         await challengerUser.save();
+        await opponentUser.save();
 
-        await this.notificationService.createNotification({
-          message: `2you win the challenge with ${opponentUser.fullName} in ${course.name}`,
-          notificationType: 'challenge',
-          userId,
-          referenceId: challenge._id,
-        });
+        const submitterNotification =
+          await this.notificationService.createNotification({
+            message: `2you win the challenge with ${opponentUser.fullName} in ${course.name}`,
+            notificationType: 'challenge',
+            userId,
+            referenceId: challenge._id,
+          });
 
-        await this.notificationService.createNotification({
-          message: `3you lose the challenge with ${challengerUser.fullName} in ${course.name}`,
-          notificationType: 'challenge',
-          userId: opponentUser._id,
-          referenceId: challenge._id,
-        });
-
+        const opponentNotification =
+          await this.notificationService.createNotification({
+            message: `3you lose the challenge with ${challengerUser.fullName} in ${course.name}`,
+            notificationType: 'challenge',
+            userId: opponentUser._id,
+            referenceId: challenge._id,
+          });
+        if (opponentUser.isOnline) {
+          this.notificationGateway.sendNotification({
+            socketId: opponentUser.socketId,
+            data: opponentNotification,
+          });
+          this.notificationGateway.sendUserPointNotification({
+            socketId: challengerUser.socketId,
+            data: challengerUser.rewardPoint,
+          });
+        }
+        if (challengerUser.isOnline) {
+          this.notificationGateway.sendNotification({
+            socketId: challengerUser.socketId,
+            data: submitterNotification,
+          });
+          this.notificationGateway.sendUserPointNotification({
+            socketId: opponentUser.socketId,
+            data: opponentUser.rewardPoint,
+          });
+        }
         return 'submit success ';
       } else {
         //  generate additional questions if this submitter also lose
@@ -467,7 +512,8 @@ export class ChallengeService {
             socketId: opponentUser.socketId,
             data: opponentNotification,
           });
-        } else if (challengerUser.isOnline) {
+        }
+        if (challengerUser.isOnline) {
           this.notificationGateway.sendNotification({
             socketId: challengerUser.socketId,
             data: challengerNotification,
@@ -482,6 +528,7 @@ export class ChallengeService {
       if (answeredCorrectly) {
         challenge.status = 'completed';
         challengerUser.rewardPoint += challenge.assignedPoint;
+        opponentUser.rewardPoint -= challenge.assignedPoint;
         //leader board
         this.leaderBoardService.insertNewUserPointAndUpdateUserRank(
           challengerUser._id,
@@ -493,20 +540,44 @@ export class ChallengeService {
         );
         await challenge.save();
         await challengerUser.save();
+        await opponentUser.save();
 
-        await this.notificationService.createNotification({
-          message: `6you win the challenge with ${opponentUser.fullName} in ${course.name}`,
-          notificationType: 'challenge',
-          userId,
-          referenceId: challenge._id,
-        });
+        const challengerNotification =
+          await this.notificationService.createNotification({
+            message: `6you win the challenge with ${opponentUser.fullName} in ${course.name}`,
+            notificationType: 'challenge',
+            userId,
+            referenceId: challenge._id,
+          });
 
-        await this.notificationService.createNotification({
-          message: `7you lose the challenge with ${challengerUser.fullName} in ${course.name}`,
-          notificationType: 'challenge',
-          userId: opponentUser._id,
-          referenceId: challenge._id,
-        });
+        const opponentNotification =
+          await this.notificationService.createNotification({
+            message: `7you lose the challenge with ${challengerUser.fullName} in ${course.name}`,
+            notificationType: 'challenge',
+            userId: opponentUser._id,
+            referenceId: challenge._id,
+          });
+        //socket event for both
+        if (opponentUser.isOnline) {
+          this.notificationGateway.sendNotification({
+            socketId: opponentUser.socketId,
+            data: opponentNotification,
+          });
+          this.notificationGateway.sendUserPointNotification({
+            socketId: opponentUser.socketId,
+            data: opponentUser.rewardPoint,
+          });
+        }
+        if (challengerUser.isOnline) {
+          this.notificationGateway.sendNotification({
+            socketId: challengerUser.socketId,
+            data: challengerNotification,
+          });
+          this.notificationGateway.sendUserPointNotification({
+            socketId: challengerUser.socketId,
+            data: challengerUser.rewardPoint,
+          });
+        }
         return 'submit success ';
       } else {
         challenge.save();

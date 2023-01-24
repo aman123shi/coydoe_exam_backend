@@ -102,37 +102,17 @@ export class UserService {
     return await this.userModel.findById(id).select('-password');
   }
 
+  async getUserByEmail(email: string) {
+    return await this.userModel.findOne({ email }).select('-password');
+  }
   async getUserRewardPoint(id: mongoose.Schema.Types.ObjectId) {
     let user = await this.userModel.findById(id).select('rewardPoint');
     return { rewardPoint: user.rewardPoint };
   }
-
-  async filterByTimeRange(query: string) {
-    if (query == 'daily') {
-      return await this.userModel
-        .find({ updatedAt: { $gte: new Date() } })
-        .sort({ rewardPoint: -1 })
-        .limit(10);
-    } else if (query == 'weekly') {
-      const now = new Date();
-      const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-      return await this.userModel
-        .find({ updatedAt: { $gte: lastWeek } })
-        .sort({ rewardPoint: -1 })
-        .limit(10);
-    } else if (query == 'monthly') {
-      const now = new Date();
-      const lastMonth = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-      return await this.userModel
-        .find({ updatedAt: { $gte: lastMonth } })
-        .sort({ rewardPoint: -1 })
-        .limit(10);
-    }
-    //return all time scorers
-    else {
-      return await this.userModel.find().sort({ rewardPoint: 1 }).limit(10);
-    }
+  async createUser(userDto: any) {
+    let newUser = new this.userModel();
+    Object.assign(newUser, userDto);
+    let user = await newUser.save();
+    return user.toObject({ getters: true });
   }
 }

@@ -1,8 +1,21 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  FileTypeValidator,
+  Get,
+  MaxFileSizeValidator,
+  Param,
+  ParseFilePipe,
+  Post,
+  Req,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UserLoginDto } from './dto/loginUser.dto';
 import { ExpressRequest } from './types/expressRequest.interface';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UserController {
@@ -35,14 +48,23 @@ export class UserController {
     return await this.userService.getUsersByOrder(order);
   }
   //https://levelup.gitconnected.com/how-we-created-a-real-time-leaderboard-for-a-million-users-555aaa3ccf7b
-  @Get('/leader-board/:range')
-  async getLeaderBoard(@Param('range') range: string) {
-    return await this.userService.getUsersByOrder(range);
-  }
 
   @Post('signup')
-  async signup(@Body() createUserDto: CreateUserDto) {
-    return await this.userService.signUp(createUserDto);
+  @UseInterceptors(FileInterceptor('image'))
+  async signup(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }), //file must be less than 4 mb
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    //  @Body() createUserDto: CreateUserDto,
+  ) {
+    return file.filename + ' ' + file.originalname;
+    //await this.userService.signUp(createUserDto);
   }
 
   @Post('login')

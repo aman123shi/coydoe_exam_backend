@@ -21,7 +21,6 @@ export class UserGuard implements CanActivate {
     let request = ctx.switchToHttp().getRequest<Request>();
     if (!request.headers.authorization) return false;
     let token = request.headers.authorization.split('')[1];
-    console.log('Token from header ' + token);
 
     try {
       let user = verify(token, JWT_SECRET);

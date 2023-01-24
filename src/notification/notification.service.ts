@@ -17,7 +17,9 @@ export class NotificationService {
   ) {}
   //get notifications of a user by his id
   async getNotification(id: mongoose.Schema.Types.ObjectId | string) {
-    return await this.notificationModel.find({ userId: id });
+    return await this.notificationModel
+      .find({ userId: id })
+      .sort({ updatedAt: -1 });
   }
 
   async getNewNotificationsCount(id: mongoose.Schema.Types.ObjectId | string) {

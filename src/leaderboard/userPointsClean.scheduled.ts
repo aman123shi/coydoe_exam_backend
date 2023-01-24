@@ -27,13 +27,7 @@ export class UserPointsCleanupService {
     private weeklyLeaderBoardModel: Model<WeeklyLeaderBoardDocument>,
     @InjectModel(MonthlyLeaderBoard.name)
     private monthlyLeaderBoardModel: Model<MonthlyLeaderBoardDocument>,
-  ) {
-    this.dropAndInitLeaderBoard();
-  }
-  @Cron('10 * * * * *')
-  handleCron() {
-    this.logger.debug('Called when the current second is 10');
-  }
+  ) {}
 
   //clean if user point created at is older than 30 days
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
