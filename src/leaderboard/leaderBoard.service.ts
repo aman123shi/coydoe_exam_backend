@@ -35,7 +35,7 @@ export class LeaderBoardService {
   async deleteOlderEntriesOfTheMonth() {
     const userPoint = await this.userPointsModel.deleteMany({
       createdAt: {
-        $lte: startOfDay(new Date()),
+        $lte: startOfDay(subDays(new Date(), 30)),
       },
     });
   }

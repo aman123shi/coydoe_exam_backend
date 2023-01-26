@@ -31,9 +31,7 @@ export class ChallengeService {
     if (!challenge) {
       throw new UnprocessableEntityException();
     }
-    if (challenge.isSubmittedByOpponent) {
-      return { status: 'expired', questions };
-    }
+
     for (const questionInfo of challenge.questions) {
       let question = await this.questionService.getQuestionById(
         questionInfo.id,
@@ -134,7 +132,7 @@ export class ChallengeService {
     //then create notification for both side and push
     //*else* if not submitted by other side calculate answered question and update user score,submittedByChallenger or Challenger
     let challenge = await this.challengeModel.findById(challengeId);
-    let context = this;
+    let context = this; //capturing the class context to access it inside internal functions
 
     let isChallenger = false,
       submitterScore = 0,

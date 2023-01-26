@@ -26,7 +26,7 @@ export class AuthService {
       });
       return { token, ...user };
     } else {
-      //create new user
+      //create new user with default country and region
       let newUser = {
         fullName: name,
         username: given_name,
