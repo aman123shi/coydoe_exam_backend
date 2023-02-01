@@ -8,7 +8,7 @@ export class LeaderBoardController {
   @Get('insert-leader-board')
   async insertPoint() {
     return await this.leaderBoardService.insertNewUserPointAndUpdateUserRank(
-      '63bf0bf6c5e510b0c1afcecd',
+      '63bf0b6ac5e510b0c1afceca',
       5,
     );
   }

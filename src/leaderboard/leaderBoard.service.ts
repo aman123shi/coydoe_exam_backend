@@ -52,6 +52,7 @@ export class LeaderBoardService {
           $lte: endOfDay(new Date()),
         },
       },
+      //if that day point already created increment unless create
       { userId, $inc: { points: point } },
       { upsert: true },
     );

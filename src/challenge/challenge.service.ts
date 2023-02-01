@@ -395,7 +395,7 @@ export class ChallengeService {
       let question = challenge.additionalQuestions.find(
         (q) => q.id == questionsInfo[i].id,
       );
-
+      //this logic should be changed if submitted questions are more than one
       if (question && question.answer == questionsInfo[i].answer)
         answeredCorrectly = true;
     }
@@ -457,8 +457,8 @@ export class ChallengeService {
             data: opponentNotification,
           });
           this.notificationGateway.sendUserPointNotification({
-            socketId: challengerUser.socketId,
-            data: challengerUser.rewardPoint,
+            socketId: opponentUser.socketId,
+            data: opponentUser.rewardPoint,
           });
         }
         if (challengerUser.isOnline) {
@@ -467,8 +467,8 @@ export class ChallengeService {
             data: submitterNotification,
           });
           this.notificationGateway.sendUserPointNotification({
-            socketId: opponentUser.socketId,
-            data: opponentUser.rewardPoint,
+            socketId: challengerUser.socketId,
+            data: challengerUser.rewardPoint,
           });
         }
         return 'submit success ';

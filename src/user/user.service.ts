@@ -48,9 +48,10 @@ export class UserService {
       .findById(userId)
       .select(['isOnline', 'socketId']);
   }
-  async signUp(createUserDTo: CreateUserDto) {
+  async signUp(createUserDTo: CreateUserDto, imagePath: string) {
     let newUser = new this.userModel();
     Object.assign(newUser, createUserDTo);
+    newUser.image = imagePath;
     let userExist = await this.userModel.findOne({ phone: newUser.phone });
     if (userExist) {
       throw new HttpException(
@@ -104,6 +105,14 @@ export class UserService {
 
   async getUserByEmail(email: string) {
     return await this.userModel.findOne({ email }).select('-password');
+  }
+  async getUserByFacebookId(fbId: string) {
+    return await this.userModel
+      .findOne({ facebookId: fbId })
+      .select('-password');
+  }
+  async getUserByLinkedinId(linkedinId: string) {
+    return await this.userModel.findOne({ linkedinId });
   }
   async getUserRewardPoint(id: mongoose.Schema.Types.ObjectId) {
     let user = await this.userModel.findById(id).select('rewardPoint');

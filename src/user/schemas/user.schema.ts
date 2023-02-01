@@ -26,6 +26,12 @@ export class User {
   gender: string;
 
   @Prop()
+  facebookId: string;
+
+  @Prop()
+  linkedinId: string;
+
+  @Prop()
   image: string;
 
   @Prop()
@@ -34,7 +40,7 @@ export class User {
   @Prop()
   password: string;
 
-  @Prop({ default: 0 })
+  @Prop({ default: 15 })
   rewardPoint: number;
 
   @Prop({ default: false })

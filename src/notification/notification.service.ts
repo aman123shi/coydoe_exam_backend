@@ -19,6 +19,8 @@ export class NotificationService {
   async getNotification(id: mongoose.Schema.Types.ObjectId | string) {
     return await this.notificationModel
       .find({ userId: id })
+      //we are sorting by updatedAt property is because sometimes
+      //we update notifications instead of creating new notifications
       .sort({ updatedAt: -1 });
   }
 
@@ -28,7 +30,7 @@ export class NotificationService {
       .count();
     return { count };
   }
-
+  //this is used to update already created notification for
   async getNotificationByChallengeIdAndUserId(
     challengeId: mongoose.Types.ObjectId,
     userId: mongoose.Schema.Types.ObjectId,
@@ -38,6 +40,7 @@ export class NotificationService {
       userId,
     });
   }
+
   async createNotification(createNotification: CreateNotificationDto) {
     let newNotification = new this.notificationModel();
     Object.assign(newNotification, createNotification);

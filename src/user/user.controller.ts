@@ -61,10 +61,10 @@ export class UserController {
       }),
     )
     file: Express.Multer.File,
-    //  @Body() createUserDto: CreateUserDto,
+    @Body() createUserDto: CreateUserDto,
   ) {
-    return file.filename + ' ' + file.originalname;
-    //await this.userService.signUp(createUserDto);
+    //return file.filename + ' ' + file.originalname;
+    return await this.userService.signUp(createUserDto, file.filename);
   }
 
   @Post('login')

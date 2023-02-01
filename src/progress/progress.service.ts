@@ -102,6 +102,7 @@ export class ProgressService {
         courseId,
         year,
       });
+
       const progress = {
         correctAnswers: 0,
         wrongAnswers: 0,

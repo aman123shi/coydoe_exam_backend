@@ -109,6 +109,7 @@ export class QuestionService {
   }) {
     return await this.questionModel.count({ course: courseId, year });
   }
+
   async getAvailableYears(courseId: mongoose.Schema.Types.ObjectId) {
     if (!mongoose.isValidObjectId(courseId)) {
       throw new HttpException(
@@ -163,7 +164,7 @@ export class QuestionService {
       let randomSkip = Math.floor(Math.random() * count);
       if (randomSkip == count) randomSkip -= 1; //subtract one if it reaches limit
 
-      if (randomSkip <  0) randomSkip = 0;                        
+      if (randomSkip < 0) randomSkip = 0;
       let question = await this.questionModel
         .findOne({ course: courseId })
         .skip(randomSkip);
