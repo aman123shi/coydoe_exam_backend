@@ -119,7 +119,7 @@ export class AuthService {
         ),
       );
 
-      let userExist = await this.userService.getUserByFacebookId(id);
+      let userExist = await this.userService.getUserByLinkedinId(id);
 
       if (userExist) {
         let user = userExist.toObject({ getters: true });
