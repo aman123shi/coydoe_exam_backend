@@ -1,26 +1,20 @@
 import { UserService } from '@app/user/user.service';
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import axios from 'axios';
-import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class AuthService {
   constructor(private userService: UserService) {}
 
   async googleLogin(token: string) {
-    const oAuth2GoogleClient = new OAuth2Client({
-      clientId:
-        '459102036002-c3njpd4m3u89u6jvc3d4cmuv8mqu87s3.apps.googleusercontent.com',
-      clientSecret: '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',
-    });
     try {
-      const ticket = await oAuth2GoogleClient.verifyIdToken({
-        idToken: token,
-        audience:
-          '459102036002-c3njpd4m3u89u6jvc3d4cmuv8mqu87s3.apps.googleusercontent.com',
-      });
-      let payload = ticket.getPayload();
-      const { email, name, picture, given_name } = payload;
+      const response = await axios.get(
+        `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`,
+      );
+
+      console.log(response.data);
+
+      const { email, name, picture, given_name } = response.data; //payload;
       let userExist = await this.userService.getUserByEmail(email);
 
       if (userExist) {
