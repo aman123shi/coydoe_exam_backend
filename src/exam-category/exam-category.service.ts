@@ -24,7 +24,7 @@ export class ExamCategoryService {
     let examCategories = await this.examCategoryModel.find();
     let response = [];
     for (const examCat of examCategories) {
-      let courses = await this.courseService.getCourses(examCat.id);
+      let courses = await this.courseService.getCourses(examCat.id, null);
       let examCategoryWithCourses = {
         _id: examCat.id,
         name: examCat.name,
