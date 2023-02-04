@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CourseService } from '@app/course/course.service';
@@ -24,8 +25,16 @@ export class CourseController {
   @Public()
   async getCourses(
     @Param('examCategoryId') examCategoryId: mongoose.Schema.Types.ObjectId,
+    @Query('type') query: string | undefined | null, //?type=grouped|plain
   ): Promise<Course[]> {
-    return await this.courseService.getCourses(examCategoryId);
+    return await this.courseService.getCourses(examCategoryId, query);
+  }
+
+  @Get('courses/all')
+  async getAllCourses(
+    @Query('type') query: string | undefined | null, //?type=grouped|plain
+  ): Promise<Course[]> {
+    return await this.courseService.getAllCourses(query);
   }
 
   @Get('courses/get/sub-exam-categories/:id')

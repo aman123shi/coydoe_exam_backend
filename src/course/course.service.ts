@@ -29,11 +29,27 @@ export class CourseService {
     private readonly subExamCategoryService: SubExamCategoryService,
   ) {}
 
-  // get all courses under specified exam-categories
+  // get all courses under specified exam-categories with optional query
   async getCourses(
     examCategoryId: mongoose.Schema.Types.ObjectId,
+    query: string | any,
   ): Promise<Course[]> {
-    return await this.courseModel.find({ examCategory: examCategoryId });
+    let matchCriteria: any = { examCategory: examCategoryId };
+    //if query parameter is provided filter courses by if they have grouped or ungrouped question
+    if (query) {
+      if (query == 'grouped') matchCriteria.hasDirections = true;
+      else matchCriteria.hasDirections = false;
+    }
+    return await this.courseModel.find(matchCriteria);
+  }
+
+  async getAllCourses(query: string | any): Promise<Course[]> {
+    let matchCriteria: any = {};
+    if (query) {
+      if (query == 'grouped') matchCriteria.hasDirections = true;
+      else matchCriteria.hasDirections = false;
+    }
+    return await this.courseModel.find(matchCriteria);
   }
 
   async getCourseById(id: mongoose.Schema.Types.ObjectId): Promise<Course> {

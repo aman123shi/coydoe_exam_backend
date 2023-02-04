@@ -17,11 +17,19 @@ export class SubExamCategoryService {
   async getSubExamCategory(): Promise<SubExamCategory[]> {
     return await this.subExamCategoryModel.find();
   }
+
+  async getSubExamCategoryByCategoryId(
+    id: mongoose.Schema.Types.ObjectId,
+  ): Promise<SubExamCategory[]> {
+    return await this.subExamCategoryModel.find({ examCategory: id });
+  }
+
   async getSubExamCategoriesById(
     ids: mongoose.Schema.Types.ObjectId[],
   ): Promise<SubExamCategory[]> {
     return await this.subExamCategoryModel.find({ _id: { $in: ids } });
   }
+
   async createSubExamCategory(
     subExamCategoryDto: SubExamCategoryDto,
   ): Promise<SubExamCategory> {

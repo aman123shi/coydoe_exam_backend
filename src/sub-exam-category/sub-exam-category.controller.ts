@@ -22,6 +22,13 @@ export class SubExamCategoryController {
     return await this.subExamCategoryService.getSubExamCategory();
   }
 
+  @Get('sub-exam-categories/:categoryId')
+  async getSubExamCategoryByCategoryId(
+    @Param('categoryId') id: mongoose.Schema.Types.ObjectId,
+  ) {
+    return await this.subExamCategoryService.getSubExamCategoryByCategoryId(id);
+  }
+
   @Post('sub-exam-categories')
   async createSubExamCategory(@Body() examCategoryDto: SubExamCategoryDto) {
     return await this.subExamCategoryService.createSubExamCategory(
