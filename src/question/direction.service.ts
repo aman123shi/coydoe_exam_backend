@@ -16,7 +16,7 @@ export class DirectionService {
   async getDirections(getDirectionDto: GetDirectionDto): Promise<Direction[]> {
     return await this.directionsModel.find({
       course: getDirectionDto.courseId,
-      courseYear: 2014,
+      courseYear: getDirectionDto.year,
     });
   }
   async createDirection(createDirectionDto: CreateDirectionDto) {
@@ -24,7 +24,14 @@ export class DirectionService {
     Object.assign(newDirection, createDirectionDto);
     return await newDirection.save();
   }
+  async getYearsOfAvailableDirection(courseId: mongoose.Schema.Types.ObjectId) {
+    const years: Direction[] = await this.directionsModel
+      .find({ course: courseId })
+      .select('courseYear')
+      .distinct('courseYear');
 
+    return years.map((y) => ({ year: y }));
+  }
   async updateDirection(
     id: mongoose.Schema.Types.ObjectId,
     updateDirectionDto: UpdateDirectionDto,
@@ -37,4 +44,5 @@ export class DirectionService {
   async deleteDirection(id: mongoose.Schema.Types.ObjectId): Promise<any> {
     return await this.directionsModel.deleteOne({ id: id });
   }
+  async;
 }

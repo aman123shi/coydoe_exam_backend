@@ -17,6 +17,14 @@ import mongoose from 'mongoose';
 export class DirectionController {
   constructor(private readonly directionService: DirectionService) {}
 
+  //returns distinct  available direction  years of particular course
+  @Get('/directions/get/years/:courseId')
+  async getAvailableYearsForCourse(
+    @Param('courseId') courseId: mongoose.Schema.Types.ObjectId,
+  ) {
+    return await this.directionService.getYearsOfAvailableDirection(courseId);
+  }
+
   @Post('directions')
   async getDirection(@Body() getDirectionDto: GetDirectionDto) {
     return await this.directionService.getDirections(getDirectionDto);
