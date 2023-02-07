@@ -14,14 +14,15 @@ export class CreateDirectionDto {
 
   @IsNotEmpty()
   @IsInt()
+  @IsOptional()
   readonly startQuestionNumber: number;
 
   @IsNotEmpty()
   @IsInt()
+  @IsOptional()
   readonly endQuestionNumber: number;
 
   @IsNotEmpty()
-  @IsInt()
   readonly course: mongoose.Schema.Types.ObjectId;
 
   @IsNotEmpty()

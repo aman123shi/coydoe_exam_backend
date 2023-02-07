@@ -89,7 +89,9 @@ export class QuestionService {
   async createQuestion(createQuestionDto: CreateQuestionDto) {
     let newQuestion = new this.questionModel();
     Object.assign(newQuestion, createQuestionDto);
-    return await newQuestion.save();
+    const question = await newQuestion.save();
+    console.log(question);
+    return question;
   }
   async insertSample() {
     for (const q of physics) {

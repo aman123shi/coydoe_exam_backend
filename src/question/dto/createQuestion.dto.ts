@@ -29,15 +29,12 @@ export class CreateQuestionDto {
   readonly description?: string;
 
   @IsNotEmpty()
-  @IsInt()
-  readonly year: number;
+  readonly year: string;
 
   @IsNotEmpty()
-  @IsInt()
   readonly course: mongoose.Schema.Types.ObjectId; //Biology Math
 
   @IsNotEmpty()
-  @IsInt()
   @IsOptional()
   readonly subExamCategory?: mongoose.Schema.Types.ObjectId; //natural social
 }

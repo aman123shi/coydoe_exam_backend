@@ -30,7 +30,7 @@ export class CourseController {
     return await this.courseService.getCourses(examCategoryId, query);
   }
 
-  @Get('courses/all')
+  @Get('courses/get/all')
   async getAllCourses(
     @Query('type') query: string | undefined | null, //?type=grouped|plain
   ): Promise<Course[]> {
