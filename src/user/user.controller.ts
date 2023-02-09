@@ -58,13 +58,14 @@ export class UserController {
           new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
           new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }), //file must be less than 4 mb
         ],
+        fileIsRequired: false,
       }),
     )
-    file: Express.Multer.File,
+    file: Express.Multer.File | undefined,
     @Body() createUserDto: CreateUserDto,
   ) {
     //return file.filename + ' ' + file.originalname;
-    return await this.userService.signUp(createUserDto, file.filename);
+    return await this.userService.signUp(createUserDto, file?.filename);
   }
 
   @Post('login')

@@ -76,9 +76,14 @@ export class GroupedQuestionService {
   }
   async createGroupedQuestion(
     createGroupedQuestionDto: CreateGroupedQuestionDto,
+    questionImage: string | null,
+    descriptionImage: string | null,
   ) {
     let newGroupedQuestion = new this.groupedQuestionModel();
     Object.assign(newGroupedQuestion, createGroupedQuestionDto);
+    if (questionImage) newGroupedQuestion.questionImage = questionImage;
+    if (descriptionImage)
+      newGroupedQuestion.descriptionImage = descriptionImage;
     return await newGroupedQuestion.save();
   }
 

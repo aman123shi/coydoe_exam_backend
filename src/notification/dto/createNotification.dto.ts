@@ -19,8 +19,12 @@ export class CreateNotificationDto {
   readonly isLink?: boolean;
 
   @IsMongoId()
-  readonly userId: mongoose.Schema.Types.ObjectId | mongoose.Types.ObjectId;
+  readonly userId:
+    | mongoose.Schema.Types.ObjectId
+    | mongoose.Types.ObjectId
+    | any;
 
   @IsMongoId()
-  readonly referenceId: mongoose.Types.ObjectId;
+  @IsOptional()
+  readonly referenceId?: mongoose.Types.ObjectId | any;
 }

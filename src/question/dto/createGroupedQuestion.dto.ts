@@ -20,31 +20,29 @@ export class CreateGroupedQuestionDto {
   @IsNotEmpty()
   readonly answer: string;
 
-  @IsNotEmpty()
   @IsOptional()
-  readonly image?: string;
+  readonly questionImage?: string;
+
+  @IsOptional()
+  readonly descriptionImage?: string;
 
   @IsNotEmpty()
   readonly description: string;
 
   @IsNotEmpty()
-  @IsInt()
-  readonly year: number;
+  readonly year: string;
 
   @IsNotEmpty()
-  @IsInt()
+  @IsOptional()
+  readonly questionNumber: string;
+
+  @IsNotEmpty()
   readonly courseId: mongoose.Schema.Types.ObjectId;
 
   @IsNotEmpty()
-  @IsInt()
-  readonly questionNumber: number;
-
-  @IsNotEmpty()
-  @IsInt()
   readonly direction: mongoose.Schema.Types.ObjectId; //to which direction it belongs
 
   @IsNotEmpty()
   @IsOptional()
-  @IsInt()
   readonly subExamCategory?: number; //natural social
 }

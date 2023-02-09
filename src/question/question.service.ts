@@ -86,9 +86,17 @@ export class QuestionService {
     return { questions, count };
   }
 
-  async createQuestion(createQuestionDto: CreateQuestionDto) {
+  async createQuestion(
+    createQuestionDto: CreateQuestionDto,
+    questionImage: string | null,
+    descriptionImage: string | null,
+  ) {
     let newQuestion = new this.questionModel();
     Object.assign(newQuestion, createQuestionDto);
+
+    if (questionImage) newQuestion.questionImage = questionImage;
+    if (descriptionImage) newQuestion.descriptionImage = descriptionImage;
+
     const question = await newQuestion.save();
     console.log(question);
     return question;

@@ -1,5 +1,13 @@
 import { ExpressRequest } from '@app/user/types/expressRequest.interface';
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { request } from 'http';
 import mongoose from 'mongoose';
 import { NotificationService } from './notification.service';
@@ -40,5 +48,10 @@ export class NotificationController {
   @Get('get-new-count')
   async getNewNotificationCount(@Req() req: ExpressRequest) {
     return await this.notificationService.getNewNotificationsCount(req.userId);
+  }
+
+  @Delete('/:id')
+  async deleteNotification(@Param('id') id: mongoose.Schema.Types.ObjectId) {
+    return await this.notificationService.deleteNotificationById(id);
   }
 }

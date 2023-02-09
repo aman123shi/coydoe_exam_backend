@@ -24,13 +24,19 @@ export class Question {
   answer: string;
 
   @Prop()
-  image: string;
+  questionImage: string;
+
+  @Prop()
+  descriptionImage: string;
 
   @Prop()
   description: string;
 
   @Prop()
   year: number;
+
+  @Prop()
+  questionNumber: number;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId })
   // @ManyToOne((type) => CourseEntity)

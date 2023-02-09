@@ -14,6 +14,9 @@ import {
   GroupedQuestionSchema,
 } from './schemas/groupedQuestion.schema';
 import { Direction, DirectionSchema } from './schemas/direction.schema';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Module({
   controllers: [
@@ -30,6 +33,20 @@ import { Direction, DirectionSchema } from './schemas/direction.schema';
     ]),
     CourseModule,
     forwardRef(() => ProgressModule),
+
+    MulterModule.register({
+      //  dest: '../../public/images/users',
+      storage: diskStorage({
+        destination: function (req, file, callback) {
+          callback(null, 'public/images/questions/');
+        },
+        filename: (_req, file, callback) => {
+          const ext = extname(file.originalname);
+          let fileName = `${file.originalname}-${Date.now()}-${ext}`;
+          callback(null, fileName);
+        },
+      }),
+    }),
   ],
   exports: [QuestionService, GroupedQuestionService],
 })

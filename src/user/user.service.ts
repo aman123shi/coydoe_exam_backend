@@ -48,10 +48,10 @@ export class UserService {
       .findById(userId)
       .select(['isOnline', 'socketId']);
   }
-  async signUp(createUserDTo: CreateUserDto, imagePath: string) {
+  async signUp(createUserDTo: CreateUserDto, imagePath: string | undefined) {
     let newUser = new this.userModel();
     Object.assign(newUser, createUserDTo);
-    newUser.image = imagePath;
+    if (imagePath) newUser.image = imagePath;
     let userExist = await this.userModel.findOne({ phone: newUser.phone });
     if (userExist) {
       throw new HttpException(

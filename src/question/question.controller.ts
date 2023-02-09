@@ -5,17 +5,24 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   Post,
   Put,
   Req,
+  UploadedFile,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import mongoose from 'mongoose';
 import { CreateQuestionDto } from './dto/createQuestion.dto';
 import { GetQuestionDto } from './dto/getQuestion.dto';
 import { UpdateQuestionDto } from './dto/updateQuestion.dto';
 import { QuestionService } from './question.service';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller()
 export class QuestionController {
@@ -51,8 +58,42 @@ export class QuestionController {
     return await this.questionService.getAvailableYears(courseId);
   }
   @Post('questions/create')
-  async createQuestion(@Body() createQuestionDto: CreateQuestionDto) {
-    return await this.questionService.createQuestion(createQuestionDto);
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'questionImage', maxCount: 1 },
+      { name: 'descriptionImage', maxCount: 1 },
+    ]),
+  )
+  async createQuestion(
+    @UploadedFiles(
+      new ParseFilePipe({
+        // validators: [
+        //   new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+        //   new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }), //file must be less than 4 mb
+        // ],
+        fileIsRequired: false,
+      }),
+    )
+    files: {
+      questionImage?: Express.Multer.File[] | undefined;
+      descriptionImage?: Express.Multer.File[] | undefined;
+    },
+    @Body() createQuestionDto: CreateQuestionDto,
+  ) {
+    const questionImage = files?.questionImage
+      ? files?.questionImage[0].filename
+      : null;
+    const descriptionImage = files?.descriptionImage
+      ? files?.descriptionImage[0].filename
+      : null;
+
+    console.log(questionImage + ' ' + descriptionImage);
+
+    return await this.questionService.createQuestion(
+      createQuestionDto,
+      questionImage,
+      descriptionImage,
+    );
   }
 
   @Put('questions/:id')

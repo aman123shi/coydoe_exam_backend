@@ -76,4 +76,14 @@ export class NotificationService {
       { new: true },
     );
   }
+
+  async deleteNotification(condition: any): Promise<any> {
+    return await this.notificationModel.deleteOne(condition);
+  }
+
+  async deleteNotificationById(
+    id: mongoose.Schema.Types.ObjectId,
+  ): Promise<any> {
+    return await this.notificationModel.deleteOne({ _id: id });
+  }
 }

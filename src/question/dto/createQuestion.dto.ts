@@ -20,16 +20,21 @@ export class CreateQuestionDto {
   @IsNotEmpty()
   readonly answer: string;
 
-  @IsNotEmpty()
   @IsOptional()
-  readonly image?: string;
+  readonly questionImage?: string;
 
+  @IsOptional()
+  readonly descriptionImage?: string;
   @IsNotEmpty()
   @IsOptional()
   readonly description?: string;
 
   @IsNotEmpty()
   readonly year: string;
+
+  @IsNotEmpty()
+  @IsOptional()
+  readonly questionNumber: string;
 
   @IsNotEmpty()
   readonly course: mongoose.Schema.Types.ObjectId; //Biology Math

@@ -23,7 +23,10 @@ export class GroupedQuestion {
   answer: string;
 
   @Prop()
-  image: string;
+  questionImage: string;
+
+  @Prop()
+  descriptionImage: string;
 
   @Prop()
   description: string;

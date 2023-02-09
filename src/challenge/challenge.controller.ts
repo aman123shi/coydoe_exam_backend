@@ -6,6 +6,7 @@ import { GetAdditionalQuestionDto } from './dto/getAdditionalQuestion.dto';
 import { GetChallengeDto } from './dto/getChallange.dto';
 import { SubmitAdditionalQuestionsDto } from './dto/submitAdditionalQuestion.dto';
 import { SubmitChallengeDto } from './dto/submitChallenge.dto';
+import mongoose from 'mongoose';
 
 @Controller()
 export class ChallengeController {
@@ -21,6 +22,14 @@ export class ChallengeController {
       opponentId: createChallengeDto.opponentId,
       userId: req.userId,
     });
+  }
+
+  @Post('reject-challenge')
+  async rejectChallenge(
+    @Req() req: ExpressRequest,
+    @Body('challengeId') challengeId: mongoose.Schema.Types.ObjectId,
+  ) {
+    return await this.challengeService.rejectChallenge(req.userId, challengeId);
   }
 
   @Post('submit-challenge')
@@ -41,6 +50,7 @@ export class ChallengeController {
       getChallengeDto.challengeId,
     );
   }
+
   @Post('get-additional-questions')
   async getAdditionalChallengeQuestions(
     @Body() getAdditionalQuestionDto: GetAdditionalQuestionDto,

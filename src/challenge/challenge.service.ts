@@ -25,6 +25,37 @@ export class ChallengeService {
     private leaderBoardService: LeaderBoardService,
   ) {}
 
+  async rejectChallenge(
+    userId: mongoose.Schema.Types.ObjectId,
+    challengeId: mongoose.Schema.Types.ObjectId,
+  ) {
+    //delete rejector notification from client
+    let challenge = await this.challengeModel.findById(challengeId);
+    let rejectorUser = await this.userService.getUserById(userId);
+    //find challenger notification and delete it
+    await this.notificationService.deleteNotification({
+      referenceId: challenge._id,
+      userId: challenge.createdBy,
+    });
+
+    //send notification for challenger that its challenge is rejected
+    await this.notificationService.createNotification({
+      userId: challenge.createdBy,
+      message:
+        'the challenge you created was rejected by ' + rejectorUser.username,
+      notificationType: 'inform',
+    });
+    //push socket notification
+
+    //find challenger user and add game creation point
+
+    //delete the challenge from Db
+    await challenge.delete();
+    return {
+      status: 'success',
+      message: 'challenge rejected success',
+    };
+  }
   async getChallengeQuestions(challengeId: string) {
     let challenge = await this.challengeModel.findById(challengeId);
     let questions = [];
