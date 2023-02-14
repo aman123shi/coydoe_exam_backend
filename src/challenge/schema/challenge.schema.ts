@@ -44,8 +44,15 @@ export class Challenge {
   //
   @Prop({ default: 0 })
   challengerScore: number;
+
   @Prop({ default: 0 })
   opponentScore: number;
+
+  @Prop({ default: 0 })
+  challengerTime: number;
+
+  @Prop({ default: 0 })
+  opponentTime: number;
 
   @Prop({})
   additionalQuestions: QuestionInfo[];

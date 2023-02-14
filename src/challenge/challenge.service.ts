@@ -31,6 +31,9 @@ export class ChallengeService {
   ) {
     //delete rejector notification from client
     let challenge = await this.challengeModel.findById(challengeId);
+    if (!challenge) {
+      return 'challenge does not Exist';
+    }
     let rejectorUser = await this.userService.getUserById(userId);
     //find challenger notification and delete it
     await this.notificationService.deleteNotification({
@@ -154,6 +157,7 @@ export class ChallengeService {
     challengeId,
     userId,
     questionsInfo,
+    time,
   }: SubmitChallenge) {
     //:TODO
     //on submit identify if the submitter is a challenger or opponent
@@ -192,6 +196,7 @@ export class ChallengeService {
     if (isChallenger) {
       challenge.isSubmittedByChallenger = true;
       challenge.challengerScore = submitterScore;
+      challenge.challengerTime = time;
       //if submitted by opponent determine the winner and reward the point to the winner
       //create notification for both sides
 
@@ -213,6 +218,7 @@ export class ChallengeService {
       //if not challenger who is submitting
       challenge.isSubmittedByOpponent = true;
       challenge.opponentScore = submitterScore;
+      challenge.opponentTime = time;
       if (challenge.isSubmittedByChallenger) {
         processMatchWinner({
           challengerId: challenge.createdBy,
@@ -250,6 +256,7 @@ export class ChallengeService {
         );
 
       if (challenge.challengerScore > challenge.opponentScore) {
+        challenge.status = 'completed';
         let challengerUser = await context.userService.getUserById(
           challengerId,
         );
@@ -343,6 +350,7 @@ export class ChallengeService {
         }
         // return "challenge submitted successfully with Equal result"
       } else {
+        challenge.status = 'completed';
         opponentReward = challenge.assignedPoint;
         let opponentUser = await context.userService.getUserById(opponentId);
         let challengerUser = await context.userService.getUserById(
@@ -613,5 +621,57 @@ export class ChallengeService {
         return 'submit success ';
       }
     }
+  }
+
+  async getChallengeReview(userId: mongoose.Schema.Types.ObjectId) {
+    let challenges = await this.challengeModel.find({
+      status: 'completed',
+      $or: [{ createdBy: userId }, { opponent: userId }],
+    });
+    let challengeReports = [],
+      isChallenger = false,
+      status: any = {};
+    for (const challenge of challenges) {
+      if (challenge.createdBy == userId) isChallenger = true;
+      let opponentId = isChallenger ? challenge.opponent : challenge.createdBy;
+      if (isChallenger && challenge.challengerScore > challenge.opponentScore) {
+        status.pointDeducted = 0;
+        status.pointAwarded = challenge.assignedPoint;
+      } else if (
+        isChallenger &&
+        challenge.challengerScore < challenge.opponentScore
+      ) {
+        status.pointDeducted = -challenge.assignedPoint;
+        status.pointAwarded = 0;
+      } else if (
+        !isChallenger &&
+        challenge.opponentScore > challenge.challengerScore
+      ) {
+        status.pointDeducted = 0;
+        status.pointAwarded = challenge.assignedPoint;
+      } else if (
+        !isChallenger &&
+        challenge.opponentScore < challenge.challengerScore
+      ) {
+        status.pointDeducted = -challenge.assignedPoint;
+        status.pointAwarded = 0;
+      }
+      let challengeTime = isChallenger
+        ? challenge.challengerTime
+        : challenge.opponentTime;
+      let course = await this.courseService.getCourseById(challenge.courseId);
+      let opponentUser = await this.userService.getUserById(opponentId);
+      let challengeReport = {
+        ...status,
+        totalTime: challengeTime,
+        totalQuestions: 5,
+        courseName: course.name,
+        opponentName: opponentUser.username,
+        totalPoint: 12,
+        totalRank: 2,
+      };
+      challengeReports.push(challengeReport);
+    }
+    return challengeReports;
   }
 }

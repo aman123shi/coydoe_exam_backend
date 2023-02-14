@@ -41,6 +41,7 @@ export class ChallengeController {
       challengeId: submitChallengeDto.challengeId,
       questionsInfo: submitChallengeDto.questionsInfo,
       userId: req.userId,
+      time: submitChallengeDto.time,
     });
   }
 

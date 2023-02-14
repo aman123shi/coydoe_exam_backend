@@ -5,4 +5,5 @@ export type SubmitChallenge = {
   challengeId: mongoose.Schema.Types.ObjectId;
   userId: mongoose.Schema.Types.ObjectId;
   questionsInfo: QuestionInfo[];
+  time?: number;
 };

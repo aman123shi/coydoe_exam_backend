@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import mongoose from 'mongoose';
 import { QuestionInfo } from './createChallenge.dto';
 
@@ -7,4 +7,7 @@ export class SubmitChallengeDto {
   challengeId: mongoose.Schema.Types.ObjectId;
   @IsNotEmpty()
   questionsInfo: QuestionInfo[];
+
+  @IsOptional()
+  time: number;
 }
