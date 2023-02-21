@@ -58,6 +58,7 @@ export class AppModule implements NestModule, OnModuleInit {
       .apply(UserAuthMiddleware)
       .forRoutes(
         { path: 'questions/create', method: RequestMethod.POST },
+        { path: 'data-clerk', method: RequestMethod.GET },
         { path: 'grouped-questions/create', method: RequestMethod.POST },
         { path: 'submit-answer', method: RequestMethod.POST },
         { path: 'get-progress', method: RequestMethod.POST },
