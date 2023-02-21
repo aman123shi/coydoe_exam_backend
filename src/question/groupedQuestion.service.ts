@@ -10,6 +10,7 @@ import {
   GroupedQuestion,
   GroupedQuestionDocument,
 } from './schemas/groupedQuestion.schema';
+import { DataClerkService } from '@app/dataClerk/dataClerk.service';
 
 @Injectable()
 export class GroupedQuestionService {
@@ -20,6 +21,7 @@ export class GroupedQuestionService {
     private readonly pagesService: PagesService,
     @Inject(forwardRef(() => ProgressService))
     private readonly progressService: ProgressService,
+    private readonly dataClerkService: DataClerkService,
   ) {}
 
   async getGroupedQuestion(
@@ -63,7 +65,13 @@ export class GroupedQuestionService {
       direction: getGroupedQuestionDto.directionId,
     });
   }
-
+  async getGroupedQuestionForAdmin(
+    getGroupedQuestionDto: GetGroupedQuestionDto,
+  ) {
+    return await this.groupedQuestionModel.find({
+      direction: getGroupedQuestionDto.directionId,
+    });
+  }
   async getYearsOfGroupedQuestions(courseId: mongoose.Schema.Types.ObjectId) {
     return await this.groupedQuestionModel
       .find({ courseId: courseId })
@@ -78,19 +86,27 @@ export class GroupedQuestionService {
     createGroupedQuestionDto: CreateGroupedQuestionDto,
     questionImage: string | null,
     descriptionImage: string | null,
+    userId: mongoose.Schema.Types.ObjectId | undefined,
   ) {
     let newGroupedQuestion = new this.groupedQuestionModel();
     Object.assign(newGroupedQuestion, createGroupedQuestionDto);
     if (questionImage) newGroupedQuestion.questionImage = questionImage;
     if (descriptionImage)
       newGroupedQuestion.descriptionImage = descriptionImage;
+
+    await this.dataClerkService.incrementQuestionEntered(userId);
     return await newGroupedQuestion.save();
   }
 
   async updateGroupedQuestion(
     id: mongoose.Schema.Types.ObjectId,
     updateGroupedQuestionDto: UpdateGroupedQuestionDto,
+    questionImage: string | null,
+    descriptionImage: string | null,
   ): Promise<any> {
+    if (questionImage) updateGroupedQuestionDto.questionImage = questionImage;
+    if (descriptionImage)
+      updateGroupedQuestionDto.descriptionImage = descriptionImage;
     return await this.groupedQuestionModel.updateOne(
       { _id: id },
       updateGroupedQuestionDto,
@@ -100,5 +116,10 @@ export class GroupedQuestionService {
     id: mongoose.Schema.Types.ObjectId,
   ): Promise<any> {
     return await this.groupedQuestionModel.deleteOne({ _id: id });
+  }
+
+  async getGroupedQuestionsCount() {
+    let count = await this.groupedQuestionModel.find().count();
+    return count;
   }
 }

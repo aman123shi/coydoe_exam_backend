@@ -1,19 +1,19 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { DataClerkSchema } from './schemas/dataClerk.schema';
-import { DataClerkAuthService } from './dataClerkAuth.service';
-import { QuestionModule } from '@app/question/question.module';
+import { DataClerk, DataClerkSchema } from './schemas/dataClerk.schema';
+import { DataClerkService } from './dataClerk.service';
 import { DataClerkController } from './dataClerk.controller';
+import { QuestionModule } from '@app/question/question.module';
 
 @Module({
   controllers: [DataClerkController],
-  providers: [DataClerkAuthService],
+  providers: [DataClerkService],
   imports: [
     MongooseModule.forFeature([
       { name: DataClerk.name, schema: DataClerkSchema },
     ]),
-    QuestionModule,
+    forwardRef(() => QuestionModule),
   ],
-  exports: [],
+  exports: [DataClerkService],
 })
-export class DataClerk {}
+export class DataClerkModule {}

@@ -21,10 +21,10 @@ export class CreateQuestionDto {
   readonly answer: string;
 
   @IsOptional()
-  readonly questionImage?: string;
+  questionImage?: string;
 
   @IsOptional()
-  readonly descriptionImage?: string;
+  descriptionImage?: string;
   @IsNotEmpty()
   @IsOptional()
   readonly description?: string;

@@ -1,12 +1,17 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateDataClerkDTO {
   @IsNotEmpty()
-  readonly fullName: string;
+  @IsOptional()
+  readonly fullName?: string;
 
   @IsNotEmpty()
   readonly username: string;
 
   @IsNotEmpty()
   readonly password: string;
+
+  @IsNotEmpty()
+  @IsOptional()
+  token?: string;
 }

@@ -25,6 +25,8 @@ import { CountryModule } from './country/country.module';
 import { LeaderBoardModule } from './leaderboard/leaderboard.module';
 import { UserPointsCleanupService } from './leaderboard/userPointsClean.scheduled';
 import { AuthModule } from './auth/auth.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -42,6 +44,10 @@ import { AuthModule } from './auth/auth.module';
     LeaderBoardModule,
     AuthModule,
     MongooseModule.forRoot(mongoDB_URI),
+
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, UnprocessableEntityExceptionFilter],
@@ -51,8 +57,8 @@ export class AppModule implements NestModule, OnModuleInit {
     consumer
       .apply(UserAuthMiddleware)
       .forRoutes(
-        { path: 'questions', method: RequestMethod.POST },
-        { path: 'grouped-questions', method: RequestMethod.POST },
+        { path: 'questions/create', method: RequestMethod.POST },
+        { path: 'grouped-questions/create', method: RequestMethod.POST },
         { path: 'submit-answer', method: RequestMethod.POST },
         { path: 'get-progress', method: RequestMethod.POST },
         { path: 'create-challenge', method: RequestMethod.POST },

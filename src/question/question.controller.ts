@@ -39,6 +39,11 @@ export class QuestionController {
       request.userId,
     );
   }
+  @Post('questions/for-admin')
+  @Public()
+  async getQuestionsForAdmin(@Body() getQuestionDto: GetQuestionDto) {
+    return await this.questionService.getPlainQuestionsForAdmin(getQuestionDto);
+  }
   @Get('questions/free/:courseId')
   @Public()
   async getFreeQuestion(
@@ -46,17 +51,20 @@ export class QuestionController {
   ) {
     return await this.questionService.getRandomQuestion(courseId);
   }
+
   @Get('questions/sample')
   @Public()
   async insertSample() {
     return await this.questionService.insertSample();
   }
+
   @Get('questions/courses/get-years/:id')
   async getAvailableYears(
     @Param('id') courseId: mongoose.Schema.Types.ObjectId,
   ) {
     return await this.questionService.getAvailableYears(courseId);
   }
+
   @Post('questions/create')
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -79,6 +87,7 @@ export class QuestionController {
       descriptionImage?: Express.Multer.File[] | undefined;
     },
     @Body() createQuestionDto: CreateQuestionDto,
+    @Req() req: ExpressRequest,
   ) {
     const questionImage = files?.questionImage
       ? files?.questionImage[0].filename
@@ -93,15 +102,46 @@ export class QuestionController {
       createQuestionDto,
       questionImage,
       descriptionImage,
+      req.userId,
     );
   }
 
-  @Put('questions/:id')
+  @Post('questions/update/:id')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'questionImage', maxCount: 1 },
+      { name: 'descriptionImage', maxCount: 1 },
+    ]),
+  )
   async updateQuestion(
+    @UploadedFiles(
+      new ParseFilePipe({
+        fileIsRequired: false,
+      }),
+    )
+    files: {
+      questionImage?: Express.Multer.File[] | undefined;
+      descriptionImage?: Express.Multer.File[] | undefined;
+    },
     @Body() updateQuestionDto: UpdateQuestionDto,
     @Param('id') id: mongoose.Schema.Types.ObjectId,
   ) {
-    return await this.questionService.updateQuestion(id, updateQuestionDto);
+    const questionImage = files?.questionImage
+      ? files?.questionImage[0].filename
+      : null;
+    const descriptionImage = files?.descriptionImage
+      ? files?.descriptionImage[0].filename
+      : null;
+
+    console.log(questionImage + ' ' + descriptionImage);
+    console.log(JSON.stringify(updateQuestionDto));
+    return 'success';
+    return await this.questionService.updateQuestion(
+      id,
+      updateQuestionDto,
+      questionImage,
+      descriptionImage,
+    );
   }
   @Delete('questions/:id')
   async DeleteQuestion(@Param('id') id: mongoose.Schema.Types.ObjectId) {

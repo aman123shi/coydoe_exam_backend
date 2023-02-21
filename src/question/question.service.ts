@@ -17,6 +17,7 @@ import { GroupedQuestionService } from './groupedQuestion.service';
 import { Question, QuestionDocument } from './schemas/question.schema';
 import { QuestionsWithCount } from './types/questionsWithCount';
 import { physics } from '@app/question';
+import { DataClerkService } from '@app/dataClerk/dataClerk.service';
 @Injectable()
 export class QuestionService {
   constructor(
@@ -30,6 +31,8 @@ export class QuestionService {
     private readonly progressService: ProgressService,
     @Inject(forwardRef(() => GroupedQuestionService))
     private readonly groupedQuestionService: GroupedQuestionService,
+    @Inject(forwardRef(() => DataClerkService))
+    private readonly dataClerkService: DataClerkService,
   ) {}
   async getQuestionById(id: mongoose.Schema.Types.ObjectId) {
     let question = await this.questionModel.findOne({ _id: id });
@@ -90,6 +93,7 @@ export class QuestionService {
     createQuestionDto: CreateQuestionDto,
     questionImage: string | null,
     descriptionImage: string | null,
+    userId: mongoose.Schema.Types.ObjectId | undefined,
   ) {
     let newQuestion = new this.questionModel();
     Object.assign(newQuestion, createQuestionDto);
@@ -98,7 +102,8 @@ export class QuestionService {
     if (descriptionImage) newQuestion.descriptionImage = descriptionImage;
 
     const question = await newQuestion.save();
-    console.log(question);
+    //increment EnteredQuestion for that clerk
+    await this.dataClerkService.incrementQuestionEntered(userId);
     return question;
   }
   async insertSample() {
@@ -157,7 +162,11 @@ export class QuestionService {
   async updateQuestion(
     id: mongoose.Schema.Types.ObjectId,
     updateQuestionDto: UpdateQuestionDto,
+    descriptionImage: string | null,
+    questionImage: string | null,
   ): Promise<any> {
+    if (questionImage) updateQuestionDto.questionImage = questionImage;
+    if (descriptionImage) updateQuestionDto.descriptionImage = descriptionImage;
     return await this.questionModel.updateOne({ _id: id }, updateQuestionDto);
   }
   async deleteQuestion(id: mongoose.Schema.Types.ObjectId): Promise<any> {
@@ -181,6 +190,30 @@ export class QuestionService {
       questions.push(question);
     }
     return questions as (Question & { _id: mongoose.Schema.Types.ObjectId })[];
+  }
+
+  async getPlainQuestionsForAdmin(getQuestionDto: GetQuestionDto) {
+    let course = getQuestionDto.course;
+    let year = getQuestionDto.year;
+    let page = getQuestionDto.page || 1;
+    let limit = getQuestionDto.limit || 10;
+    const questions = await this.questionModel
+      .find({
+        course,
+        year,
+      })
+      .skip((page - 1) * limit)
+      .limit(limit);
+    const count = await this.questionModel.count({
+      course,
+      year,
+    });
+
+    return { questions, count };
+  }
+  async getPlainQuestionsCount() {
+    let count = await this.questionModel.find().count();
+    return count;
   }
 }
 

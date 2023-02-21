@@ -35,6 +35,15 @@ export class GroupedQuestionController {
       req.userId,
     );
   }
+  @Post('grouped-questions/for-admin')
+  async getGroupedQuestionsForAdmin(
+    @Body() getGroupedQuestionDto: GetGroupedQuestionDto,
+    @Req() req: ExpressRequest,
+  ) {
+    return await this.groupedQuestionService.getGroupedQuestionForAdmin(
+      getGroupedQuestionDto,
+    );
+  }
 
   @Post('grouped-questions/create')
   @UseInterceptors(
@@ -54,6 +63,7 @@ export class GroupedQuestionController {
       descriptionImage?: Express.Multer.File[] | undefined;
     },
     @Body() createGroupedQuestionDto: CreateGroupedQuestionDto,
+    @Req() req: ExpressRequest,
   ) {
     const questionImage = files?.questionImage
       ? files?.questionImage[0].filename
@@ -65,19 +75,44 @@ export class GroupedQuestionController {
       createGroupedQuestionDto,
       questionImage,
       descriptionImage,
+      req.userId,
     );
   }
 
   @Put('grouped-questions/:id')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'questionImage', maxCount: 1 },
+      { name: 'descriptionImage', maxCount: 1 },
+    ]),
+  )
   async updateGroupedQuestion(
+    @UploadedFiles(
+      new ParseFilePipe({
+        fileIsRequired: false,
+      }),
+    )
+    files: {
+      questionImage?: Express.Multer.File[] | undefined;
+      descriptionImage?: Express.Multer.File[] | undefined;
+    },
     @Body() updateGroupedQuestionDto: UpdateGroupedQuestionDto,
     @Param('id') id: mongoose.Schema.Types.ObjectId,
   ) {
+    const questionImage = files?.questionImage
+      ? files?.questionImage[0].filename
+      : null;
+    const descriptionImage = files?.descriptionImage
+      ? files?.descriptionImage[0].filename
+      : null;
     return await this.groupedQuestionService.updateGroupedQuestion(
       id,
       updateGroupedQuestionDto,
+      questionImage,
+      descriptionImage,
     );
   }
+
   @Delete('grouped-questions/:id')
   async DeleteGroupedQuestion(@Param('id') id: mongoose.Schema.Types.ObjectId) {
     return await this.groupedQuestionService.deleteGroupedQuestion(id);

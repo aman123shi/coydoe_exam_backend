@@ -12,6 +12,7 @@ import { CreateDirectionDto } from '@app/question/dto/createDirection.dto';
 import { GetDirectionDto } from '@app/question/dto/getDirection.dto';
 import { UpdateQuestionDto } from '@app/question/dto/updateQuestion.dto';
 import mongoose from 'mongoose';
+import { UpdateDirectionDto } from './dto/updateDirection.dto';
 
 @Controller()
 export class DirectionController {
@@ -37,7 +38,7 @@ export class DirectionController {
 
   @Put('directions/:id')
   async updateQuestion(
-    @Body() updateQuestionDto: UpdateQuestionDto,
+    @Body() updateQuestionDto: UpdateDirectionDto,
     @Param('id') id: mongoose.Schema.Types.ObjectId,
   ) {
     return await this.directionService.updateDirection(id, updateQuestionDto);
