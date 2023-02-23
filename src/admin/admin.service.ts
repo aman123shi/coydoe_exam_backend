@@ -14,8 +14,8 @@ export class AdminService {
     @InjectModel(Admin.name) private adminModel: Model<AdminDocument>,
   ) {}
 
-  generateJWT(phone: string): string {
-    return sign({ phone }, 'JWT_SECRET');
+  generateJWT(id: any): string {
+    return sign({ id, isAdmin: true }, 'JWT_SECRET');
   }
 
   async signUp(createAdminDTo: CreateAdminDTo) {
@@ -35,7 +35,7 @@ export class AdminService {
     delete newAdmin.password;
     let response = {
       ...newAdmin,
-      token: this.generateJWT(newAdmin.phone),
+      token: this.generateJWT(newAdmin._id),
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
@@ -62,7 +62,7 @@ export class AdminService {
     delete admin.password;
     let response = {
       ...admin,
-      token: this.generateJWT(admin.phone),
+      token: this.generateJWT(admin._id),
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }

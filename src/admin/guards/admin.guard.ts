@@ -23,10 +23,14 @@ export class AdminGuard implements CanActivate {
     console.log('Token from header ' + token);
 
     try {
-      let user = verify(token, 'JWT_SECRET');
-      if (user) {
+      let user = verify(token, 'JWT_SECRET') as {
+        id: string;
+        isAdmin: boolean;
+      };
+      if (user && user.isAdmin) {
         return true;
       }
+      return false;
     } catch (error) {
       throw new HttpException(
         'User AnAuthorized please Login First',
