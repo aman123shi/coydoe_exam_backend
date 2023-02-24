@@ -4,6 +4,7 @@ import { CreateDataClerkDTO } from './dtos/CreateDataClerkDTO';
 import { LoginDataClerkDTO } from './dtos/loginDataClerkDto';
 import { Public } from '@app/admin/decorators/publicRoute.decorators';
 import { ExpressRequest } from '@app/user/types/expressRequest.interface';
+import { GetDataInsertionReportDto } from './dtos/getReport.dto';
 
 @Controller('data-clerk')
 export class DataClerkController {
@@ -35,5 +36,15 @@ export class DataClerkController {
   @Public()
   async login(@Body() loginDataClerkDto: LoginDataClerkDTO) {
     return await this.dataClerkAuthService.login(loginDataClerkDto);
+  }
+
+  @Post('get/data-insertion-report')
+  async generateDataInsertionReport(
+    @Body() getReportDto: GetDataInsertionReportDto,
+  ) {
+    return await this.dataClerkAuthService.generateDataInsertionReport(
+      getReportDto.clerkId,
+      getReportDto.durationInDays,
+    );
   }
 }

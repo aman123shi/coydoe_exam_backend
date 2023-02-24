@@ -20,6 +20,7 @@ import { UserAuthMiddleware } from './user/middlewares/userAuth.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
 import { mongoDB_URI } from './config';
 import { NotificationModule } from './notification/notification.module';
+
 import { ChallengeModule } from './challenge/challenge.module';
 import { CountryModule } from './country/country.module';
 import { LeaderBoardModule } from './leaderboard/leaderboard.module';
@@ -27,9 +28,11 @@ import { UserPointsCleanupService } from './leaderboard/userPointsClean.schedule
 import { AuthModule } from './auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { StudentTypeModule } from './studentType/studentType.module';
 
 @Module({
   imports: [
+    StudentTypeModule,
     ScheduleModule.forRoot(),
     QuestionModule,
     CourseModule,

@@ -13,17 +13,28 @@ import { JWT_SECRET } from '@app/config';
 import { LoginDataClerkDTO } from './dtos/loginDataClerkDto';
 import { QuestionService } from '@app/question/question.service';
 import { GroupedQuestionService } from '@app/question/groupedQuestion.service';
+import {
+  ClerkDataEntryReport,
+  ClerkDataEntryReportDocument,
+} from './schemas/dataEntry.schema';
+import { ClerkDataEntryReportDTO } from './dtos/createClerkDataEntry.dto';
+import { endOfDay, startOfDay, subDays } from 'date-fns';
+import { CourseService } from '@app/course/course.service';
 
 @Injectable()
 export class DataClerkService {
   constructor(
     @InjectModel(DataClerk.name)
     private dataClerkModel: Model<DataClerkDocument>,
+    @InjectModel(ClerkDataEntryReport.name)
+    private clerkDataEntryReportModel: Model<ClerkDataEntryReportDocument>,
     @Inject(forwardRef(() => QuestionService))
     private questionService: QuestionService,
 
     @Inject(forwardRef(() => GroupedQuestionService))
     private groupedQuestionService: GroupedQuestionService,
+
+    private courseService: CourseService,
   ) {}
   generateJWT(data: any): string {
     return sign(data, JWT_SECRET);
@@ -133,5 +144,65 @@ export class DataClerkService {
       clerks,
       totalData: plainQuestionsCount + groupedQuestionsCount,
     };
+  }
+
+  async insertReport(createClerkDataEntryDto: ClerkDataEntryReportDTO) {
+    let insertedReport = await this.clerkDataEntryReportModel.findOneAndUpdate(
+      {
+        clerkId: createClerkDataEntryDto.clerkId,
+        courseId: createClerkDataEntryDto.courseId,
+        createdAt: {
+          $gte: startOfDay(new Date()),
+          $lte: endOfDay(new Date()),
+        },
+      },
+      {
+        clerkId: createClerkDataEntryDto.clerkId,
+        courseId: createClerkDataEntryDto.courseId,
+        $inc: { count: 1 },
+      },
+      { upsert: true },
+    );
+
+    return insertedReport;
+  }
+
+  async generateDataInsertionReport(
+    clerkId: any,
+    dateDuration: number,
+  ): Promise<any[]> {
+    let courses: any = {},
+      response = [];
+    let matchCriteria: any = {
+      clerkId: new mongoose.Types.ObjectId(clerkId),
+      createdAt: {
+        $gte: startOfDay(subDays(new Date(), dateDuration)),
+      },
+    };
+
+    const dataInsertionReports = await this.clerkDataEntryReportModel.find(
+      matchCriteria,
+    );
+
+    //group by courseId as a key and count and store that date insertion
+    for (const insertion of dataInsertionReports) {
+      if (!courses[insertion.courseId.toString()]) {
+        courses[insertion.courseId.toString()] = [
+          { createdAt: insertion?.createdAt, count: insertion.count },
+        ];
+      } else {
+        courses[insertion.courseId.toString()].push({
+          createdAt: insertion?.createdAt,
+          count: insertion.count,
+        });
+      }
+    }
+    //iterate to get course name and reformat the response
+    for (const key in courses) {
+      const courseId = new mongoose.Types.ObjectId(key);
+      let course = await this.courseService.getCourseById(courseId);
+      response.push({ name: course.name, insertions: courses[key] });
+    }
+    return response;
   }
 }

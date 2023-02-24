@@ -52,7 +52,9 @@ export class CourseService {
     return await this.courseModel.find(matchCriteria);
   }
 
-  async getCourseById(id: mongoose.Schema.Types.ObjectId): Promise<Course> {
+  async getCourseById(
+    id: mongoose.Schema.Types.ObjectId | mongoose.Types.ObjectId,
+  ): Promise<Course> {
     return await this.courseModel.findOne({ _id: id });
   }
 
