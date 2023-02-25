@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { DataClerkService } from './dataClerk.service';
 import { CreateDataClerkDTO } from './dtos/CreateDataClerkDTO';
 import { LoginDataClerkDTO } from './dtos/loginDataClerkDto';
@@ -47,15 +47,17 @@ export class DataClerkController {
       getReportDto.durationInDays,
     );
   }
+
   @Get('insert-dummy')
   async insertDummy() {
     return await this.dataClerkAuthService.insertDummyReport();
   }
 
-  @Get('get-all')
-  async getAllTimeDataInsertionReport() {
+  @Get('get-all-time-insertion-report/:clerkId')
+  async getAllTimeDataInsertionReport(@Param('clerkId') clerkId: string) {
+    // '63f09552e64c513045f245ac',
     return await this.dataClerkAuthService.generateAllTimeInsertionReport(
-      '63f09552e64c513045f245ac',
+      clerkId,
     );
   }
 }
