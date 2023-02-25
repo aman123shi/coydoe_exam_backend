@@ -205,4 +205,30 @@ export class DataClerkService {
     }
     return response;
   }
+  async generateAllTimeInsertionReport(clrkId: string) {
+    let courses: any = {},
+      response = [];
+    const clerkId = new mongoose.Types.ObjectId(clrkId);
+    const dataInsertionReports = await this.clerkDataEntryReportModel.aggregate(
+      [
+        { $match: { clerkId } },
+        { $group: { _id: '$courseId', total: { $sum: '$count' } } },
+      ],
+    );
+    for (const insertion of dataInsertionReports) {
+      const courseId = new mongoose.Types.ObjectId(insertion._id);
+      let course = await this.courseService.getCourseById(courseId);
+      response.push({ name: course.name, count: insertion.total });
+    }
+    return response;
+  }
+  async insertDummyReport() {
+    let newInsertion = new this.clerkDataEntryReportModel();
+    Object.assign(newInsertion, {
+      clerkId: '63f09552e64c513045f245ac',
+      courseId: '63e49566acbfccb4849b659c',
+      count: 7,
+    });
+    return await newInsertion.save();
+  }
 }

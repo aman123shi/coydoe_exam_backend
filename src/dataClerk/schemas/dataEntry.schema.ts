@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { type } from 'os';
-import { timestamp } from 'rxjs';
 
 export type ClerkDataEntryReportDocument =
   HydratedDocument<ClerkDataEntryReport>;

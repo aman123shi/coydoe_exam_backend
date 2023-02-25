@@ -47,4 +47,15 @@ export class DataClerkController {
       getReportDto.durationInDays,
     );
   }
+  @Get('insert-dummy')
+  async insertDummy() {
+    return await this.dataClerkAuthService.insertDummyReport();
+  }
+
+  @Get('get-all')
+  async getAllTimeDataInsertionReport() {
+    return await this.dataClerkAuthService.generateAllTimeInsertionReport(
+      '63f09552e64c513045f245ac',
+    );
+  }
 }
