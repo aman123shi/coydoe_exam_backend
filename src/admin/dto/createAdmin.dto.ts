@@ -10,7 +10,7 @@ export class CreateAdminDTo {
   readonly lastName: string;
 
   @IsNotEmpty()
-  readonly phone: string;
+  readonly username: string;
 
   @IsNotEmpty()
   readonly password: string;

@@ -21,7 +21,9 @@ export class AdminService {
   async signUp(createAdminDTo: CreateAdminDTo) {
     let newAdmin = new this.adminModel();
     Object.assign(newAdmin, createAdminDTo);
-    let adminExist = await this.adminModel.findOne({ phone: newAdmin.phone });
+    let adminExist = await this.adminModel.findOne({
+      username: newAdmin.username,
+    });
 
     if (adminExist) {
       throw new HttpException(
@@ -40,7 +42,7 @@ export class AdminService {
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
   async login(loginDto: AdminLoginDto) {
-    let admin = await this.adminModel.findOne({ phone: loginDto.phone });
+    let admin = await this.adminModel.findOne({ username: loginDto.username });
 
     if (!admin) {
       throw new HttpException(

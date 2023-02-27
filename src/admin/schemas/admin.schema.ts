@@ -12,7 +12,7 @@ export class Admin {
   lastName: string;
 
   @Prop()
-  phone: string;
+  username: string;
 
   @Prop()
   password: string;
