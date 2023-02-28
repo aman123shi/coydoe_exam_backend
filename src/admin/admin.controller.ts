@@ -29,4 +29,9 @@ export class AdminController {
   async resetNotifications(@Body('notificationIds') notificationIds: string[]) {
     return await this.adminService.resetNotifications(notificationIds);
   }
+
+  @Get('insert-sample')
+  async insertSample() {
+    return await this.adminService.insertSample();
+  }
 }

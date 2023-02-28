@@ -97,4 +97,8 @@ export class AdminService {
       { count: 0 },
     );
   }
+
+  async insertSample() {
+    return await this.incrementDataInsertionNotification('');
+  }
 }
