@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 import { AdminService } from '@app/admin/admin.service';
 import { AdminLoginDto } from '@app/admin/dto/adminLogin.dto';
 import { CreateAdminDTo } from '@app/admin/dto/createAdmin.dto';
@@ -18,5 +18,15 @@ export class AdminController {
   @Public()
   async login(@Body() adminLoginDto: AdminLoginDto) {
     return await this.adminService.login(adminLoginDto);
+  }
+
+  @Get('notifications')
+  async getNotifications() {
+    return await this.adminService.getNewNotifications();
+  }
+
+  @Put('reset-notifications')
+  async resetNotifications(@Body('notificationIds') notificationIds: string[]) {
+    return await this.adminService.resetNotifications(notificationIds);
   }
 }

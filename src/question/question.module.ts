@@ -18,6 +18,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { DataClerkModule } from '@app/dataClerk/dataClerk.module';
+import { AdminModule } from '@app/admin/admin.module';
 
 @Module({
   controllers: [
@@ -35,6 +36,7 @@ import { DataClerkModule } from '@app/dataClerk/dataClerk.module';
     CourseModule,
     forwardRef(() => ProgressModule),
     forwardRef(() => DataClerkModule),
+    AdminModule,
     MulterModule.register({
       //  dest: '../../public/images/users',
       storage: diskStorage({

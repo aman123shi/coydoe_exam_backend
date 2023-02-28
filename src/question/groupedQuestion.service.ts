@@ -11,6 +11,7 @@ import {
   GroupedQuestionDocument,
 } from './schemas/groupedQuestion.schema';
 import { DataClerkService } from '@app/dataClerk/dataClerk.service';
+import { AdminService } from '@app/admin/admin.service';
 
 @Injectable()
 export class GroupedQuestionService {
@@ -22,6 +23,7 @@ export class GroupedQuestionService {
     @Inject(forwardRef(() => ProgressService))
     private readonly progressService: ProgressService,
     private readonly dataClerkService: DataClerkService,
+    private readonly adminService: AdminService,
   ) {}
 
   async getGroupedQuestion(
@@ -95,6 +97,14 @@ export class GroupedQuestionService {
       newGroupedQuestion.descriptionImage = descriptionImage;
 
     await this.dataClerkService.incrementQuestionEntered(userId);
+
+    //insert data entry report for that day from dataClerkService(insert report)
+    await this.dataClerkService.insertReport({
+      clerkId: userId,
+      courseId: createGroupedQuestionDto.courseId,
+    });
+    //increment admin notification for that user AdminService
+    await this.adminService.incrementDataInsertionNotification(userId);
     return await newGroupedQuestion.save();
   }
 

@@ -9,7 +9,8 @@ export class ClerkDataEntryReportDTO {
   readonly clerkId: mongoose.Schema.Types.ObjectId | string;
 
   @IsNotEmpty()
-  readonly questionId: mongoose.Schema.Types.ObjectId | string;
+  @IsOptional()
+  readonly questionId?: mongoose.Schema.Types.ObjectId | string;
 
   @IsNotEmpty()
   @IsOptional()

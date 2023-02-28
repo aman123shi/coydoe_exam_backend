@@ -18,6 +18,7 @@ import { Question, QuestionDocument } from './schemas/question.schema';
 import { QuestionsWithCount } from './types/questionsWithCount';
 import { physics } from '@app/question';
 import { DataClerkService } from '@app/dataClerk/dataClerk.service';
+import { AdminService } from '@app/admin/admin.service';
 @Injectable()
 export class QuestionService {
   constructor(
@@ -33,6 +34,7 @@ export class QuestionService {
     private readonly groupedQuestionService: GroupedQuestionService,
     @Inject(forwardRef(() => DataClerkService))
     private readonly dataClerkService: DataClerkService,
+    private readonly adminService: AdminService,
   ) {}
   async getQuestionById(id: mongoose.Schema.Types.ObjectId) {
     let question = await this.questionModel.findOne({ _id: id });
@@ -104,6 +106,13 @@ export class QuestionService {
     const question = await newQuestion.save();
     //increment EnteredQuestion for that clerk
     await this.dataClerkService.incrementQuestionEntered(userId);
+    //insert data entry report for that day from dataClerkService(insert report)
+    await this.dataClerkService.insertReport({
+      clerkId: userId,
+      courseId: createQuestionDto.course,
+    });
+    //increment admin notification for that user AdminService
+    await this.adminService.incrementDataInsertionNotification(userId);
     return question;
   }
   async insertSample() {

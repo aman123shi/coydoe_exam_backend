@@ -7,11 +7,17 @@ import { responseBuilder } from '@app/utils/http-response-builder';
 import { Admin, AdminDocument } from './schemas/admin.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import {
+  AdminNotification,
+  AdminNotificationDocument,
+} from './schemas/adminNotification.schema';
 
 @Injectable()
 export class AdminService {
   constructor(
     @InjectModel(Admin.name) private adminModel: Model<AdminDocument>,
+    @InjectModel(AdminNotification.name)
+    private adminNotificationModel: Model<AdminNotificationDocument>,
   ) {}
 
   generateJWT(id: any): string {
@@ -67,5 +73,28 @@ export class AdminService {
       token: this.generateJWT(admin._id),
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
+  }
+  async getNewNotifications() {
+    return await this.adminNotificationModel
+      .find({ count: { $gt: 0 } })
+      .populate('clerkId');
+  }
+
+  async incrementDataInsertionNotification(clerkId: any) {
+    return await this.adminNotificationModel.findOneAndUpdate(
+      { clerkId },
+      {
+        clerkId,
+        $inc: { count: 1 },
+      },
+      { upsert: true },
+    );
+  }
+
+  async resetNotifications(notificationIds: string[]): Promise<any> {
+    return await this.adminNotificationModel.updateMany(
+      { _id: { $in: notificationIds } },
+      { count: 0 },
+    );
   }
 }
