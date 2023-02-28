@@ -110,14 +110,6 @@ export class DataClerkService {
   async getClerk(userId: mongoose.Schema.Types.ObjectId) {
     return await this.dataClerkModel.findById(userId);
   }
-  async incrementQuestionEntered(
-    userId: mongoose.Schema.Types.ObjectId,
-  ): Promise<any> {
-    return await this.dataClerkModel.updateOne(
-      { _id: userId },
-      { $inc: { questionsEntered: 1 } },
-    );
-  }
 
   async publicClerkLogin(loginDto: LoginDataClerkDTO) {
     if (
@@ -144,6 +136,15 @@ export class DataClerkService {
       clerks,
       totalData: plainQuestionsCount + groupedQuestionsCount,
     };
+  }
+
+  async incrementQuestionEntered(
+    userId: mongoose.Schema.Types.ObjectId,
+  ): Promise<any> {
+    return await this.dataClerkModel.updateOne(
+      { $or: [{ _id: userId }, { adminId: userId }] },
+      { $inc: { questionsEntered: 1 } },
+    );
   }
 
   async insertReport(createClerkDataEntryDto: ClerkDataEntryReportDTO) {
