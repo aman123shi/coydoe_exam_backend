@@ -41,8 +41,9 @@ export class AdminService {
     newAdmin.password = await bcrypt.hash(newAdmin.password, salt);
     await newAdmin.save();
     delete newAdmin.password;
+    let admin = newAdmin.toObject({ getters: true });
     let response = {
-      ...newAdmin,
+      ...admin,
       token: this.generateJWT(newAdmin._id),
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
@@ -68,8 +69,9 @@ export class AdminService {
       );
     }
     delete admin.password;
+    let loggedInAdmin = admin.toObject({ getters: true });
     let response = {
-      ...admin,
+      ...loggedInAdmin,
       token: this.generateJWT(admin._id),
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
@@ -77,7 +79,7 @@ export class AdminService {
   async getNewNotifications() {
     return await this.adminNotificationModel
       .find({ count: { $gt: 0 } })
-      .populate('clerkId');
+      .populate('clerkId', ['username']);
   }
 
   async incrementDataInsertionNotification(clerkId: any) {
@@ -87,7 +89,7 @@ export class AdminService {
         clerkId,
         $inc: { count: 1 },
       },
-      { upsert: true },
+      { upsert: true, new: true },
     );
   }
 
@@ -99,6 +101,8 @@ export class AdminService {
   }
 
   async insertSample() {
-    return await this.incrementDataInsertionNotification('');
+    return await this.incrementDataInsertionNotification(
+      '63f09552e64c513045f245ac',
+    );
   }
 }
