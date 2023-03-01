@@ -172,6 +172,9 @@ export class DataClerkService {
     clerkId: any,
     dateDuration: number,
   ): Promise<any[]> {
+    console.log('clerkid for admin ');
+    console.log(clerkId);
+
     let courses: any = {},
       response = [];
     let matchCriteria: any = {

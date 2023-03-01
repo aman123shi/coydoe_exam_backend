@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 export type DataClerkDocument = HydratedDocument<DataClerk>;
 
@@ -19,6 +19,9 @@ export class DataClerk {
 
   @Prop({ default: 0 })
   questionsEntered: number;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  adminId: mongoose.Schema.Types.ObjectId;
 }
 
 export const DataClerkSchema = SchemaFactory.createForClass(DataClerk);
