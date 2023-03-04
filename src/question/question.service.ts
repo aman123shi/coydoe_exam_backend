@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Inject,
   Injectable,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
@@ -102,7 +103,15 @@ export class QuestionService {
 
     if (questionImage) newQuestion.questionImage = questionImage;
     if (descriptionImage) newQuestion.descriptionImage = descriptionImage;
-
+    //check if this question is already inserted
+    const questionExisted = await this.questionModel.findOne({
+      course: createQuestionDto.course,
+      year: createQuestionDto.year,
+      questionNumber: createQuestionDto.questionNumber,
+    });
+    if (questionExisted) {
+      throw new UnprocessableEntityException('Question already Existed');
+    }
     const question = await newQuestion.save();
     //increment EnteredQuestion for that clerk
     await this.dataClerkService.incrementQuestionEntered(userId);

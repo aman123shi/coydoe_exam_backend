@@ -1,6 +1,11 @@
 import { PagesService } from '@app/progress/pages.service';
 import { ProgressService } from '@app/progress/progress.service';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { CreateGroupedQuestionDto } from './dto/createGroupedQuestion.dto';
@@ -95,7 +100,15 @@ export class GroupedQuestionService {
     if (questionImage) newGroupedQuestion.questionImage = questionImage;
     if (descriptionImage)
       newGroupedQuestion.descriptionImage = descriptionImage;
-
+    //check if this question is already inserted
+    const questionExisted = await this.groupedQuestionModel.findOne({
+      course: createGroupedQuestionDto.courseId,
+      year: createGroupedQuestionDto.year,
+      questionNumber: createGroupedQuestionDto.questionNumber,
+    });
+    if (questionExisted) {
+      throw new UnprocessableEntityException('Question already Existed');
+    }
     await this.dataClerkService.incrementQuestionEntered(userId);
 
     //insert data entry report for that day from dataClerkService(insert report)
