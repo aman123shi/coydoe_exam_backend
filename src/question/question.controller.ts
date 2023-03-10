@@ -75,10 +75,6 @@ export class QuestionController {
   async createQuestion(
     @UploadedFiles(
       new ParseFilePipe({
-        // validators: [
-        //   new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
-        //   new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }), //file must be less than 4 mb
-        // ],
         fileIsRequired: false,
       }),
     )
@@ -135,7 +131,7 @@ export class QuestionController {
 
     console.log(questionImage + ' ' + descriptionImage);
     console.log(JSON.stringify(updateQuestionDto));
-    return 'success';
+
     return await this.questionService.updateQuestion(
       id,
       updateQuestionDto,
