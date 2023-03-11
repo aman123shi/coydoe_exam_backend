@@ -17,7 +17,6 @@ import { UpdateQuestionDto } from './dto/updateQuestion.dto';
 import { GroupedQuestionService } from './groupedQuestion.service';
 import { Question, QuestionDocument } from './schemas/question.schema';
 import { QuestionsWithCount } from './types/questionsWithCount';
-import { physics } from '@app/question';
 import { DataClerkService } from '@app/dataClerk/dataClerk.service';
 import { AdminService } from '@app/admin/admin.service';
 @Injectable()
@@ -125,7 +124,7 @@ export class QuestionService {
     return question;
   }
   async insertSample() {
-    for (const q of physics) {
+    for (const q of 'physics') {
       let newQuestion = new this.questionModel();
       // this.questionModel.insertMany()
       Object.assign(newQuestion, q);

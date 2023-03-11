@@ -1,10 +1,11 @@
 if (!process.env.IS_TS_NODE) {
   require('module-alias/register');
+  require('dotenv').config();
 }
 
 import 'reflect-metadata';
 import { NestFactory, Reflector } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from '@app/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { UnprocessableEntityExceptionFilter } from './exception-handlers/unprocessableEntity-exception.filter';
 import { AdminGuard } from './admin/guards/admin.guard';
