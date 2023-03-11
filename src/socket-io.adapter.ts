@@ -2,7 +2,7 @@ import { INestApplicationContext, Logger } from '@nestjs/common';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { verify } from 'jsonwebtoken';
 import { Server, ServerOptions } from 'socket.io';
-import { JWT_SECRET } from './config';
+
 import { SocketWithAuth } from './notification/types/socket-with-auth';
 
 export class SocketIOAdapter extends IoAdapter {
@@ -37,7 +37,7 @@ const createTokenMiddleware =
     if (!token) next(new Error('FORBIDDEN PLEASE PROVIDE SOCKET TOKEN'));
 
     try {
-      const payload = verify(token, JWT_SECRET) as {
+      const payload = verify(token, process.env.JWT_SECRET) as {
         id: string;
         phone: string;
       };
