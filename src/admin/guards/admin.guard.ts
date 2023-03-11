@@ -23,7 +23,7 @@ export class AdminGuard implements CanActivate {
     console.log('Token from header ' + token);
 
     try {
-      let user = verify(token, 'JWT_SECRET') as {
+      let user = verify(token, process.env.JWT_SECRET) as {
         id: string;
         isAdmin: boolean;
       };

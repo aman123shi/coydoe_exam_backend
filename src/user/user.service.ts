@@ -4,7 +4,7 @@ import { CreateUserDto } from './dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
 import { UserLoginDto } from './dto/loginUser.dto';
 import { responseBuilder } from '@app/utils/http-response-builder';
-import { JWT_SECRET } from '@app/config';
+
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
@@ -18,7 +18,7 @@ export class UserService {
   ) {}
 
   generateJWT(data: any): string {
-    return sign(data, JWT_SECRET);
+    return sign(data, process.env.JWT_SECRET);
   }
 
   async getAllOnlineUsers(userId: mongoose.Schema.Types.ObjectId) {

@@ -20,7 +20,7 @@ import { UserAuthMiddleware } from './user/middlewares/userAuth.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
 import { mongoDB_URI } from './config';
 import { NotificationModule } from './notification/notification.module';
-
+import { ConfigModule } from '@nestjs/config';
 import { ChallengeModule } from './challenge/challenge.module';
 import { CountryModule } from './country/country.module';
 import { LeaderBoardModule } from './leaderboard/leaderboard.module';
@@ -32,6 +32,7 @@ import { StudentTypeModule } from './studentType/studentType.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     StudentTypeModule,
     ScheduleModule.forRoot(),
     QuestionModule,
@@ -50,6 +51,7 @@ import { StudentTypeModule } from './studentType/studentType.module';
 
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
+      exclude: ['/api*'],
     }),
   ],
   controllers: [AppController],

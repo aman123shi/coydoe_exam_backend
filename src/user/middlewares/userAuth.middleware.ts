@@ -2,7 +2,7 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Response, NextFunction } from 'express';
 import { ExpressRequest } from '../types/expressRequest.interface';
 import { verify } from 'jsonwebtoken';
-import { JWT_SECRET } from '@app/config';
+
 import mongoose from 'mongoose';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class UserAuthMiddleware implements NestMiddleware {
       let token = req.headers['authorization'].split(' ')[1];
       console.log(token);
 
-      const decoded = verify(token, JWT_SECRET) as {
+      const decoded = verify(token, process.env.JWT_SECRET) as {
         id: mongoose.Schema.Types.ObjectId;
         phone?: string;
       };

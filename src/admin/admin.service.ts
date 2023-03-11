@@ -11,7 +11,6 @@ import {
   AdminNotification,
   AdminNotificationDocument,
 } from './schemas/adminNotification.schema';
-import { JWT_SECRET } from '@app/config';
 
 @Injectable()
 export class AdminService {
@@ -22,7 +21,7 @@ export class AdminService {
   ) {}
 
   generateJWT(id: any): string {
-    return sign({ id, isAdmin: true }, JWT_SECRET);
+    return sign({ id, isAdmin: true }, process.env.JWT_SECRET);
   }
 
   async signUp(createAdminDTo: CreateAdminDTo) {

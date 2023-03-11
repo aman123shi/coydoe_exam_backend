@@ -9,7 +9,7 @@ import { DataClerk, DataClerkDocument } from './schemas/dataClerk.schema';
 import mongoose, { Model } from 'mongoose';
 import { CreateDataClerkDTO } from './dtos/CreateDataClerkDTO';
 import { sign, verify } from 'jsonwebtoken';
-import { JWT_SECRET } from '@app/config';
+
 import { LoginDataClerkDTO } from './dtos/loginDataClerkDto';
 import { QuestionService } from '@app/question/question.service';
 import { GroupedQuestionService } from '@app/question/groupedQuestion.service';
@@ -37,11 +37,11 @@ export class DataClerkService {
     private courseService: CourseService,
   ) {}
   generateJWT(data: any): string {
-    return sign(data, JWT_SECRET);
+    return sign(data, process.env.JWT_SECRET);
   }
 
   verifyJWT(token: string) {
-    return verify(token, JWT_SECRET);
+    return verify(token, process.env.JWT_SECRET);
   }
   async createAccount(createDataClerkDto: CreateDataClerkDTO) {
     try {
@@ -113,8 +113,8 @@ export class DataClerkService {
 
   async publicClerkLogin(loginDto: LoginDataClerkDTO) {
     if (
-      loginDto.username == 'coydoeDataEncoder' &&
-      loginDto.password == 'coydoe123'
+      loginDto.username == process.env.PUBLIC_CLERK_USERNAME &&
+      loginDto.password == process.env.PUBLIC_CLERK_PASSWORD
     ) {
       return {
         token: this.generateJWT({ id: 'publicUserId' }),

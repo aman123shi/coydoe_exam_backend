@@ -1,4 +1,3 @@
-import { JWT_SECRET } from '@app/config';
 import {
   CanActivate,
   ExecutionContext,
@@ -23,7 +22,7 @@ export class UserGuard implements CanActivate {
     let token = request.headers.authorization.split('')[1];
 
     try {
-      let user = verify(token, JWT_SECRET);
+      let user = verify(token, process.env.JWT_SECRET);
       if (user) {
         return true;
       }
