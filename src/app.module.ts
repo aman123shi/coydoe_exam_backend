@@ -18,7 +18,7 @@ import { UserModule } from './user/user.module';
 import { ProgressModule } from './progress/progress.module';
 import { UserAuthMiddleware } from './user/middlewares/userAuth.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
-import { mongoDB_URI } from './config';
+
 import { NotificationModule } from './notification/notification.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChallengeModule } from './challenge/challenge.module';
@@ -47,7 +47,7 @@ import { StudentTypeModule } from './studentType/studentType.module';
     CountryModule,
     LeaderBoardModule,
     AuthModule,
-    MongooseModule.forRoot(mongoDB_URI),
+    MongooseModule.forRoot(process.env.MONGO_DB_URI),
 
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
