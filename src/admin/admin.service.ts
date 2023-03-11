@@ -6,11 +6,12 @@ import { AdminLoginDto } from './dto/adminLogin.dto';
 import { responseBuilder } from '@app/utils/http-response-builder';
 import { Admin, AdminDocument } from './schemas/admin.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import {
   AdminNotification,
   AdminNotificationDocument,
 } from './schemas/adminNotification.schema';
+import { UpdateAdminDTo } from './dto/updateAdmin.dto';
 
 @Injectable()
 export class AdminService {
@@ -48,6 +49,7 @@ export class AdminService {
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
+
   async login(loginDto: AdminLoginDto) {
     let admin = await this.adminModel.findOne({ username: loginDto.username });
 
@@ -103,6 +105,20 @@ export class AdminService {
   async insertSample() {
     return await this.incrementDataInsertionNotification(
       '63f09552e64c513045f245ac',
+    );
+  }
+
+  async updateAdminCredentials(
+    id: mongoose.Schema.Types.ObjectId,
+    updateAdminDto: UpdateAdminDTo,
+  ) {
+    const salt = await bcrypt.genSalt(10);
+    const password = await bcrypt.hash(updateAdminDto.password, salt);
+
+    return await this.adminModel.findByIdAndUpdate(
+      id,
+      { username: updateAdminDto.username, password },
+      { new: true },
     );
   }
 }

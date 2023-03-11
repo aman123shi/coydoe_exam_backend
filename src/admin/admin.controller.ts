@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { AdminService } from '@app/admin/admin.service';
 import { AdminLoginDto } from '@app/admin/dto/adminLogin.dto';
 import { CreateAdminDTo } from '@app/admin/dto/createAdmin.dto';
 import { Public } from './decorators/publicRoute.decorators';
-
+import mongoose from 'mongoose';
+import { UpdateAdminDTo } from '@app/admin/dto/updateAdmin.dto';
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
@@ -33,5 +34,13 @@ export class AdminController {
   @Get('insert-sample')
   async insertSample() {
     return await this.adminService.insertSample();
+  }
+
+  @Post('update-credentials/:id')
+  async updateCredentials(
+    @Param('id') id: mongoose.Schema.Types.ObjectId,
+    @Body() updateAdminDto: UpdateAdminDTo,
+  ) {
+    return this.adminService.updateAdminCredentials(id, updateAdminDto);
   }
 }
