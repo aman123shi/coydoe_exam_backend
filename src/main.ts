@@ -1,6 +1,6 @@
 if (!process.env.IS_TS_NODE) {
   require('module-alias/register');
-  require('dotenv').config();
+  // require('dotenv').config();
 }
 
 import 'reflect-metadata';
