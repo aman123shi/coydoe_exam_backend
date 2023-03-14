@@ -29,6 +29,7 @@ import { AuthModule } from './auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { StudentTypeModule } from './studentType/studentType.module';
+import { ExerciseModule } from './exercise/exercise.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { StudentTypeModule } from './studentType/studentType.module';
     CountryModule,
     LeaderBoardModule,
     AuthModule,
+    ExerciseModule,
     MongooseModule.forRoot(process.env.MONGO_DB_URI),
 
     ServeStaticModule.forRoot({
