@@ -30,6 +30,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { StudentTypeModule } from './studentType/studentType.module';
 import { ExerciseModule } from './exercise/exercise.module';
+import { GeneralQuestionModule } from './general-question/generalQuestion.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { ExerciseModule } from './exercise/exercise.module';
     LeaderBoardModule,
     AuthModule,
     ExerciseModule,
+    GeneralQuestionModule,
     MongooseModule.forRoot(process.env.MONGO_DB_URI),
 
     ServeStaticModule.forRoot({
