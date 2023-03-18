@@ -22,8 +22,8 @@ export class GeneralQuestionController {
 
   @Get()
   async getGeneralQuestions(@Query() query: GetGeneralQuestionDto) {
-    const page = parseInt(query?.page.toString() || '1');
-    const limit = parseInt(query?.limit.toString() || '10');
+    const page = parseInt(query?.page?.toString() || '1');
+    const limit = parseInt(query?.limit?.toString() || '10');
     return await this.generalQuestionService.getGeneralQuestions(page, limit);
   }
 
