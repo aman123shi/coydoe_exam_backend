@@ -24,11 +24,12 @@ export class CreateGeneralQuestionDto {
 
   @IsOptional()
   descriptionImage?: string;
+
   @IsNotEmpty()
   @IsOptional()
   readonly description?: string;
 
   @IsNotEmpty()
   @IsOptional()
-  readonly questionNumber: string;
+  readonly questionNumber: number;
 }
