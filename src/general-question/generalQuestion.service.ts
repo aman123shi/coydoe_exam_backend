@@ -16,10 +16,13 @@ export class GeneralQuestionService {
   ) {}
 
   async getGeneralQuestions(page: number, limit: number) {
-    return await this.generalQuestionModel
+    let count = await this.generalQuestionModel.find().count();
+    let questions = await this.generalQuestionModel
       .find()
       .skip((page - 1) * limit)
       .limit(limit);
+
+    return { count, questions };
   }
 
   async createGeneralQuestions(
