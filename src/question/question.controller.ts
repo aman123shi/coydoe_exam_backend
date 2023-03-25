@@ -65,6 +65,13 @@ export class QuestionController {
     return await this.questionService.getAvailableYears(courseId);
   }
 
+  @Get('questions/courses/get-years/v2/:id')
+  async getAvailableYearsV2(
+    @Param('id') courseId: mongoose.Schema.Types.ObjectId,
+  ) {
+    return await this.questionService.getAvailableYearsV2(courseId);
+  }
+
   @Post('questions/create')
   @UseInterceptors(
     FileFieldsInterceptor([

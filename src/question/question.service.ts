@@ -176,6 +176,13 @@ export class QuestionService {
       throw new HttpException(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }
+  async getAvailableYearsV2(courseId: mongoose.Schema.Types.ObjectId) {
+    const result = await this.getAvailableYears(courseId);
+    if (result.length == 0) return [];
+    return {
+      years: result.map((y) => y.year),
+    };
+  }
   async updateQuestion(
     id: mongoose.Schema.Types.ObjectId,
     updateQuestionDto: UpdateQuestionDto,
