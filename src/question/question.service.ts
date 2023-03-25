@@ -178,7 +178,9 @@ export class QuestionService {
   }
   async getAvailableYearsV2(courseId: mongoose.Schema.Types.ObjectId) {
     const result = await this.getAvailableYears(courseId);
-    if (result.length == 0) return [];
+    if (result.length == 0) {
+      return { years: [] };
+    }
     return {
       years: result.map((y) => y.year),
     };
