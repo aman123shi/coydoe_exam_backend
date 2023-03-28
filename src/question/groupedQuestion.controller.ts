@@ -44,7 +44,14 @@ export class GroupedQuestionController {
       getGroupedQuestionDto,
     );
   }
-
+  @Post('grouped-questions/v2')
+  async getGroupedQuestionsV2(
+    @Body() getGroupedQuestionDto: GetGroupedQuestionDto,
+  ) {
+    return await this.groupedQuestionService.getGroupedQuestionsV2(
+      getGroupedQuestionDto,
+    );
+  }
   @Post('grouped-questions/create')
   @UseInterceptors(
     FileFieldsInterceptor([

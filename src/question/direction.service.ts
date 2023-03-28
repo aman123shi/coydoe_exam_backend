@@ -19,6 +19,10 @@ export class DirectionService {
       courseYear: getDirectionDto.year,
     });
   }
+  async getDirectionsV2(getDirectionDto: GetDirectionDto) {
+    const directions = await this.getDirections(getDirectionDto);
+    return { directions: directions };
+  }
   async createDirection(createDirectionDto: CreateDirectionDto) {
     let newDirection = new this.directionsModel();
     Object.assign(newDirection, createDirectionDto);

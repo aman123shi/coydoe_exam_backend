@@ -79,6 +79,14 @@ export class GroupedQuestionService {
       direction: getGroupedQuestionDto.directionId,
     });
   }
+
+  async getGroupedQuestionsV2(getGroupedQuestionDto: GetGroupedQuestionDto) {
+    const groupedQuestions = await this.getGroupedQuestionForAdmin(
+      getGroupedQuestionDto,
+    );
+    return { groupedQuestions };
+  }
+
   async getYearsOfGroupedQuestions(courseId: mongoose.Schema.Types.ObjectId) {
     return await this.groupedQuestionModel
       .find({ courseId: courseId })

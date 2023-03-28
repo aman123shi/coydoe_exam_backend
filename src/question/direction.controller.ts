@@ -31,6 +31,11 @@ export class DirectionController {
     return await this.directionService.getDirections(getDirectionDto);
   }
 
+  @Post('directions/v2')
+  async getDirectionV2(@Body() getDirectionDto: GetDirectionDto) {
+    return await this.directionService.getDirectionsV2(getDirectionDto);
+  }
+
   @Post('directions/create')
   async createQuestion(@Body() createDirectionDto: CreateDirectionDto) {
     return await this.directionService.createDirection(createDirectionDto);
