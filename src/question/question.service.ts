@@ -186,8 +186,9 @@ export class QuestionService {
     }
 
     for (const year of years) {
-      const parts = await this.getGroupedQuestionsExamParts(courseId, year);
+      let parts = await this.getGroupedQuestionsExamParts(courseId, year);
       const totalQuestions = await this.getTotalQuestions(courseId, year);
+      if (parts == 0) parts += 1; //for non grouped subjects
       examData.push({ year, totalQuestions, parts });
     }
     return { examData };

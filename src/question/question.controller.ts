@@ -150,6 +150,7 @@ export class QuestionController {
       descriptionImage,
     );
   }
+
   @Delete('questions/:id')
   async DeleteQuestion(@Param('id') id: mongoose.Schema.Types.ObjectId) {
     return await this.questionService.deleteQuestion(id);
