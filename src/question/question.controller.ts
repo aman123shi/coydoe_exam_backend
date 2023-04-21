@@ -71,6 +71,10 @@ export class QuestionController {
   ) {
     return await this.questionService.getAvailableYearsV2(courseId);
   }
+  @Get('questions/exam-data/:id')
+  async getExamData(@Param('id') courseId: mongoose.Schema.Types.ObjectId) {
+    return await this.questionService.getExamData(courseId);
+  }
 
   @Post('questions/create')
   @UseInterceptors(

@@ -19,6 +19,7 @@ import { Question, QuestionDocument } from './schemas/question.schema';
 import { QuestionsWithCount } from './types/questionsWithCount';
 import { DataClerkService } from '@app/dataClerk/dataClerk.service';
 import { AdminService } from '@app/admin/admin.service';
+import { DirectionService } from './direction.service';
 @Injectable()
 export class QuestionService {
   constructor(
@@ -35,6 +36,7 @@ export class QuestionService {
     @Inject(forwardRef(() => DataClerkService))
     private readonly dataClerkService: DataClerkService,
     private readonly adminService: AdminService,
+    private readonly directionService: DirectionService,
   ) {}
   async getQuestionById(id: mongoose.Schema.Types.ObjectId) {
     let question = await this.questionModel.findOne({ _id: id });
@@ -176,6 +178,49 @@ export class QuestionService {
       throw new HttpException(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }
+  async getExamData(courseId: mongoose.Schema.Types.ObjectId) {
+    const examData = [];
+    const years = (await this.getAvailableYearsV2(courseId)).years;
+    if (years.length == 0) {
+      return { examData: [] };
+    }
+
+    for (const year of years) {
+      const parts = await this.getGroupedQuestionsExamParts(courseId, year);
+      const totalQuestions = await this.getTotalQuestions(courseId, year);
+      examData.push({ year, totalQuestions, parts });
+    }
+    return { examData };
+  }
+
+  async getGroupedQuestionsExamParts(
+    courseId: mongoose.Schema.Types.ObjectId,
+    year: number,
+  ) {
+    return await this.directionService.getDirectionsCount({ courseId, year });
+  }
+
+  async getTotalQuestions(
+    courseId: mongoose.Schema.Types.ObjectId,
+    year: number,
+  ) {
+    let totalQuestions = 0;
+
+    const course = await this.courseService.getCourseById(courseId);
+    if (!course) return 0;
+    if (course.hasDirections == false) {
+      totalQuestions = await this.questionModel
+        .find({ course: courseId, year })
+        .count();
+    } else {
+      totalQuestions = await this.groupedQuestionService.getTotalQuestions(
+        courseId,
+        year,
+      );
+    }
+    return totalQuestions;
+  }
+
   async getAvailableYearsV2(courseId: mongoose.Schema.Types.ObjectId) {
     const result = await this.getAvailableYears(courseId);
     if (result.length == 0) {
@@ -185,6 +230,7 @@ export class QuestionService {
       years: result.map((y) => y.year),
     };
   }
+
   async updateQuestion(
     id: mongoose.Schema.Types.ObjectId,
     updateQuestionDto: UpdateQuestionDto,

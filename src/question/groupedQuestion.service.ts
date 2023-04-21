@@ -153,4 +153,16 @@ export class GroupedQuestionService {
     let count = await this.groupedQuestionModel.find().count();
     return count;
   }
+  async getTotalQuestions(
+    courseId: mongoose.Schema.Types.ObjectId,
+    year: number,
+  ) {
+    let totalQuestions = 0;
+
+    totalQuestions = await this.groupedQuestionModel
+      .find({ courseId, year })
+      .count();
+
+    return totalQuestions;
+  }
 }

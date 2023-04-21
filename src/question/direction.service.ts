@@ -19,6 +19,14 @@ export class DirectionService {
       courseYear: getDirectionDto.year,
     });
   }
+  async getDirectionsCount(getDirectionDto: GetDirectionDto): Promise<number> {
+    return await this.directionsModel
+      .find({
+        course: getDirectionDto.courseId,
+        courseYear: getDirectionDto.year,
+      })
+      .count();
+  }
   async getDirectionsV2(getDirectionDto: GetDirectionDto) {
     const directions = await this.getDirections(getDirectionDto);
     return { directions: directions };
