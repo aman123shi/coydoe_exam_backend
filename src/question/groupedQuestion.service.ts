@@ -39,7 +39,7 @@ export class GroupedQuestionService {
       year = getGroupedQuestionDto.year,
       page = getGroupedQuestionDto.directionNumber;
 
-    let visitedPage = await this.pagesService.findPage({
+    const visitedPage = await this.pagesService.findPage({
       courseId,
       year,
       userId,
@@ -103,14 +103,14 @@ export class GroupedQuestionService {
     descriptionImage: string | null,
     userId: mongoose.Schema.Types.ObjectId | undefined,
   ) {
-    let newGroupedQuestion = new this.groupedQuestionModel();
+    const newGroupedQuestion = new this.groupedQuestionModel();
     Object.assign(newGroupedQuestion, createGroupedQuestionDto);
     if (questionImage) newGroupedQuestion.questionImage = questionImage;
     if (descriptionImage)
       newGroupedQuestion.descriptionImage = descriptionImage;
     //check if this question is already inserted
     const questionExisted = await this.groupedQuestionModel.findOne({
-      course: createGroupedQuestionDto.courseId,
+      courseId: createGroupedQuestionDto.courseId,
       year: createGroupedQuestionDto.year,
       questionNumber: createGroupedQuestionDto.questionNumber,
     });
@@ -150,7 +150,7 @@ export class GroupedQuestionService {
   }
 
   async getGroupedQuestionsCount() {
-    let count = await this.groupedQuestionModel.find().count();
+    const count = await this.groupedQuestionModel.find().count();
     return count;
   }
   async getTotalQuestions(

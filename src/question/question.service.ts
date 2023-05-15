@@ -39,19 +39,19 @@ export class QuestionService {
     private readonly directionService: DirectionService,
   ) {}
   async getQuestionById(id: mongoose.Schema.Types.ObjectId) {
-    let question = await this.questionModel.findOne({ _id: id });
+    const question = await this.questionModel.findOne({ _id: id });
     return question;
   }
   async getQuestion(
     getQuestionDto: GetQuestionDto,
     userId: mongoose.Schema.Types.ObjectId,
   ): Promise<QuestionsWithCount> {
-    let limit = getQuestionDto.limit || 5;
-    let page = getQuestionDto.page || 1;
+    const limit = getQuestionDto.limit || 5;
+    const page = getQuestionDto.page || 1;
     const course = getQuestionDto.course;
     const year = getQuestionDto.year;
     const subExamCategory = getQuestionDto.subCategory;
-    let visitedPage = await this.pagesService.findPage({
+    const visitedPage = await this.pagesService.findPage({
       courseId: course,
       year,
       userId,
@@ -99,7 +99,7 @@ export class QuestionService {
     descriptionImage: string | null,
     userId: mongoose.Schema.Types.ObjectId | undefined,
   ) {
-    let newQuestion = new this.questionModel();
+    const newQuestion = new this.questionModel();
     Object.assign(newQuestion, createQuestionDto);
 
     if (questionImage) newQuestion.questionImage = questionImage;
@@ -127,7 +127,7 @@ export class QuestionService {
   }
   async insertSample() {
     for (const q of 'physics') {
-      let newQuestion = new this.questionModel();
+      const newQuestion = new this.questionModel();
       // this.questionModel.insertMany()
       Object.assign(newQuestion, q);
       await newQuestion.save();
@@ -152,7 +152,7 @@ export class QuestionService {
       );
     }
 
-    let course = await this.courseService.getCourseById(courseId);
+    const course = await this.courseService.getCourseById(courseId);
     if (!course) {
       throw new HttpException(
         'invalid Course ID ',
@@ -246,18 +246,15 @@ export class QuestionService {
     return await this.questionModel.deleteOne({ _id: id });
   }
 
-  async getRandomQuestion(
-    courseId: mongoose.Schema.Types.ObjectId,
-    limit: number = 5,
-  ) {
-    let count = await this.questionModel.find({ course: courseId }).count();
-    let questions = [];
+  async getRandomQuestion(courseId: mongoose.Schema.Types.ObjectId, limit = 5) {
+    const count = await this.questionModel.find({ course: courseId }).count();
+    const questions = [];
     for (let i = 0; i < limit; i++) {
       let randomSkip = Math.floor(Math.random() * count);
       if (randomSkip == count) randomSkip -= 1; //subtract one if it reaches limit
 
       if (randomSkip < 0) randomSkip = 0;
-      let question = await this.questionModel
+      const question = await this.questionModel
         .findOne({ course: courseId })
         .skip(randomSkip);
       questions.push(question);
@@ -266,10 +263,10 @@ export class QuestionService {
   }
 
   async getPlainQuestionsForAdmin(getQuestionDto: GetQuestionDto) {
-    let course = getQuestionDto.course;
-    let year = getQuestionDto.year;
-    let page = getQuestionDto.page || 1;
-    let limit = getQuestionDto.limit || 10;
+    const course = getQuestionDto.course;
+    const year = getQuestionDto.year;
+    const page = getQuestionDto.page || 1;
+    const limit = getQuestionDto.limit || 10;
     const questions = await this.questionModel
       .find({
         course,
@@ -285,7 +282,7 @@ export class QuestionService {
     return { questions, count };
   }
   async getPlainQuestionsCount() {
-    let count = await this.questionModel.find().count();
+    const count = await this.questionModel.find().count();
     return count;
   }
 }
