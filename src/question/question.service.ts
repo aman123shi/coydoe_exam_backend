@@ -276,16 +276,9 @@ export class QuestionService {
     const page = getQuestionDto.page || 1;
     const limit = getQuestionDto.limit || 10;
     const skip = (page - 1) * limit;
-    const aggregationPipeline = [
-      {
-        $match: {
-          year: year,
-          course: course,
-        },
-      },
-    ];
+
     const questions = await this.questionModel
-      .aggregate(aggregationPipeline)
+      .find({ course, year })
       .sort({ questionNumber: 1 })
       .skip(skip)
       .limit(limit);
