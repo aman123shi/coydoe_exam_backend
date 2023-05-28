@@ -20,6 +20,7 @@ import { QuestionsWithCount } from './types/questionsWithCount';
 import { DataClerkService } from '@app/dataClerk/dataClerk.service';
 import { AdminService } from '@app/admin/admin.service';
 import { DirectionService } from './direction.service';
+
 @Injectable()
 export class QuestionService {
   constructor(
@@ -58,13 +59,20 @@ export class QuestionService {
       page,
     });
 
+    const skip = (page - 1) * limit;
+    const aggregationPipeline = [
+      {
+        $match: {
+          year: year,
+          course: course,
+          subExamCategory,
+        },
+      },
+    ];
     const questions = await this.questionModel
-      .find({
-        course,
-        year,
-        subExamCategory,
-      })
-      .skip((page - 1) * limit)
+      .aggregate(aggregationPipeline)
+      .sort({ questionNumber: 1 })
+      .skip(skip)
       .limit(limit);
     const count = await this.questionModel.count({
       course,
@@ -267,13 +275,21 @@ export class QuestionService {
     const year = getQuestionDto.year;
     const page = getQuestionDto.page || 1;
     const limit = getQuestionDto.limit || 10;
+    const skip = (page - 1) * limit;
+    const aggregationPipeline = [
+      {
+        $match: {
+          year: year,
+          course: course,
+        },
+      },
+    ];
     const questions = await this.questionModel
-      .find({
-        course,
-        year,
-      })
-      .skip((page - 1) * limit)
+      .aggregate(aggregationPipeline)
+      .sort({ questionNumber: 1 })
+      .skip(skip)
       .limit(limit);
+
     const count = await this.questionModel.count({
       course,
       year,
@@ -286,40 +302,3 @@ export class QuestionService {
     return count;
   }
 }
-
-/*
- async createTestQuestion() {
-    for (let index = 0; index < 10; index++) {
-      let question = new QuestionEntity();
-      question.questionText =
-        'Q' + index + ' Social Math what is derivative of X+1';
-      question.option_a = '1';
-      question.option_b = 'x+2';
-      question.option_c = 't-9';
-      question.option_d = 't+9';
-      question.answer = 'option_a';
-      question.description = 'derivative of a x is 1 and constant is 0';
-      question.image = 'img/question/img-2.jpg';
-      question.course = 2;
-      question.subExamCategory = 2;
-      question.year = 2014;
-
-      await this.questionRepository.save(question);
-    }
-  }
-
-
-      return await this.questionRepository
-      .createQueryBuilder('q')
-      .select()
-      .where('q.course = :course', {
-        course: getQuestionDto.course,
-      })
-      .andWhere('q.year = :year', { year: getQuestionDto.year })
-      .andWhere('q.subExamCategory = :subExamCategory', {
-        subExamCategory: getQuestionDto.subCategory || '',
-      })
-      .take(5)
-
-      .getMany();
-*/

@@ -75,9 +75,11 @@ export class GroupedQuestionService {
   async getGroupedQuestionForAdmin(
     getGroupedQuestionDto: GetGroupedQuestionDto,
   ) {
-    return await this.groupedQuestionModel.find({
-      direction: getGroupedQuestionDto.directionId,
-    });
+    return await this.groupedQuestionModel
+      .find({
+        direction: getGroupedQuestionDto.directionId,
+      })
+      .sort({ questionNumber: 1 });
   }
 
   async getGroupedQuestionsV2(getGroupedQuestionDto: GetGroupedQuestionDto) {
