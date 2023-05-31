@@ -151,6 +151,12 @@ export class GroupedQuestionService {
     return await this.groupedQuestionModel.deleteOne({ _id: id });
   }
 
+  async deleteGroupedQuestionByDirectionId(
+    id: mongoose.Schema.Types.ObjectId,
+  ): Promise<any> {
+    return await this.groupedQuestionModel.deleteMany({ direction: id });
+  }
+
   async getGroupedQuestionsCount() {
     const count = await this.groupedQuestionModel.find().count();
     return count;
