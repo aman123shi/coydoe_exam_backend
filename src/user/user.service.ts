@@ -22,7 +22,8 @@ export class UserService {
   }
 
   async getAllOnlineUsers(userId: mongoose.Schema.Types.ObjectId) {
-    return await this.userModel.find({ _id: { $nin: [userId] } });
+    const users = await this.userModel.find({ _id: { $nin: [userId] } });
+    return { data: users, total: users.length };
   }
   async getUsersByRegion(countryId: string, regionId: string) {
     return await this.userModel
@@ -49,10 +50,10 @@ export class UserService {
       .select(['isOnline', 'socketId']);
   }
   async signUp(createUserDTo: CreateUserDto, imagePath: string | undefined) {
-    let newUser = new this.userModel();
+    const newUser = new this.userModel();
     Object.assign(newUser, createUserDTo);
     if (imagePath) newUser.image = imagePath;
-    let userExist = await this.userModel.findOne({ phone: newUser.phone });
+    const userExist = await this.userModel.findOne({ phone: newUser.phone });
     if (userExist) {
       throw new HttpException(
         'User already exist',
@@ -62,9 +63,9 @@ export class UserService {
     const salt = await bcrypt.genSalt(10);
     newUser.password = await bcrypt.hash(newUser.password, salt);
     await newUser.save();
-    let user = newUser.toObject({ getters: true });
+    const user = newUser.toObject({ getters: true });
     delete user.password;
-    let response = {
+    const response = {
       ...user,
       token: this.generateJWT({ id: newUser._id, phone: newUser.phone }),
     };
@@ -72,7 +73,7 @@ export class UserService {
   }
 
   async login(loginDto: UserLoginDto) {
-    let user = await this.userModel.findOne({ phone: loginDto.phone });
+    const user = await this.userModel.findOne({ phone: loginDto.phone });
     if (!user) {
       throw new HttpException(
         'Incorrect Phone or Password',
@@ -90,9 +91,9 @@ export class UserService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-    let loggedInUser = user.toObject({ getters: true });
+    const loggedInUser = user.toObject({ getters: true });
     delete loggedInUser.password;
-    let response = {
+    const response = {
       ...loggedInUser,
       token: this.generateJWT({ id: loggedInUser._id, phone: user.phone }),
     };
@@ -115,13 +116,13 @@ export class UserService {
     return await this.userModel.findOne({ linkedinId });
   }
   async getUserRewardPoint(id: mongoose.Schema.Types.ObjectId) {
-    let user = await this.userModel.findById(id).select('rewardPoint');
+    const user = await this.userModel.findById(id).select('rewardPoint');
     return { rewardPoint: user.rewardPoint };
   }
   async createUser(userDto: any) {
-    let newUser = new this.userModel();
+    const newUser = new this.userModel();
     Object.assign(newUser, userDto);
-    let user = await newUser.save();
+    const user = await newUser.save();
     return user.toObject({ getters: true });
   }
 }
