@@ -45,7 +45,7 @@ import { AdminModule } from '@app/admin/admin.module';
         },
         filename: (_req, file, callback) => {
           const ext = extname(file.originalname);
-          let fileName = `${file.originalname}-${Date.now()}-${ext}`;
+          const fileName = `${file.originalname}-${Date.now()}-${ext}`;
           callback(null, fileName);
         },
       }),

@@ -37,6 +37,7 @@ export class QuestionService {
     @Inject(forwardRef(() => DataClerkService))
     private readonly dataClerkService: DataClerkService,
     private readonly adminService: AdminService,
+    @Inject(forwardRef(() => DirectionService))
     private readonly directionService: DirectionService,
   ) {}
   async getQuestionById(id: mongoose.Schema.Types.ObjectId) {
