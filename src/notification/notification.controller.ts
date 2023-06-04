@@ -8,7 +8,6 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { request } from 'http';
 import mongoose from 'mongoose';
 import { NotificationService } from './notification.service';
 

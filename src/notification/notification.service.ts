@@ -17,15 +17,14 @@ export class NotificationService {
   ) {}
   //get notifications of a user by his id
   async getNotification(id: mongoose.Schema.Types.ObjectId | string) {
-    return await this.notificationModel
+    const data = await this.notificationModel
       .find({ userId: id })
-      //we are sorting by updatedAt property is because sometimes
-      //we update notifications instead of creating new notifications
       .sort({ updatedAt: -1 });
+    return { data, total: data.length };
   }
 
   async getNewNotificationsCount(id: mongoose.Schema.Types.ObjectId | string) {
-    let count = await this.notificationModel
+    const count = await this.notificationModel
       .find({ userId: id, isViewed: false })
       .count();
     return { count };
@@ -42,7 +41,7 @@ export class NotificationService {
   }
 
   async createNotification(createNotification: CreateNotificationDto) {
-    let newNotification = new this.notificationModel();
+    const newNotification = new this.notificationModel();
     Object.assign(newNotification, createNotification);
     return await newNotification.save();
   }
@@ -51,7 +50,7 @@ export class NotificationService {
     id: mongoose.Schema.Types.ObjectId,
     updateNotificationDto: UpdateNotificationDto,
   ) {
-    let notification = await this.notificationModel.findById(id);
+    const notification = await this.notificationModel.findById(id);
     if (!notification) {
       throw new UnprocessableEntityException(
         "can't find Notification with this Id",
