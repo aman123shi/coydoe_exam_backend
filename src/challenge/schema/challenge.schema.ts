@@ -1,4 +1,4 @@
-import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { QuestionInfo } from '../dto/createChallenge.dto';
 
@@ -10,10 +10,10 @@ export class Challenge {
   courseId: mongoose.Schema.Types.ObjectId;
   @Prop({ default: 'pending' })
   status: string;
-  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   createdBy: mongoose.Schema.Types.ObjectId;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   opponent: mongoose.Schema.Types.ObjectId;
 
   @Prop({ default: 0 })

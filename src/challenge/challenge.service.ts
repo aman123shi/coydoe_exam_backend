@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import { CourseService } from '@app/course/course.service';
 import { LeaderBoardService } from '@app/leaderboard/leaderBoard.service';
 import { NotificationGateway } from '@app/notification/notification.gateway';
@@ -7,7 +8,7 @@ import { UserService } from '@app/user/user.service';
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import { CreateChallengeDto, QuestionInfo } from './dto/createChallenge.dto';
+import { QuestionInfo } from './dto/createChallenge.dto';
 import { UpdateChallengeDto } from './dto/updateChallenge.dto';
 import { Challenge, ChallengeDocument } from './schema/challenge.schema';
 import { SubmitChallenge } from './types/submitChallenge.type';
@@ -30,11 +31,11 @@ export class ChallengeService {
     challengeId: mongoose.Schema.Types.ObjectId,
   ) {
     //delete rejector notification from client
-    let challenge = await this.challengeModel.findById(challengeId);
+    const challenge = await this.challengeModel.findById(challengeId);
     if (!challenge) {
       return 'challenge does not Exist';
     }
-    let rejectorUser = await this.userService.getUserById(userId);
+    const rejectorUser = await this.userService.getUserById(userId);
     //find challenger notification and delete it
     await this.notificationService.deleteNotification({
       referenceId: challenge._id,
@@ -60,14 +61,14 @@ export class ChallengeService {
     };
   }
   async getChallengeQuestions(challengeId: string) {
-    let challenge = await this.challengeModel.findById(challengeId);
-    let questions = [];
+    const challenge = await this.challengeModel.findById(challengeId);
+    const questions = [];
     if (!challenge) {
       throw new UnprocessableEntityException();
     }
 
     for (const questionInfo of challenge.questions) {
-      let question = await this.questionService.getQuestionById(
+      const question = await this.questionService.getQuestionById(
         questionInfo.id,
       );
       questions.push(question);
@@ -75,19 +76,41 @@ export class ChallengeService {
     return { status: 'waiting', questions };
   }
 
+  async getInvitationChallenge(userId: mongoose.Schema.Types.ObjectId) {
+    const challenges = await this.challengeModel
+      .find({
+        status: 'pending',
+        opponent: userId,
+        isAcceptedByOpponent: false,
+      })
+      .populate('createdBy');
+    return { data: challenges, total: challenges.length };
+  }
+
+  async getMyChallenges(userId: mongoose.Schema.Types.ObjectId) {
+    const challenges = await this.challengeModel
+      .find({
+        status: 'pending',
+        createdBy: userId,
+        isAcceptedByOpponent: false,
+      })
+      .populate('opponent');
+    return { data: challenges, total: challenges.length };
+  }
+
   async createChallenge({ courseId, userId, opponentId }) {
-    let challengerUser = await this.userService.getUserById(userId);
+    const challengerUser = await this.userService.getUserById(userId);
     //5 is a minimum point required to create a challenge
     if (challengerUser.rewardPoint < 5) {
       return new UnprocessableEntityException(
         "you don't have sufficient point to create a challenge",
       );
     }
-    let newChallenge = new this.challengeModel();
+    const newChallenge = new this.challengeModel();
     // Object.assign(newChallenge, createChallengeDto);
-    let questionsInfo: QuestionInfo[] = [];
+    const questionsInfo: QuestionInfo[] = [];
     const rewardPoint = 5;
-    let randomQuestions = await this.questionService.getRandomQuestion(
+    const randomQuestions = await this.questionService.getRandomQuestion(
       courseId,
     );
     for (const question of randomQuestions) {
@@ -102,11 +125,11 @@ export class ChallengeService {
     await newChallenge.save();
     //get both users
 
-    let opponentUser = await this.userService.getUserById(opponentId);
+    const opponentUser = await this.userService.getUserById(opponentId);
     console.log('========> userId ' + userId + ' opponentId ' + opponentId);
 
     //notification for challenger  user
-    let challengerNotification =
+    const challengerNotification =
       await this.notificationService.createNotification({
         userId,
         message: `waiting for ${opponentUser?.fullName} to complete the challenge`,
@@ -115,7 +138,7 @@ export class ChallengeService {
         isViewed: false,
       });
     //notification for opponent user
-    let opponentNotification =
+    const opponentNotification =
       await this.notificationService.createNotification({
         userId: opponentId,
         message: `${challengerUser?.fullName} is challenging you to solve biology`,
@@ -146,7 +169,7 @@ export class ChallengeService {
     id: mongoose.Schema.Types.ObjectId,
     updateChallengeDto: UpdateChallengeDto,
   ) {
-    let updatedChallenge = await this.challengeModel.findOneAndUpdate(
+    const updatedChallenge = await this.challengeModel.findOneAndUpdate(
       { _id: id },
       updateChallengeDto,
     );
@@ -166,8 +189,9 @@ export class ChallengeService {
     //if submitted identify the winner and award the point to the winner
     //then create notification for both side and push
     //*else* if not submitted by other side calculate answered question and update user score,submittedByChallenger or Challenger
-    let challenge = await this.challengeModel.findById(challengeId);
-    let context = this; //capturing the class context to access it inside internal functions
+    const challenge = await this.challengeModel.findById(challengeId);
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const context = this; //capturing the class context to access it inside internal functions
 
     let isChallenger = false,
       submitterScore = 0,
@@ -186,7 +210,7 @@ export class ChallengeService {
     }
     //calculate answered questions
     for (let i = 0; i < questionsInfo.length; i++) {
-      let question = challenge.questions.find(
+      const question = challenge.questions.find(
         (q) => q.id == questionsInfo[i].id,
       );
       if (question && question.answer == questionsInfo[i].answer)
@@ -257,10 +281,10 @@ export class ChallengeService {
 
       if (challenge.challengerScore > challenge.opponentScore) {
         challenge.status = 'completed';
-        let challengerUser = await context.userService.getUserById(
+        const challengerUser = await context.userService.getUserById(
           challengerId,
         );
-        let opponentUser = await context.userService.getUserById(opponentId);
+        const opponentUser = await context.userService.getUserById(opponentId);
         challengerUser.rewardPoint += challengerReward;
         opponentUser.rewardPoint -= challenge.assignedPoint;
         //inserting to leaderBoard
@@ -304,15 +328,15 @@ export class ChallengeService {
         }
         //if their result is Equal
       } else if (challenge.challengerScore == challenge.opponentScore) {
-        let opponentUser = await context.userService.getUserById(opponentId);
-        let challengerUser = await context.userService.getUserById(
+        const opponentUser = await context.userService.getUserById(opponentId);
+        const challengerUser = await context.userService.getUserById(
           challengerId,
         );
-        let randomQuestions = await context.questionService.getRandomQuestion(
+        const randomQuestions = await context.questionService.getRandomQuestion(
           challenge.courseId,
           1,
         );
-        let challengerNotification =
+        const challengerNotification =
           context.notificationService.createNotification({
             notificationType: 'next-challenge',
             isLink: true,
@@ -320,7 +344,7 @@ export class ChallengeService {
             userId: challenge.createdBy,
             referenceId: challenge._id,
           });
-        let opponentNotification =
+        const opponentNotification =
           context.notificationService.createNotification({
             notificationType: 'next-challenge',
             isLink: true,
@@ -352,8 +376,8 @@ export class ChallengeService {
       } else {
         challenge.status = 'completed';
         opponentReward = challenge.assignedPoint;
-        let opponentUser = await context.userService.getUserById(opponentId);
-        let challengerUser = await context.userService.getUserById(
+        const opponentUser = await context.userService.getUserById(opponentId);
+        const challengerUser = await context.userService.getUserById(
           challengerId,
         );
         opponentUser.rewardPoint += opponentReward;
@@ -401,13 +425,13 @@ export class ChallengeService {
   }
 
   async getAdditionalQuestions(challengeId: string) {
-    let challenge = await this.challengeModel.findById(challengeId);
+    const challenge = await this.challengeModel.findById(challengeId);
     if (!challenge) {
       throw new UnprocessableEntityException("can't find the challenge");
     }
-    let questions = [];
+    const questions = [];
     for (const q of challenge.additionalQuestions) {
-      let question = await this.questionService.getQuestionById(q.id);
+      const question = await this.questionService.getQuestionById(q.id);
       questions.push(question);
     }
     return { status: 'waiting', questions };
@@ -418,12 +442,12 @@ export class ChallengeService {
     userId: mongoose.Schema.Types.ObjectId,
     questionsInfo: QuestionInfo[],
   ) {
-    let challenge = await this.challengeModel.findById(challengeId);
-    let challengerUser = await this.userService.getUserById(userId);
-    let opponentId =
+    const challenge = await this.challengeModel.findById(challengeId);
+    const challengerUser = await this.userService.getUserById(userId);
+    const opponentId =
       challenge.createdBy == userId ? challenge.opponent : challenge.createdBy;
-    let opponentUser = await this.userService.getUserById(opponentId);
-    let course = await this.courseService.getCourseById(challenge.courseId);
+    const opponentUser = await this.userService.getUserById(opponentId);
+    const course = await this.courseService.getCourseById(challenge.courseId);
     let answeredCorrectly = false;
     if (!challenge) {
       throw new UnprocessableEntityException("can't find the challenge");
@@ -431,7 +455,7 @@ export class ChallengeService {
 
     //calculate answered questions
     for (let i = 0; i < challenge.additionalQuestions.length; i++) {
-      let question = challenge.additionalQuestions.find(
+      const question = challenge.additionalQuestions.find(
         (q) => q.id == questionsInfo[i].id,
       );
       //this logic should be changed if submitted questions are more than one
@@ -514,12 +538,12 @@ export class ChallengeService {
       } else {
         //  generate additional questions if this submitter also lose
 
-        let randomQuestions = await this.questionService.getRandomQuestion(
+        const randomQuestions = await this.questionService.getRandomQuestion(
           challenge.courseId,
           1,
         );
 
-        let challengerNotification =
+        const challengerNotification =
           await this.notificationService.createNotification({
             notificationType: 'next-challenge',
             isLink: true,
@@ -528,7 +552,7 @@ export class ChallengeService {
             referenceId: challenge._id,
           });
 
-        let opponentNotification =
+        const opponentNotification =
           await this.notificationService.createNotification({
             notificationType: 'next-challenge',
             isLink: true,
@@ -624,7 +648,7 @@ export class ChallengeService {
   }
 
   async getChallengeReview(userId: mongoose.Schema.Types.ObjectId) {
-    let challenges = await this.challengeModel.find({
+    const challenges = await this.challengeModel.find({
       status: 'completed',
       $or: [{ createdBy: userId }, { opponent: userId }],
     });
@@ -633,7 +657,9 @@ export class ChallengeService {
       status: any = {};
     for (const challenge of challenges) {
       if (challenge.createdBy == userId) isChallenger = true;
-      let opponentId = isChallenger ? challenge.opponent : challenge.createdBy;
+      const opponentId = isChallenger
+        ? challenge.opponent
+        : challenge.createdBy;
       if (isChallenger && challenge.challengerScore > challenge.opponentScore) {
         status.pointDeducted = 0;
         status.pointAwarded = challenge.assignedPoint;
@@ -656,12 +682,12 @@ export class ChallengeService {
         status.pointDeducted = -challenge.assignedPoint;
         status.pointAwarded = 0;
       }
-      let challengeTime = isChallenger
+      const challengeTime = isChallenger
         ? challenge.challengerTime
         : challenge.opponentTime;
-      let course = await this.courseService.getCourseById(challenge.courseId);
-      let opponentUser = await this.userService.getUserById(opponentId);
-      let challengeReport = {
+      const course = await this.courseService.getCourseById(challenge.courseId);
+      const opponentUser = await this.userService.getUserById(opponentId);
+      const challengeReport = {
         ...status,
         totalTime: challengeTime,
         totalQuestions: 5,

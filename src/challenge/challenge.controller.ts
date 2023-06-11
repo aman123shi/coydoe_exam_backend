@@ -1,5 +1,5 @@
 import { ExpressRequest } from '@app/user/types/expressRequest.interface';
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { ChallengeService } from './challenge.service';
 import { createChallengeParamsDto } from './dto/createChallengeParams.dto';
 import { GetAdditionalQuestionDto } from './dto/getAdditionalQuestion.dto';
@@ -22,6 +22,16 @@ export class ChallengeController {
       opponentId: createChallengeDto.opponentId,
       userId: req.userId,
     });
+  }
+
+  @Get('get-challenge-invitation')
+  async getInvitationChallenge(@Req() req: ExpressRequest) {
+    return await this.challengeService.getInvitationChallenge(req.userId);
+  }
+
+  @Get('get-my-challenge')
+  async getMyChallenge(@Req() req: ExpressRequest) {
+    return await this.challengeService.getMyChallenges(req.userId);
   }
 
   @Post('reject-challenge')

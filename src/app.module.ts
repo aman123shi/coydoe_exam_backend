@@ -79,6 +79,8 @@ export class AppModule implements NestModule, OnModuleInit {
         { path: 'notifications/get-new-count', method: RequestMethod.GET },
         { path: 'users/all', method: RequestMethod.GET },
         { path: 'users/get-reward-point', method: RequestMethod.GET },
+        { path: 'get-challenge-invitation', method: RequestMethod.GET },
+        { path: 'get-my-challenge', method: RequestMethod.GET },
       );
   }
   constructor(private usersPointCleanUp: UserPointsCleanupService) {}
