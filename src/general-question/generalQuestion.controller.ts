@@ -7,12 +7,14 @@ import {
   Post,
   Put,
   Query,
+  Req,
 } from '@nestjs/common';
 import { GeneralQuestionService } from './generalQuestion.service';
 import { GetGeneralQuestionDto } from './dto/getGeneralQuestion.dto';
 import { CreateGeneralQuestionDto } from './dto/createGeneralQuestion.dto';
 import mongoose from 'mongoose';
 import { UpdateGeneralQuestionDto } from './dto/updateGeneralQuestion.dto';
+import { ExpressRequest } from '@app/user/types/expressRequest.interface';
 
 @Controller('general-questions')
 export class GeneralQuestionController {
@@ -30,9 +32,11 @@ export class GeneralQuestionController {
   @Post()
   async createGeneralQuestion(
     @Body() createGeneralQuestionDto: CreateGeneralQuestionDto,
+    @Req() req: ExpressRequest,
   ) {
     return await this.generalQuestionService.createGeneralQuestions(
       createGeneralQuestionDto,
+      req.userId,
     );
   }
 

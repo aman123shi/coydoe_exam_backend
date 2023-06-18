@@ -7,17 +7,21 @@ import {
 import mongoose, { Model } from 'mongoose';
 import { CreateGeneralQuestionDto } from './dto/createGeneralQuestion.dto';
 import { UpdateGeneralQuestionDto } from './dto/updateGeneralQuestion.dto';
+import { DataClerkService } from '@app/dataClerk/dataClerk.service';
+import { AdminService } from '@app/admin/admin.service';
 
 @Injectable()
 export class GeneralQuestionService {
   constructor(
     @InjectModel(GeneralQuestion.name)
     private generalQuestionModel: Model<GeneralQuestionDocument>,
+    private readonly dataClerkService: DataClerkService,
+    private readonly adminService: AdminService,
   ) {}
 
   async getGeneralQuestions(page: number, limit: number) {
-    let count = await this.generalQuestionModel.find().count();
-    let questions = await this.generalQuestionModel
+    const count = await this.generalQuestionModel.find().count();
+    const questions = await this.generalQuestionModel
       .find()
       .skip((page - 1) * limit)
       .limit(limit);
@@ -27,9 +31,19 @@ export class GeneralQuestionService {
 
   async createGeneralQuestions(
     createGeneralQuestionsDto: CreateGeneralQuestionDto,
+    userId: mongoose.Schema.Types.ObjectId,
   ) {
-    let newQuestion = new this.generalQuestionModel();
+    const newQuestion = new this.generalQuestionModel();
     Object.assign(newQuestion, createGeneralQuestionsDto);
+    await this.dataClerkService.incrementQuestionEntered(userId);
+    //insert data entry report for that day from dataClerkService(insert report)
+    await this.dataClerkService.insertReport({
+      clerkId: userId,
+      courseId: '648f652433537c7cf862c72e',
+    });
+    //increment admin notification for that user AdminService
+    await this.adminService.incrementDataInsertionNotification(userId);
+
     return await newQuestion.save();
   }
 
