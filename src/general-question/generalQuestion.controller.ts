@@ -29,6 +29,11 @@ export class GeneralQuestionController {
     return await this.generalQuestionService.getGeneralQuestions(page, limit);
   }
 
+  @Get('random')
+  async getRandomGeneralQuestions() {
+    return await this.generalQuestionService.getRandomGeneralQuestions();
+  }
+
   @Post()
   async createGeneralQuestion(
     @Body() createGeneralQuestionDto: CreateGeneralQuestionDto,

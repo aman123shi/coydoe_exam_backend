@@ -29,6 +29,15 @@ export class GeneralQuestionService {
     return { count, questions };
   }
 
+  async getRandomGeneralQuestions() {
+    const count = await this.generalQuestionModel.find().count();
+    const questions = await this.generalQuestionModel
+      .aggregate([{ $sample: { size: 10 } }])
+      .exec();
+
+    return { count, questions };
+  }
+
   async createGeneralQuestions(
     createGeneralQuestionsDto: CreateGeneralQuestionDto,
     userId: mongoose.Schema.Types.ObjectId,
