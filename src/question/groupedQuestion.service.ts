@@ -115,6 +115,7 @@ export class GroupedQuestionService {
       courseId: createGroupedQuestionDto.courseId,
       year: createGroupedQuestionDto.year,
       questionNumber: createGroupedQuestionDto.questionNumber,
+      direction: createGroupedQuestionDto.direction, //
     });
     if (questionExisted) {
       throw new UnprocessableEntityException('Question already Existed');

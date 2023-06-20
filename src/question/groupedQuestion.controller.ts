@@ -3,7 +3,6 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   Param,
   ParseFilePipe,
   Post,
@@ -38,7 +37,6 @@ export class GroupedQuestionController {
   @Post('grouped-questions/for-admin')
   async getGroupedQuestionsForAdmin(
     @Body() getGroupedQuestionDto: GetGroupedQuestionDto,
-    @Req() req: ExpressRequest,
   ) {
     return await this.groupedQuestionService.getGroupedQuestionForAdmin(
       getGroupedQuestionDto,
