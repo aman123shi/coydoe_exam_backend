@@ -10,7 +10,6 @@ import {
 import { DirectionService } from '@app/question/direction.service';
 import { CreateDirectionDto } from '@app/question/dto/createDirection.dto';
 import { GetDirectionDto } from '@app/question/dto/getDirection.dto';
-import { UpdateQuestionDto } from '@app/question/dto/updateQuestion.dto';
 import mongoose from 'mongoose';
 import { UpdateDirectionDto } from './dto/updateDirection.dto';
 

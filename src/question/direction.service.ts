@@ -57,6 +57,6 @@ export class DirectionService {
   }
   async deleteDirection(id: mongoose.Schema.Types.ObjectId): Promise<any> {
     await this.groupedQuestionService.deleteGroupedQuestionByDirectionId(id);
-    return await this.directionsModel.deleteOne({ id: id });
+    return await this.directionsModel.deleteOne({ _id: id });
   }
 }
