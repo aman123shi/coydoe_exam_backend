@@ -37,4 +37,13 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   password: string;
+
+  @IsOptional()
+  transactionNo: string;
+
+  @IsOptional()
+  generatedCode: string;
+
+  @IsOptional()
+  paymentStatus: string;
 }

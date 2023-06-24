@@ -40,6 +40,15 @@ export class User {
   @Prop()
   password: string;
 
+  @Prop()
+  transactionNo: string;
+
+  @Prop()
+  generatedCode: string;
+
+  @Prop()
+  paymentStatus: string;
+
   @Prop({ default: 15 })
   rewardPoint: number;
 

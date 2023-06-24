@@ -9,6 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { UpdateUserStatus } from './types/updateUserstatus.types';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class UserService {
@@ -80,6 +81,7 @@ export class UserService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
+
     const isPasswordCorrect = await bcrypt.compare(
       loginDto.password,
       user.password,
@@ -91,6 +93,7 @@ export class UserService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
+
     const loggedInUser = user.toObject({ getters: true });
     delete loggedInUser.password;
     const response = {
@@ -107,22 +110,38 @@ export class UserService {
   async getUserByEmail(email: string) {
     return await this.userModel.findOne({ email }).select('-password');
   }
+
   async getUserByFacebookId(fbId: string) {
     return await this.userModel
       .findOne({ facebookId: fbId })
       .select('-password');
   }
+
   async getUserByLinkedinId(linkedinId: string) {
     return await this.userModel.findOne({ linkedinId });
   }
+
   async getUserRewardPoint(id: mongoose.Schema.Types.ObjectId) {
     const user = await this.userModel.findById(id).select('rewardPoint');
     return { rewardPoint: user.rewardPoint };
   }
+
   async createUser(userDto: any) {
     const newUser = new this.userModel();
     Object.assign(newUser, userDto);
     const user = await newUser.save();
     return user.toObject({ getters: true });
+  }
+
+  async updateUser(
+    id: mongoose.Schema.Types.ObjectId,
+    updateUserDto: UpdateUserDto,
+  ) {
+    delete updateUserDto.password;
+    return await this.userModel.updateOne({ _id: id }, updateUserDto);
+  }
+
+  async notifyUser(id: mongoose.Schema.Types.ObjectId) {
+    return 'hello' + id;
   }
 }

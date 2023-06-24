@@ -7,6 +7,7 @@ import {
   Param,
   ParseFilePipe,
   Post,
+  Put,
   Req,
   UploadedFile,
   UseInterceptors,
@@ -16,6 +17,8 @@ import { CreateUserDto } from './dto/createUser.dto';
 import { UserLoginDto } from './dto/loginUser.dto';
 import { ExpressRequest } from './types/expressRequest.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateUserDto } from './dto/updateUser.dto';
+import mongoose from 'mongoose';
 
 @Controller('users')
 export class UserController {
@@ -72,4 +75,16 @@ export class UserController {
   async login(@Body() userLoginDto: UserLoginDto) {
     return await this.userService.login(userLoginDto);
   }
+
+  @Put('update/:id')
+  async updateUser(
+    @Param('id') id: mongoose.Schema.Types.ObjectId,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.userService.updateUser(id, updateUserDto);
+  }
+  //  @Post('notify')
+  // async notifyUsers(@Body('userId') userId: UserLoginDto) {
+  //   return await this.userService.login(userLoginDto);
+  // }
 }
