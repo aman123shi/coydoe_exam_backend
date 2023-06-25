@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsInt, IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
 import mongoose from 'mongoose';
 
 export class CreateExerciseQuestionDto {
@@ -26,18 +26,23 @@ export class CreateExerciseQuestionDto {
   @IsOptional()
   descriptionImage?: string;
 
-
   @IsNotEmpty()
   @IsOptional()
   readonly description?: string;
-
 
   @IsNotEmpty()
   @IsOptional()
   readonly questionNumber: string;
 
+  @IsNotEmpty()
+  @IsInt()
+  grade: number; //grade 9
+
+  @IsNotEmpty()
+  @IsInt()
+  chapter: number; //chapter 2
 
   @IsNotEmpty()
   @IsMongoId()
-  readonly exerciseId: mongoose.Schema.Types.ObjectId; //Entrance COC
+  courseId: mongoose.Schema.Types.ObjectId;
 }

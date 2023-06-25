@@ -35,9 +35,14 @@ export class ExerciseQuestion {
   @Prop()
   questionNumber: number;
 
+  @Prop()
+  grade: number; //grade 9
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId })
-  exerciseId: mongoose.Schema.Types.ObjectId;
+  @Prop()
+  chapter: number; //chapter 2
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Course' })
+  courseId: mongoose.Schema.Types.ObjectId;
 }
 
 export const ExerciseQuestionSchema =

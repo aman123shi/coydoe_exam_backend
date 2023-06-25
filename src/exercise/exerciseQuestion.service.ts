@@ -8,6 +8,7 @@ import {
 } from './schemas/exerciseQuestion.schema';
 import { CreateExerciseQuestionDto } from './dto/createExerciseQuestion.dto';
 import { UpdateExerciseQuestionDto } from './dto/updateExerciseQuestion.dto';
+import { GetExerciseQuestionDto } from './dto/getExerciseQuestion';
 
 @Injectable()
 export class ExerciseQuestionService {
@@ -16,14 +17,23 @@ export class ExerciseQuestionService {
     private exerciseQuestionModel: Model<ExerciseQuestionDocument>,
   ) {}
 
-  async getExerciseQuestions(exerciseId: mongoose.Schema.Types.ObjectId) {
-    return await this.exerciseQuestionModel.find({ exerciseId });
+  async getExerciseQuestions(getExerciseQuestionDto: GetExerciseQuestionDto) {
+    const skip =
+      getExerciseQuestionDto.size * (getExerciseQuestionDto.page - 1);
+    return await this.exerciseQuestionModel
+      .find({
+        grade: getExerciseQuestionDto.grade,
+        courseId: getExerciseQuestionDto.courseId,
+      })
+      .sort({ chapter: 1 })
+      .skip(skip)
+      .size(getExerciseQuestionDto.size);
   }
 
   async createExerciseQuestion(
     createExerciseQuestionDto: CreateExerciseQuestionDto,
   ) {
-    let newExerciseQuestion = new this.exerciseQuestionModel();
+    const newExerciseQuestion = new this.exerciseQuestionModel();
     Object.assign(newExerciseQuestion, createExerciseQuestionDto);
     return await newExerciseQuestion.save();
   }

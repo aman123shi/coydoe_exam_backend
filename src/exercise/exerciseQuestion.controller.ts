@@ -1,16 +1,9 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import { ExerciseQuestionService } from './exerciseQuestion.service';
 import mongoose from 'mongoose';
 import { CreateExerciseQuestionDto } from './dto/createExerciseQuestion.dto';
 import { UpdateExerciseQuestionDto } from './dto/updateExerciseQuestion.dto';
+import { GetExerciseQuestionDto } from './dto/getExerciseQuestion';
 
 @Controller('exercise-questions')
 export class ExerciseQuestionController {
@@ -18,14 +11,16 @@ export class ExerciseQuestionController {
     private readonly exerciseQuestionService: ExerciseQuestionService,
   ) {}
 
-  @Get('/:exerciseId')
+  @Post('get')
   async getExerciseQuestions(
-    @Param('exerciseId') exerciseId: mongoose.Schema.Types.ObjectId,
+    @Body() getExerciseQuestionDto: GetExerciseQuestionDto,
   ) {
-    return await this.exerciseQuestionService.getExerciseQuestions(exerciseId);
+    return await this.exerciseQuestionService.getExerciseQuestions(
+      getExerciseQuestionDto,
+    );
   }
 
-  @Post()
+  @Post('create')
   async createExerciseQuestion(
     @Body() createExerciseQuestionDto: CreateExerciseQuestionDto,
   ) {

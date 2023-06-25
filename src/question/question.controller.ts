@@ -1,19 +1,14 @@
 import { Public } from '@app/admin/decorators/publicRoute.decorators';
-import { AdminGuard } from '@app/admin/guards/admin.guard';
 import { ExpressRequest } from '@app/user/types/expressRequest.interface';
 import {
   Body,
   Controller,
   Delete,
-  FileTypeValidator,
   Get,
-  MaxFileSizeValidator,
   Param,
   ParseFilePipe,
   Post,
-  Put,
   Req,
-  UploadedFile,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
