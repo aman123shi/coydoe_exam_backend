@@ -2,7 +2,7 @@ import { GroupedQuestionService } from '@app/question/groupedQuestion.service';
 import { QuestionService } from '@app/question/question.service';
 import { GroupedQuestion } from '@app/question/schemas/groupedQuestion.schema';
 import { Question } from '@app/question/schemas/question.schema';
-import { responseBuilder } from '@app/utils/http-response-builder';
+import { responseBuilder } from '@app/question/utils/http-response-builder';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';

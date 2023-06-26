@@ -3,7 +3,7 @@ import { sign } from 'jsonwebtoken';
 import { CreateUserDto } from './dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
 import { UserLoginDto } from './dto/loginUser.dto';
-import { responseBuilder } from '@app/utils/http-response-builder';
+import { responseBuilder } from '@app/question/utils/http-response-builder';
 
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';

@@ -27,7 +27,7 @@ export class ExerciseQuestionService {
       })
       .sort({ chapter: 1 })
       .skip(skip)
-      .size(getExerciseQuestionDto.size);
+      .limit(getExerciseQuestionDto.size);
   }
 
   async createExerciseQuestion(

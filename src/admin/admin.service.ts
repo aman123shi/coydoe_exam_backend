@@ -3,7 +3,7 @@ import { sign } from 'jsonwebtoken';
 import { CreateAdminDTo } from './dto/createAdmin.dto';
 import * as bcrypt from 'bcrypt';
 import { AdminLoginDto } from './dto/adminLogin.dto';
-import { responseBuilder } from '@app/utils/http-response-builder';
+import { responseBuilder } from '@app/question/utils/http-response-builder';
 import { Admin, AdminDocument } from './schemas/admin.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';

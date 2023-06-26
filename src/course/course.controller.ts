@@ -12,7 +12,7 @@ import {
 import { CourseService } from '@app/course/course.service';
 import { CreateCourseDto } from '@app/course/dtos/createCourse.dto';
 import { UpdateCourseDto } from '@app/course/dtos/updateCourse.dto';
-import { responseBuilder } from '@app/utils/http-response-builder';
+import { responseBuilder } from '@app/question/utils/http-response-builder';
 import { Public } from '@app/admin/decorators/publicRoute.decorators';
 import { Course } from './schemas/course.schema';
 import mongoose from 'mongoose';

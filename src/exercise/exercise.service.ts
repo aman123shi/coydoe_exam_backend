@@ -17,7 +17,7 @@ export class ExerciseService {
   }
 
   async createExercise(createExerciseDto: CreateExerciseDto) {
-    let newExercise = new this.exerciseModel();
+    const newExercise = new this.exerciseModel();
     Object.assign(newExercise, createExerciseDto);
     return await newExercise.save();
   }
