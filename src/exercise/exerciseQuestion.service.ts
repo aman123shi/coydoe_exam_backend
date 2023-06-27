@@ -20,7 +20,8 @@ export class ExerciseQuestionService {
   async getExerciseQuestions(getExerciseQuestionDto: GetExerciseQuestionDto) {
     const skip =
       getExerciseQuestionDto.size * (getExerciseQuestionDto.page - 1);
-    return await this.exerciseQuestionModel
+
+    const questions = await this.exerciseQuestionModel
       .find({
         grade: getExerciseQuestionDto.grade,
         courseId: getExerciseQuestionDto.courseId,
@@ -28,6 +29,12 @@ export class ExerciseQuestionService {
       .sort({ chapter: 1 })
       .skip(skip)
       .limit(getExerciseQuestionDto.size);
+
+    const total = await this.exerciseQuestionModel.count({
+      grade: getExerciseQuestionDto.grade,
+      courseId: getExerciseQuestionDto.courseId,
+    });
+    return { questions, total };
   }
 
   async createExerciseQuestion(
