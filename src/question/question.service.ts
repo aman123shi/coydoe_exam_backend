@@ -272,7 +272,7 @@ export class QuestionService {
       questions.push(question);
     }
 
-    return { questions, total: 5 };
+    return questions;
   }
 
   async getPlainQuestionsForAdmin(getQuestionDto: GetQuestionDto) {
@@ -301,14 +301,14 @@ export class QuestionService {
   }
 
   async getRandomPlainQuestions(courseId: mongoose.Schema.Types.ObjectId) {
-    const questions = await this.questionModel
-      .aggregate([{ $match: { course: courseId } }, { $sample: { size: 10 } }])
-      .exec();
-
+    // const questions = await this.questionModel
+    //   .aggregate([{ $match: { course: courseId } }, { $sample: { size: 10 } }])
+    //   .exec();
+    const questions = await this.getRandomQuestion(courseId);
     const count = await this.questionModel.count({
       course: courseId,
     });
 
-    return { questions, count };
+    return { questions, total: count };
   }
 }

@@ -46,7 +46,7 @@ export class QuestionController {
   async getFreeQuestion(
     @Param('courseId') courseId: mongoose.Schema.Types.ObjectId,
   ) {
-    return await this.questionService.getRandomQuestion(courseId);
+    return await this.questionService.getRandomPlainQuestions(courseId);
   }
 
   @Get('questions/sample')
