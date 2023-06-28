@@ -271,7 +271,8 @@ export class QuestionService {
         .skip(randomSkip);
       questions.push(question);
     }
-    return { questions, total: count };
+
+    return { questions, total: 5 };
   }
 
   async getPlainQuestionsForAdmin(getQuestionDto: GetQuestionDto) {
