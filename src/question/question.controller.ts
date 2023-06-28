@@ -34,11 +34,13 @@ export class QuestionController {
       request.userId,
     );
   }
+
   @Post('questions/for-admin')
   @Public()
   async getQuestionsForAdmin(@Body() getQuestionDto: GetQuestionDto) {
     return await this.questionService.getPlainQuestionsForAdmin(getQuestionDto);
   }
+
   @Get('questions/free/:courseId')
   @Public()
   async getFreeQuestion(
@@ -58,6 +60,14 @@ export class QuestionController {
     @Param('id') courseId: mongoose.Schema.Types.ObjectId,
   ) {
     return await this.questionService.getAvailableYears(courseId);
+  }
+
+  // random plain question generator
+  @Get('questions/random/:courseId')
+  async getRandomPlainQuestions(
+    @Param('courseId') courseId: mongoose.Schema.Types.ObjectId,
+  ) {
+    return await this.questionService.getRandomPlainQuestions(courseId);
   }
 
   @Get('questions/courses/get-years/v2/:id')

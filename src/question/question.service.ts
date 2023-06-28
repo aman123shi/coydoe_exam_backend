@@ -295,4 +295,16 @@ export class QuestionService {
     const count = await this.questionModel.find().count();
     return count;
   }
+
+  async getRandomPlainQuestions(courseId: mongoose.Schema.Types.ObjectId) {
+    const questions = await this.questionModel
+      .aggregate([{ $match: { course: courseId } }, { $sample: { size: 10 } }])
+      .exec();
+
+    const count = await this.questionModel.count({
+      course: courseId,
+    });
+
+    return { questions, count };
+  }
 }
