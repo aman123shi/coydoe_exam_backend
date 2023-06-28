@@ -143,6 +143,7 @@ export class QuestionService {
     }
     return 'boom';
   }
+
   async getCourseQuestionCount({
     courseId,
     year,
@@ -187,6 +188,7 @@ export class QuestionService {
       throw new HttpException(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }
+
   async getExamData(courseId: mongoose.Schema.Types.ObjectId) {
     const examData = [];
     const years = (await this.getAvailableYearsV2(courseId)).years;
@@ -251,6 +253,7 @@ export class QuestionService {
     if (descriptionImage) updateQuestionDto.descriptionImage = descriptionImage;
     return await this.questionModel.updateOne({ _id: id }, updateQuestionDto);
   }
+
   async deleteQuestion(id: mongoose.Schema.Types.ObjectId): Promise<any> {
     return await this.questionModel.deleteOne({ _id: id });
   }
@@ -268,7 +271,7 @@ export class QuestionService {
         .skip(randomSkip);
       questions.push(question);
     }
-    return questions as (Question & { _id: mongoose.Schema.Types.ObjectId })[];
+    return { questions, total: count };
   }
 
   async getPlainQuestionsForAdmin(getQuestionDto: GetQuestionDto) {
