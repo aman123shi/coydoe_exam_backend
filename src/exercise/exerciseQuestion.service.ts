@@ -37,6 +37,29 @@ export class ExerciseQuestionService {
     return { questions, total };
   }
 
+  async getExerciseQuestionsForMobile(
+    getExerciseQuestionDto: GetExerciseQuestionDto,
+  ) {
+    const skip =
+      getExerciseQuestionDto.size * (getExerciseQuestionDto.page - 1);
+    const questions = await this.exerciseQuestionModel
+      .find({
+        grade: getExerciseQuestionDto.grade,
+        courseId: getExerciseQuestionDto.courseId,
+        chapter: getExerciseQuestionDto.chapter,
+      })
+      .sort({ questionNumber: 1 })
+      .skip(skip)
+      .limit(getExerciseQuestionDto.size);
+
+    const total = await this.exerciseQuestionModel.count({
+      grade: getExerciseQuestionDto.grade,
+      courseId: getExerciseQuestionDto.courseId,
+      chapter: getExerciseQuestionDto.chapter,
+    });
+    return { questions, total };
+  }
+
   async createExerciseQuestion(
     createExerciseQuestionDto: CreateExerciseQuestionDto,
   ) {

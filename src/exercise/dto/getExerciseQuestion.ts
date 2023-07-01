@@ -12,6 +12,10 @@ export class GetExerciseQuestionDto {
 
   @IsOptional()
   @IsInt()
+  readonly chapter: number = 1;
+
+  @IsOptional()
+  @IsInt()
   readonly page: number = 1;
 
   @IsOptional()

@@ -20,6 +20,15 @@ export class ExerciseQuestionController {
     );
   }
 
+  @Post('get/mobile')
+  async getExerciseQuestionsMobile(
+    @Body() getExerciseQuestionDto: GetExerciseQuestionDto,
+  ) {
+    return await this.exerciseQuestionService.getExerciseQuestionsForMobile(
+      getExerciseQuestionDto,
+    );
+  }
+
   @Post('create')
   async createExerciseQuestion(
     @Body() createExerciseQuestionDto: CreateExerciseQuestionDto,
