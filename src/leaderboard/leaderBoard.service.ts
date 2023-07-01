@@ -59,13 +59,12 @@ export class LeaderBoardService {
 
     //then get user daily,weekly and monthly score from userPoints collection
 
-    let userDailyScore: UserTotalPoint[] = await this.generateDailyLeaderBoard(
-      userId,
-    );
+    const userDailyScore: UserTotalPoint[] =
+      await this.generateDailyLeaderBoard(userId);
 
-    let userWeeklyScore: UserTotalPoint[] =
+    const userWeeklyScore: UserTotalPoint[] =
       await this.generateWeeklyLeaderBoard(userId);
-    let userMonthlyScore: UserTotalPoint[] =
+    const userMonthlyScore: UserTotalPoint[] =
       await this.generateMonthlyLeaderBoard(userId);
     //this is for real time update when single user data is changed
     await this.dailyLeaderBoardModel.findOneAndUpdate(
@@ -90,7 +89,7 @@ export class LeaderBoardService {
   async generateDailyLeaderBoard(
     userId: any = null,
   ): Promise<UserTotalPoint[]> {
-    let matchCriteria: any = {
+    const matchCriteria: any = {
       createdAt: {
         $gte: startOfDay(new Date()),
       },
@@ -112,7 +111,7 @@ export class LeaderBoardService {
   async generateWeeklyLeaderBoard(
     userId: any = null,
   ): Promise<UserTotalPoint[]> {
-    let matchCriteria: any = {
+    const matchCriteria: any = {
       createdAt: {
         $gte: startOfDay(subDays(new Date(), 7)),
       },
@@ -132,7 +131,7 @@ export class LeaderBoardService {
   async generateMonthlyLeaderBoard(
     userId: any = null,
   ): Promise<UserTotalPoint[]> {
-    let matchCriteria: any = {
+    const matchCriteria: any = {
       createdAt: {
         $gte: startOfDay(subDays(new Date(), 30)),
       },

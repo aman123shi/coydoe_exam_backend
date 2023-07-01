@@ -34,7 +34,7 @@ export class CourseService {
     examCategoryId: mongoose.Schema.Types.ObjectId,
     query: string | any,
   ): Promise<Course[]> {
-    let matchCriteria: any = { examCategory: examCategoryId };
+    const matchCriteria: any = { examCategory: examCategoryId };
     //if query parameter is provided filter courses by if they have grouped or ungrouped question
     if (query) {
       if (query == 'grouped') matchCriteria.hasDirections = true;
@@ -44,7 +44,7 @@ export class CourseService {
   }
 
   async getAllCourses(query: string | any): Promise<Course[]> {
-    let matchCriteria: any = {};
+    const matchCriteria: any = {};
     if (query) {
       if (query == 'grouped') matchCriteria.hasDirections = true;
       else matchCriteria.hasDirections = false;
@@ -59,9 +59,9 @@ export class CourseService {
   }
 
   async createCourse(createCourseDto: CreateCourseDto) {
-    let newCourse = new this.courseModel();
+    const newCourse = new this.courseModel();
     Object.assign(newCourse, createCourseDto);
-    let examCategory = await this.examCategoryService.getExamCategoryById(
+    const examCategory = await this.examCategoryService.getExamCategoryById(
       createCourseDto.examCategory,
     );
     if (!examCategory) {
@@ -85,10 +85,10 @@ export class CourseService {
   }
 
   async getSubExamCategories(id: mongoose.Schema.Types.ObjectId) {
-    let subExamCategories = await this.courseSubExamCategoryModel
+    const subExamCategories = await this.courseSubExamCategoryModel
       .find({ course: id })
       .select('subExamCategory');
-    let ids = subExamCategories.map((sub) => sub.subExamCategory);
+    const ids = subExamCategories.map((sub) => sub.subExamCategory);
     console.log(ids);
     return await this.subExamCategoryService.getSubExamCategoriesById(ids);
   }

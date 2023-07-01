@@ -9,6 +9,7 @@ import {
 import { CreateExerciseQuestionDto } from './dto/createExerciseQuestion.dto';
 import { UpdateExerciseQuestionDto } from './dto/updateExerciseQuestion.dto';
 import { GetExerciseQuestionDto } from './dto/getExerciseQuestion';
+import { GetExerciseChaptersDto } from './dto/getChapters.dto';
 
 @Injectable()
 export class ExerciseQuestionService {
@@ -58,6 +59,18 @@ export class ExerciseQuestionService {
       chapter: getExerciseQuestionDto.chapter,
     });
     return { questions, total };
+  }
+
+  async getAvailableChapters(getExerciseChaptersDto: GetExerciseChaptersDto) {
+    const chapters = await this.exerciseQuestionModel
+      .find({
+        grade: getExerciseChaptersDto.grade,
+        courseId: getExerciseChaptersDto.courseId,
+      })
+      .select('chapter')
+      .distinct('chapter');
+
+    return { chapters, total: chapters.length };
   }
 
   async createExerciseQuestion(
