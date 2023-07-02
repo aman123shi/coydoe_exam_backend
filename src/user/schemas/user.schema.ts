@@ -49,6 +49,9 @@ export class User {
   @Prop()
   paymentStatus: string;
 
+  @Prop({ default: '' })
+  paymentImageUrl: string;
+
   @Prop({ default: 15 })
   rewardPoint: number;
 

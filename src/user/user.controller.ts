@@ -83,8 +83,25 @@ export class UserController {
   ) {
     return this.userService.updateUser(id, updateUserDto);
   }
-  //  @Post('notify')
-  // async notifyUsers(@Body('userId') userId: UserLoginDto) {
-  //   return await this.userService.login(userLoginDto);
-  // }
+
+  @Post('upload-payment-image')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadPaymentImage(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 30 }), //file must be less than 30 mb
+        ],
+        fileIsRequired: true,
+      }),
+    )
+    file: Express.Multer.File | undefined,
+    @Req() request: ExpressRequest,
+  ) {
+    return await this.userService.uploadPaymentImage(
+      request.userId,
+      file?.filename ?? '',
+    );
+  }
 }

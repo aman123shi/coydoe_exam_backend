@@ -73,6 +73,17 @@ export class UserService {
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
 
+  async uploadPaymentImage(
+    userId: mongoose.Schema.Types.ObjectId,
+    imagePath: string,
+  ) {
+    return await this.userModel.findByIdAndUpdate(
+      userId,
+      { paymentImageUrl: imagePath, paymentStatus: 'pending' },
+      { new: true },
+    );
+  }
+
   async login(loginDto: UserLoginDto) {
     const user = await this.userModel.findOne({ phone: loginDto.phone });
     if (!user) {

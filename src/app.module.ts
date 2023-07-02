@@ -82,6 +82,7 @@ export class AppModule implements NestModule, OnModuleInit {
         { path: 'get-challenge-invitation', method: RequestMethod.GET },
         { path: 'get-my-challenge', method: RequestMethod.GET },
         { path: 'general-questions', method: RequestMethod.POST },
+        { path: 'users/upload-payment-image', method: RequestMethod.POST },
       );
   }
   constructor(private usersPointCleanUp: UserPointsCleanupService) {}
