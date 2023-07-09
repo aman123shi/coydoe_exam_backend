@@ -152,6 +152,10 @@ export class UserService {
     return await this.userModel.updateOne({ _id: id }, updateUserDto);
   }
 
+  async deleteUser(id: mongoose.Schema.Types.ObjectId) {
+    return await this.userModel.findByIdAndRemove({ _id: id });
+  }
+
   async notifyUser(id: mongoose.Schema.Types.ObjectId) {
     return 'hello' + id;
   }

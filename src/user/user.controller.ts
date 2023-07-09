@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   FileTypeValidator,
   Get,
   MaxFileSizeValidator,
@@ -82,6 +83,11 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.userService.updateUser(id, updateUserDto);
+  }
+
+  @Delete('delete/:id')
+  async deleteUser(@Param('id') id: mongoose.Schema.Types.ObjectId) {
+    return this.userService.deleteUser(id);
   }
 
   @Post('upload-payment-image')
