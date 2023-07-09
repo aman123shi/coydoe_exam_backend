@@ -18,6 +18,9 @@ export class CreateUserDto {
   country: string;
 
   @IsOptional()
+  paymentImageUrl: string;
+
+  @IsOptional()
   image: string;
 
   @IsNotEmpty()
