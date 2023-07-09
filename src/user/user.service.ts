@@ -148,7 +148,7 @@ export class UserService {
     id: mongoose.Schema.Types.ObjectId,
     updateUserDto: UpdateUserDto,
   ) {
-    delete updateUserDto.password;
+    delete updateUserDto?.password;
     return await this.userModel.updateOne({ _id: id }, updateUserDto);
   }
 
