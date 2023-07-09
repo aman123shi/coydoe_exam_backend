@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsPhoneNumber } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateAdminDTo {
   @IsNotEmpty()
@@ -11,6 +11,9 @@ export class CreateAdminDTo {
 
   @IsNotEmpty()
   readonly username: string;
+
+  @IsNotEmpty()
+  readonly phone: string;
 
   @IsNotEmpty()
   readonly password: string;
