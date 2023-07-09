@@ -26,9 +26,9 @@ export class AdminService {
   }
 
   async signUp(createAdminDTo: CreateAdminDTo) {
-    let newAdmin = new this.adminModel();
+    const newAdmin = new this.adminModel();
     Object.assign(newAdmin, createAdminDTo);
-    let adminExist = await this.adminModel.findOne({
+    const adminExist = await this.adminModel.findOne({
       username: newAdmin.username,
     });
 
@@ -42,8 +42,8 @@ export class AdminService {
     newAdmin.password = await bcrypt.hash(newAdmin.password, salt);
     await newAdmin.save();
     delete newAdmin.password;
-    let admin = newAdmin.toObject({ getters: true });
-    let response = {
+    const admin = newAdmin.toObject({ getters: true });
+    const response = {
       ...admin,
       token: this.generateJWT(newAdmin._id),
     };
@@ -51,7 +51,7 @@ export class AdminService {
   }
 
   async login(loginDto: AdminLoginDto) {
-    let admin = await this.adminModel.findOne({ username: loginDto.username });
+    const admin = await this.adminModel.findOne({ phone: loginDto.username });
 
     if (!admin) {
       throw new HttpException(
@@ -71,8 +71,8 @@ export class AdminService {
       );
     }
     delete admin.password;
-    let loggedInAdmin = admin.toObject({ getters: true });
-    let response = {
+    const loggedInAdmin = admin.toObject({ getters: true });
+    const response = {
       ...loggedInAdmin,
       token: this.generateJWT(admin._id),
     };
