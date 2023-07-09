@@ -40,10 +40,10 @@ export class User {
   @Prop()
   password: string;
 
-  @Prop()
+  @Prop({ default: '' })
   transactionNo: string;
 
-  @Prop()
+  @Prop({ default: '' })
   generatedCode: string;
 
   @Prop()
