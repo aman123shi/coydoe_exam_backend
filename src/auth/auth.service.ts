@@ -15,18 +15,18 @@ export class AuthService {
       console.log(response.data);
 
       const { email, name, picture, given_name } = response.data; //payload;
-      let userExist = await this.userService.getUserByEmail(email);
+      const userExist = await this.userService.getUserByEmail(email);
 
       if (userExist) {
-        let user = userExist.toObject({ getters: true });
-        let token = this.userService.generateJWT({
+        const user = userExist.toObject({ getters: true });
+        const token = this.userService.generateJWT({
           id: userExist._id,
           email: userExist.email,
         });
         return { token, ...user };
       } else {
         //create new user with default country and region
-        let newUser = {
+        const newUser = {
           fullName: name,
           username: given_name,
           email,
@@ -34,8 +34,8 @@ export class AuthService {
           country: '63beb746dbe9063bcab93820',
           region: '63beb746dbe9063bcab93821',
         };
-        let user = await this.userService.createUser(newUser);
-        let token = this.userService.generateJWT({
+        const user = await this.userService.createUser(newUser);
+        const token = this.userService.generateJWT({
           id: user._id,
           email: user.email,
         });
@@ -63,18 +63,18 @@ export class AuthService {
       const { id, first_name, last_name, picture } = data;
       console.log(data); // { id, email, first_name, last_name,picture }
 
-      let userExist = await this.userService.getUserByFacebookId(id);
+      const userExist = await this.userService.getUserByFacebookId(id);
 
       if (userExist) {
-        let user = userExist.toObject({ getters: true });
-        let token = this.userService.generateJWT({
+        const user = userExist.toObject({ getters: true });
+        const token = this.userService.generateJWT({
           id: userExist._id,
           email: userExist.email,
         });
         return { token, ...user };
       } else {
         //create new user with default country and region
-        let newUser = {
+        const newUser = {
           fullName: first_name + ' ' + last_name,
           username: first_name,
           facebookId: id,
@@ -82,8 +82,8 @@ export class AuthService {
           country: '63beb746dbe9063bcab93820',
           region: '63beb746dbe9063bcab93821',
         };
-        let user = await this.userService.createUser(newUser);
-        let token = this.userService.generateJWT({
+        const user = await this.userService.createUser(newUser);
+        const token = this.userService.generateJWT({
           id: user._id,
           email: user.email,
         });
@@ -108,7 +108,7 @@ export class AuthService {
           Authorization: `Bearer ${accessToken}`,
         },
       };
-      let response = await axios.get(urlToGetUserProfile, config);
+      const response = await axios.get(urlToGetUserProfile, config);
 
       const { id, localizedFirstName, localizedLastName, profilePicture } =
         response.data;
@@ -119,18 +119,18 @@ export class AuthService {
         ),
       );
 
-      let userExist = await this.userService.getUserByLinkedinId(id);
+      const userExist = await this.userService.getUserByLinkedinId(id);
 
       if (userExist) {
-        let user = userExist.toObject({ getters: true });
-        let token = this.userService.generateJWT({
+        const user = userExist.toObject({ getters: true });
+        const token = this.userService.generateJWT({
           id: userExist._id,
           email: userExist.email,
         });
         return { token, ...user };
       } else {
         //  create new user with default country and region
-        let newUser = {
+        const newUser = {
           fullName: localizedFirstName + ' ' + localizedLastName,
           username: localizedFirstName,
           linkedinId: id,
@@ -140,8 +140,8 @@ export class AuthService {
           country: '63beb746dbe9063bcab93820',
           region: '63beb746dbe9063bcab93821',
         };
-        let user = await this.userService.createUser(newUser);
-        let token = this.userService.generateJWT({
+        const user = await this.userService.createUser(newUser);
+        const token = this.userService.generateJWT({
           id: user._id,
           email: user.email,
         });

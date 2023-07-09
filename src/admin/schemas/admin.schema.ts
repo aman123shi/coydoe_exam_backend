@@ -11,8 +11,11 @@ export class Admin {
   @Prop()
   lastName: string;
 
-  @Prop()
+  @Prop({ default: '' })
   username: string;
+
+  @Prop()
+  phone: string;
 
   @Prop()
   password: string;
