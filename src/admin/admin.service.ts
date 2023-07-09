@@ -29,7 +29,7 @@ export class AdminService {
     const newAdmin = new this.adminModel();
     Object.assign(newAdmin, createAdminDTo);
     const adminExist = await this.adminModel.findOne({
-      username: newAdmin.username,
+      phone: newAdmin.phone,
     });
 
     if (adminExist) {
