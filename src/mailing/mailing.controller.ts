@@ -9,7 +9,7 @@ export class MailingController {
   public sendMail() {
     this.mailingService.sendMail({
       code: '678895',
-      to: 'abexshiferaw8@gmail.com',
+      to: 'efalight8@gmail.com',
     });
   }
 }

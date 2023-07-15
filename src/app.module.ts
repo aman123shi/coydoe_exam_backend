@@ -67,7 +67,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
     AuthModule,
     ExerciseModule,
     GeneralQuestionModule,
-    MongooseModule.forRoot(process.env.MONGO_DB_URI),
+    MongooseModule.forRoot(process.env.MONGO_DB_URI_PRODUCTION),
 
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
