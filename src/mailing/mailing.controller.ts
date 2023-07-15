@@ -7,6 +7,9 @@ export class MailingController {
 
   @Get('send-mail')
   public sendMail() {
-    this.mailingService.sendMail();
+    this.mailingService.sendMail({
+      code: '678895',
+      to: 'abexshiferaw8@gmail.com',
+    });
   }
 }
