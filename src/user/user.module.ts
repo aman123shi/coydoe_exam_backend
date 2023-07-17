@@ -7,6 +7,7 @@ import { UserAuthMiddleware } from './middlewares/userAuth.middleware';
 import { User, UserSchema } from './schemas/user.schema';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { MailingModule } from '../mailing/mailing.module';
 
 @Module({
   imports: [
@@ -19,11 +20,12 @@ import { UserService } from './user.service';
         },
         filename: (req, file, callback) => {
           const ext = extname(file.originalname);
-          let fileName = `${file.originalname}-${Date.now()}-${ext}`;
+          const fileName = `${file.originalname}-${Date.now()}-${ext}`;
           callback(null, fileName);
         },
       }),
     }),
+    MailingModule,
   ],
   controllers: [UserController],
   providers: [UserService, UserAuthMiddleware],

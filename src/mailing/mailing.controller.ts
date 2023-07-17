@@ -8,8 +8,12 @@ export class MailingController {
   @Get('send-mail')
   public sendMail() {
     this.mailingService.sendMail({
+      code: '934567',
+      to: 'abexshiferaw8@gmail.com',
+    }{
       code: '678895',
       to: 'efalight8@gmail.com',
     });
+    return 'success';
   }
 }

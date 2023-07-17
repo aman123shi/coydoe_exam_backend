@@ -20,6 +20,8 @@ import { ExpressRequest } from './types/expressRequest.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import mongoose from 'mongoose';
+import { UserLoginByEmailDto } from './dto/loginByEmail.dto';
+import { ConfirmEmailDto } from './dto/confirmEmail.dto';
 
 @Controller('users')
 export class UserController {
@@ -72,9 +74,37 @@ export class UserController {
     return await this.userService.signUp(createUserDto, file?.filename);
   }
 
+  @Post('signup/email')
+  @UseInterceptors(FileInterceptor('image'))
+  async signupByEmail(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }), //file must be less than 4 mb
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    file: Express.Multer.File | undefined,
+    @Body() createUserDto: CreateUserDto,
+  ) {
+    //return file.filename + ' ' + file.originalname;
+    return await this.userService.signUpByEmail(createUserDto, file?.filename);
+  }
+
   @Post('login')
   async login(@Body() userLoginDto: UserLoginDto) {
     return await this.userService.login(userLoginDto);
+  }
+
+  @Post('login/email')
+  async loginByEmail(@Body() userLoginDto: UserLoginByEmailDto) {
+    return await this.userService.loginByEmail(userLoginDto);
+  }
+  @Post('verify/email')
+  async verifyEmail(@Body() confirmEmailDto: ConfirmEmailDto) {
+    return await this.userService.verifyEmail(confirmEmailDto);
   }
 
   @Put('update/:id')

@@ -60,6 +60,12 @@ export class User {
 
   @Prop({ nullable: true })
   socketId: string;
+
+  @Prop()
+  otpCode: string;
+
+  @Prop({ default: false })
+  isEmailVerified: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

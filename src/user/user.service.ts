@@ -10,12 +10,17 @@ import mongoose, { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { UpdateUserStatus } from './types/updateUserstatus.types';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { MailingService } from '@app/mailing/mailing.service';
+import { generateOTPCode } from '@app/utils';
+import { ConfirmEmailDto } from './dto/confirmEmail.dto';
+import { UserLoginByEmailDto } from './dto/loginByEmail.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<UserDocument>,
+    private mailerService: MailingService,
   ) {}
 
   generateJWT(data: any): string {
@@ -73,6 +78,89 @@ export class UserService {
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
 
+  async signUpByEmail(
+    createUserDTo: CreateUserDto,
+    imagePath: string | undefined,
+  ) {
+    const newUser = new this.userModel();
+    Object.assign(newUser, createUserDTo);
+    if (imagePath) newUser.image = imagePath;
+    const userExist = await this.userModel.findOne({
+      email: newUser.email,
+      isEmailVerified: true,
+    });
+    if (userExist) {
+      throw new HttpException(
+        'User already exist',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+
+    await this.userModel.findOneAndDelete({
+      email: newUser.email,
+    });
+
+
+    const otpCode = generateOTPCode();
+    const salt = await bcrypt.genSalt(10);
+
+
+    newUser.password = await bcrypt.hash(newUser.password, salt);
+    newUser.otpCode = otpCode;
+
+    this.mailerService.sendMail({to:newUser.email,code:otpCode});
+    await newUser.save();
+    const user = newUser.toObject({ getters: true });
+    delete user.password;
+    const response = {
+      ...user,
+      token: this.generateJWT({ id: newUser._id, phone: newUser.phone }),
+    };
+    return responseBuilder({ statusCode: HttpStatus.OK, body: response });
+  }
+    async verifyEmail(confirmEmailDto:ConfirmEmailDto){
+      const userExist = await this.userModel.findOne({
+        email: confirmEmailDto.email,
+        otpCode:confirmEmailDto.otp
+      });
+       if(!userExist){
+        throw new HttpException(
+          'User Donot exist',
+          HttpStatus.NOT_FOUND,
+        );
+       }
+      const isPasswordCorrect = await bcrypt.compare(
+        confirmEmailDto.password,
+        userExist.password,
+      );
+  
+      if (!isPasswordCorrect) {
+        throw new HttpException(
+          'Incorrect Password',
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+      console.log('helloe');
+      userExist.isEmailVerified = true;
+      userExist.otpCode = '';
+       userExist.save();
+
+
+      const loggedInUser = userExist.toObject({ getters: true });
+      delete loggedInUser.password;
+      const response = {
+        ...loggedInUser,
+        token: this.generateJWT({ id: loggedInUser._id, email: userExist.email }),
+      };
+      return responseBuilder({ statusCode: HttpStatus.OK, body: response });
+
+
+
+    }
+
+// verify email
+
   async uploadPaymentImage(
     userId: mongoose.Schema.Types.ObjectId,
     imagePath: string,
@@ -113,7 +201,37 @@ export class UserService {
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
+// login by email
+async loginByEmail(loginDto: UserLoginByEmailDto) {
+  const user = await this.userModel.findOne({ email: loginDto.email,isEmailVerified:true });
+  if (!user) {
+    throw new HttpException(
+      'Incorrect email or Password',
+      HttpStatus.UNPROCESSABLE_ENTITY,
+    );
+  }
 
+  const isPasswordCorrect = await bcrypt.compare(
+    loginDto.password,
+    user.password,
+  );
+
+  if (!isPasswordCorrect) {
+    throw new HttpException(
+      'Incorrect email or Password',
+      HttpStatus.UNPROCESSABLE_ENTITY,
+    );
+  }
+
+  const loggedInUser = user.toObject({ getters: true });
+  delete loggedInUser.password;
+  const response = {
+    ...loggedInUser,
+    token: this.generateJWT({ id: loggedInUser._id, phone: user.phone }),
+  };
+  return responseBuilder({ statusCode: HttpStatus.OK, body: response });
+}
+// email
   async getUserById(id: mongoose.Schema.Types.ObjectId) {
     return await this.userModel.findById(id).select('-password');
   }
