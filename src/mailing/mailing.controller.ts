@@ -10,9 +10,6 @@ export class MailingController {
     this.mailingService.sendMail({
       code: '934567',
       to: 'abexshiferaw8@gmail.com',
-    }{
-      code: '678895',
-      to: 'efalight8@gmail.com',
     });
     return 'success';
   }
