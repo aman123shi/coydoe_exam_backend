@@ -107,6 +107,10 @@ export class UserService {
     newUser.otpCode = otpCode;
 
     this.mailerService.sendMail({ to: newUser.email, code: otpCode });
+    console.log(
+      ' email sent **************************************************',
+    );
+
     await newUser.save();
     const user = newUser.toObject({ getters: true });
     delete user.password;
