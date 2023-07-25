@@ -96,20 +96,17 @@ export class UserService {
       );
     }
 
-
     await this.userModel.findOneAndDelete({
       email: newUser.email,
     });
 
-
     const otpCode = generateOTPCode();
     const salt = await bcrypt.genSalt(10);
-
 
     newUser.password = await bcrypt.hash(newUser.password, salt);
     newUser.otpCode = otpCode;
 
-    this.mailerService.sendMail({to:newUser.email,code:otpCode});
+    this.mailerService.sendMail({ to: newUser.email, code: otpCode });
     await newUser.save();
     const user = newUser.toObject({ getters: true });
     delete user.password;
@@ -119,47 +116,40 @@ export class UserService {
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
-    async verifyEmail(confirmEmailDto:ConfirmEmailDto){
-      const userExist = await this.userModel.findOne({
-        email: confirmEmailDto.email,
-        otpCode:confirmEmailDto.otp
-      });
-       if(!userExist){
-        throw new HttpException(
-          'User Donot exist',
-          HttpStatus.NOT_FOUND,
-        );
-       }
-      const isPasswordCorrect = await bcrypt.compare(
-        confirmEmailDto.password,
-        userExist.password,
-      );
-  
-      if (!isPasswordCorrect) {
-        throw new HttpException(
-          'Incorrect Password',
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
-      console.log('helloe');
-      userExist.isEmailVerified = true;
-      userExist.otpCode = '';
-       userExist.save();
-
-
-      const loggedInUser = userExist.toObject({ getters: true });
-      delete loggedInUser.password;
-      const response = {
-        ...loggedInUser,
-        token: this.generateJWT({ id: loggedInUser._id, email: userExist.email }),
-      };
-      return responseBuilder({ statusCode: HttpStatus.OK, body: response });
-
-
-
+  async verifyEmail(confirmEmailDto: ConfirmEmailDto) {
+    const userExist = await this.userModel.findOne({
+      email: confirmEmailDto.email,
+      otpCode: confirmEmailDto.otp,
+    });
+    if (!userExist) {
+      throw new HttpException('User Donot exist', HttpStatus.NOT_FOUND);
     }
+    const isPasswordCorrect = await bcrypt.compare(
+      confirmEmailDto.password,
+      userExist.password,
+    );
 
-// verify email
+    if (!isPasswordCorrect) {
+      throw new HttpException(
+        'Incorrect Password',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+    console.log('helloe');
+    userExist.isEmailVerified = true;
+    userExist.otpCode = '';
+    userExist.save();
+
+    const loggedInUser = userExist.toObject({ getters: true });
+    delete loggedInUser.password;
+    const response = {
+      ...loggedInUser,
+      token: this.generateJWT({ id: loggedInUser._id, email: userExist.email }),
+    };
+    return responseBuilder({ statusCode: HttpStatus.OK, body: response });
+  }
+
+  // verify email
 
   async uploadPaymentImage(
     userId: mongoose.Schema.Types.ObjectId,
@@ -201,37 +191,40 @@ export class UserService {
     };
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
-// login by email
-async loginByEmail(loginDto: UserLoginByEmailDto) {
-  const user = await this.userModel.findOne({ email: loginDto.email,isEmailVerified:true });
-  if (!user) {
-    throw new HttpException(
-      'Incorrect email or Password',
-      HttpStatus.UNPROCESSABLE_ENTITY,
+  // login by email
+  async loginByEmail(loginDto: UserLoginByEmailDto) {
+    const user = await this.userModel.findOne({
+      email: loginDto.email,
+      isEmailVerified: true,
+    });
+    if (!user) {
+      throw new HttpException(
+        'Incorrect email or Password',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(
+      loginDto.password,
+      user.password,
     );
+
+    if (!isPasswordCorrect) {
+      throw new HttpException(
+        'Incorrect email or Password',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const loggedInUser = user.toObject({ getters: true });
+    delete loggedInUser.password;
+    const response = {
+      ...loggedInUser,
+      token: this.generateJWT({ id: loggedInUser._id, phone: user.phone }),
+    };
+    return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
-
-  const isPasswordCorrect = await bcrypt.compare(
-    loginDto.password,
-    user.password,
-  );
-
-  if (!isPasswordCorrect) {
-    throw new HttpException(
-      'Incorrect email or Password',
-      HttpStatus.UNPROCESSABLE_ENTITY,
-    );
-  }
-
-  const loggedInUser = user.toObject({ getters: true });
-  delete loggedInUser.password;
-  const response = {
-    ...loggedInUser,
-    token: this.generateJWT({ id: loggedInUser._id, phone: user.phone }),
-  };
-  return responseBuilder({ statusCode: HttpStatus.OK, body: response });
-}
-// email
+  // email
   async getUserById(id: mongoose.Schema.Types.ObjectId) {
     return await this.userModel.findById(id).select('-password');
   }
