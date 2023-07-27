@@ -274,4 +274,11 @@ export class UserService {
   async notifyUser(id: mongoose.Schema.Types.ObjectId) {
     return 'hello' + id;
   }
+
+  async isPremiumActive(id: mongoose.Schema.Types.ObjectId) {
+    const user = await this.userModel.findById(id);
+    return {
+      data: { isActive: user?.paymentStatus == 'active' ? true : false },
+    };
+  }
 }

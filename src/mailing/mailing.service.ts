@@ -53,7 +53,6 @@ export class MailingService {
         if (err) {
           console.log(err);
           reject('Failed to create access token');
-          
         }
         resolve(token);
       });
@@ -72,3 +71,4 @@ export class MailingService {
     this.mailerService.addTransporter('gmail', config);
   }
 }
+// wrtbdkumldviszif

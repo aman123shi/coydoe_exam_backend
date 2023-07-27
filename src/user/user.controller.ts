@@ -98,10 +98,16 @@ export class UserController {
     return await this.userService.login(userLoginDto);
   }
 
+  @Get('is-premium-active')
+  async isPremiumActive(@Req() request: ExpressRequest) {
+    return await this.userService.isPremiumActive(request.userId);
+  }
+
   @Post('login/email')
   async loginByEmail(@Body() userLoginDto: UserLoginByEmailDto) {
     return await this.userService.loginByEmail(userLoginDto);
   }
+
   @Post('verify/email')
   async verifyEmail(@Body() confirmEmailDto: ConfirmEmailDto) {
     return await this.userService.verifyEmail(confirmEmailDto);
