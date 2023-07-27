@@ -264,7 +264,7 @@ export class UserService {
     updateUserDto: UpdateUserDto,
   ) {
     delete updateUserDto?.password;
-    return await this.userModel.updateOne({ _id: id }, updateUserDto);
+    return await this.userModel.findOneAndUpdate({ _id: id }, updateUserDto);
   }
 
   async deleteUser(id: mongoose.Schema.Types.ObjectId) {
