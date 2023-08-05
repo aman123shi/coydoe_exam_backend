@@ -27,4 +27,10 @@ export class CreateNotificationDto {
   @IsMongoId()
   @IsOptional()
   readonly referenceId?: mongoose.Types.ObjectId | any;
+
+  @IsMongoId()
+  readonly opponentUser:
+    | mongoose.Schema.Types.ObjectId
+    | mongoose.Types.ObjectId
+    | any;
 }

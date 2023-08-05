@@ -19,7 +19,9 @@ export class NotificationService {
   async getNotification(id: mongoose.Schema.Types.ObjectId | string) {
     const data = await this.notificationModel
       .find({ userId: id })
-      .sort({ updatedAt: -1 });
+      .sort({ updatedAt: -1 })
+      .populate('opponentUser')
+      .populate('userId ');
     return { data, total: data.length };
   }
 

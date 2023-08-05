@@ -35,7 +35,7 @@ import { GeneralQuestionModule } from './general-question/generalQuestion.module
 import { MailingModule } from './mailing/mailing.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-console.log(process.env);
+
 @Module({
   imports: [
     MailingModule,

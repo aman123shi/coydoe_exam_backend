@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prefer-const */
 import { CourseService } from '@app/course/course.service';
 import { LeaderBoardService } from '@app/leaderboard/leaderBoard.service';
@@ -48,6 +49,7 @@ export class ChallengeService {
       message:
         'the challenge you created was rejected by ' + rejectorUser.username,
       notificationType: 'inform',
+      opponentUser: challenge.opponent,
     });
     //push socket notification
 
@@ -136,6 +138,7 @@ export class ChallengeService {
         referenceId: newChallenge._id,
         notificationType: 'challenge',
         isViewed: false,
+        opponentUser: opponentId,
       });
     //notification for opponent user
     const opponentNotification =
@@ -146,6 +149,7 @@ export class ChallengeService {
         notificationType: 'challenge',
         isViewed: false,
         isLink: true,
+        opponentUser: userId,
       });
     //send socket notification to opponent if it is online
     if (opponentUser.isOnline)
@@ -345,6 +349,7 @@ export class ChallengeService {
             message: `you have got Equal Points with ${opponentUser.fullName} in the challenge x complete this challenge first to be a winner`,
             userId: challenge.createdBy,
             referenceId: challenge._id,
+            opponentUser: challenge.opponent,
           });
         const opponentNotification =
           context.notificationService.createNotification({
@@ -353,6 +358,7 @@ export class ChallengeService {
             message: `you have got Equal Points with ${challengerUser.fullName} in the challenge x complete this challenge first to be a winner`,
             userId: challenge.opponent,
             referenceId: challenge._id,
+            opponentUser: challenge.createdBy,
           });
         (await challengerNotification).save();
         (await opponentNotification).save();
@@ -382,7 +388,7 @@ export class ChallengeService {
         const challengerUser = await context.userService.getUserById(
           challengerId,
         );
-        opponentUser.rewardPoint += opponentReward;
+        opponentUser.rewardPoint += challenge.assignedPoint;
         challengerUser.rewardPoint -= challenge.assignedPoint;
         //inserting to leaderBoard
         context.leaderBoardService.insertNewUserPointAndUpdateUserRank(
@@ -475,6 +481,7 @@ export class ChallengeService {
         notificationType: 'challenge',
         userId,
         referenceId: challenge._id,
+        opponentUser: opponentUser._id,
       });
       //socket fire todo
       return 'submit success ';
@@ -503,18 +510,20 @@ export class ChallengeService {
 
         const submitterNotification =
           await this.notificationService.createNotification({
-            message: `2you win the challenge with ${opponentUser.fullName} in ${course.name}`,
+            message: `you win the challenge with ${opponentUser.fullName} in ${course.name}`,
             notificationType: 'challenge',
             userId,
             referenceId: challenge._id,
+            opponentUser: opponentUser._id,
           });
 
         const opponentNotification =
           await this.notificationService.createNotification({
-            message: `3you lose the challenge with ${challengerUser.fullName} in ${course.name}`,
+            message: `you lose the challenge with ${challengerUser.fullName} in ${course.name}`,
             notificationType: 'challenge',
             userId: opponentUser._id,
             referenceId: challenge._id,
+            opponentUser: challengerUser._id,
           });
         if (opponentUser.isOnline) {
           this.notificationGateway.sendNotification({
@@ -552,6 +561,7 @@ export class ChallengeService {
             message: `4you have got Equal Points with ${opponentUser.fullName} in the challenge ${course.name}, complete this challenge first to be a winner`,
             userId: challenge.createdBy,
             referenceId: challenge._id,
+            opponentUser: opponentUser._id,
           });
 
         const opponentNotification =
@@ -561,6 +571,7 @@ export class ChallengeService {
             message: `5you have got Equal Points with ${challengerUser.fullName} in the challenge ${course.name}, complete this challenge first to be a winner`,
             userId: challenge.opponent,
             referenceId: challenge._id,
+            opponentUser: challengerUser._id,
           });
 
         challenge.additionalQuestions = [];
@@ -611,6 +622,7 @@ export class ChallengeService {
             notificationType: 'challenge',
             userId,
             referenceId: challenge._id,
+            opponentUser: opponentUser._id,
           });
 
         const opponentNotification =
@@ -619,6 +631,7 @@ export class ChallengeService {
             notificationType: 'challenge',
             userId: opponentUser._id,
             referenceId: challenge._id,
+            opponentUser: challengerUser._id,
           });
         //socket event for both
         if (opponentUser.isOnline) {

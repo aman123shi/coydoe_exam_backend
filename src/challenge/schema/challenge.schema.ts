@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { QuestionInfo } from '../dto/createChallenge.dto';
@@ -6,7 +7,7 @@ export type ChallengeDocument = HydratedDocument<Challenge>;
 
 @Schema({ timestamps: true })
 export class Challenge {
-  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  @Prop({ type: mongoose.Schema.Types.ObjectId }) // opponentUser
   courseId: mongoose.Schema.Types.ObjectId;
   @Prop({ default: 'pending' })
   status: string;
@@ -56,6 +57,8 @@ export class Challenge {
 
   @Prop({})
   additionalQuestions: QuestionInfo[];
+
+
 }
 
 export const ChallengeSchema = SchemaFactory.createForClass(Challenge);

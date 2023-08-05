@@ -25,6 +25,9 @@ export class Notification {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId })
   referenceId: mongoose.Schema.Types.ObjectId; // it could refer challenges or messages
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, isRequired: false }) // opponentUser
+  opponentUser: mongoose.Schema.Types.ObjectId | null | undefined;
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);
