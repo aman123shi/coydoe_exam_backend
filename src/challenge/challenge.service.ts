@@ -298,8 +298,10 @@ export class ChallengeService {
         );
         challengerNotification.message = winnerMessage;
         challengerNotification.isViewed = false;
+        challengerNotification.isLink = false;
         opponentNotification.message = loserMessage;
         opponentNotification.isViewed = false;
+        opponentNotification.isLink = false;
 
         await opponentNotification.save();
         await challengerNotification.save();
