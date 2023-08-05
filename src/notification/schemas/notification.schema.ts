@@ -30,7 +30,7 @@ export class Notification {
     type: mongoose.Schema.Types.ObjectId,
     isRequired: false,
     ref: 'User',
-  }) // opponentUser
+  })
   opponentUser: mongoose.Schema.Types.ObjectId | null | undefined;
 }
 

@@ -21,7 +21,7 @@ export class NotificationService {
       .find({ userId: id })
       .sort({ updatedAt: -1 })
       .populate('opponentUser')
-      .populate('userId ');
+      .populate('userId');
     return { data, total: data.length };
   }
 
