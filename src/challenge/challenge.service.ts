@@ -45,9 +45,10 @@ export class ChallengeService {
 
     //send notification for challenger that its challenge is rejected
     await this.notificationService.createNotification({
-      userId: challenge.createdBy,
+      userId: challenge?.createdBy,
       message:
-        'the challenge you created was rejected by ' + rejectorUser.username,
+        'the challenge you created was rejected by ' + rejectorUser?.username ??
+        'opponent',
       notificationType: 'inform',
       opponentUser: challenge.opponent,
     });
