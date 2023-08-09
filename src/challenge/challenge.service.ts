@@ -48,6 +48,7 @@ export class ChallengeService {
       userId: challenge?.createdBy,
       message:
         'the challenge you created was rejected by ' + rejectorUser?.username ??
+        rejectorUser?.fullName ??
         'opponent',
       notificationType: 'inform',
       opponentUser: challenge.opponent,
@@ -135,7 +136,9 @@ export class ChallengeService {
     const challengerNotification =
       await this.notificationService.createNotification({
         userId,
-        message: `waiting for ${opponentUser?.fullName} to complete the challenge`,
+        message: `waiting for ${
+          opponentUser?.fullName ?? opponentUser?.username
+        } to complete the challenge`,
         referenceId: newChallenge._id,
         notificationType: 'challenge',
         isViewed: false,
@@ -145,7 +148,9 @@ export class ChallengeService {
     const opponentNotification =
       await this.notificationService.createNotification({
         userId: opponentId,
-        message: `${challengerUser?.fullName} is challenging you to solve biology`,
+        message: `${
+          challengerUser?.fullName ?? challengerUser?.username
+        } is challenging you to solve biology`,
         referenceId: newChallenge._id,
         notificationType: 'challenge',
         isViewed: false,
@@ -197,6 +202,7 @@ export class ChallengeService {
     const challenge = await this.challengeModel.findById(challengeId);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const context = this; //capturing the class context to access it inside internal functions
+    const course = await this.courseService.getCourseById(challenge.courseId);
 
     let isChallenger = false,
       submitterScore = 0,
@@ -301,13 +307,17 @@ export class ChallengeService {
           opponentUser._id,
           -challenge.assignedPoint, //negative to subtract
         );
-        challengerNotification.message = winnerMessage;
+        challengerNotification.message = `you win the challenge with  ${
+          opponentUser?.username ?? opponentUser?.fullName
+        } in course ${course.name}`;
         challengerNotification.isViewed = false;
         challengerNotification.isLink = false;
-        opponentNotification.message = loserMessage;
+        opponentNotification.message = `you lose the challenge with  ${
+          challengerUser?.username ?? challengerUser?.fullName
+        } in course ${course.name}`;
         opponentNotification.isViewed = false;
         opponentNotification.isLink = false;
-
+        // --
         await opponentNotification.save();
         await challengerNotification.save();
         await challengerUser.save();
@@ -347,7 +357,7 @@ export class ChallengeService {
           context.notificationService.createNotification({
             notificationType: 'next-challenge',
             isLink: true,
-            message: `you have got Equal Points with ${opponentUser.fullName} in the challenge x complete this challenge first to be a winner`,
+            message: `you have got Equal Points with ${opponentUser.fullName} in the challenge ${course.name} complete this challenge first to be a winner`,
             userId: challenge.createdBy,
             referenceId: challenge._id,
             opponentUser: challenge.opponent,
@@ -356,7 +366,7 @@ export class ChallengeService {
           context.notificationService.createNotification({
             notificationType: 'next-challenge',
             isLink: true,
-            message: `you have got Equal Points with ${challengerUser.fullName} in the challenge x complete this challenge first to be a winner`,
+            message: `you have got Equal Points with ${challengerUser.fullName} in the challenge ${course.name} complete this challenge first to be a winner`,
             userId: challenge.opponent,
             referenceId: challenge._id,
             opponentUser: challenge.createdBy,
@@ -400,9 +410,17 @@ export class ChallengeService {
           challengerUser._id,
           -challenge.assignedPoint, //negative to subtract
         );
-        challengerNotification.message = loserMessage;
+
+        challengerNotification.message = `you lose the challenge with  ${
+          opponentUser?.username ?? opponentUser?.fullName
+        } in course ${course.name}`;
+
         challengerNotification.isViewed = false;
-        opponentNotification.message = winnerMessage;
+
+        opponentNotification.message = `you Win the challenge with  ${
+          challengerUser?.username ?? challengerUser?.fullName
+        } in course ${course.name}`;
+
         opponentNotification.isViewed = false;
         await opponentNotification.save();
         await challengerNotification.save();
@@ -478,7 +496,9 @@ export class ChallengeService {
     ) {
       // notification you lose this challenge
       await this.notificationService.createNotification({
-        message: `1you lose the challenge with ${opponentUser.fullName} in ${course.name} because of late submission`,
+        message: `you lose the challenge with ${
+          opponentUser.fullName ?? opponentUser.username
+        } in ${course.name} because of late submission`,
         notificationType: 'challenge',
         userId,
         referenceId: challenge._id,
@@ -511,7 +531,9 @@ export class ChallengeService {
 
         const submitterNotification =
           await this.notificationService.createNotification({
-            message: `you win the challenge with ${opponentUser.fullName} in ${course.name}`,
+            message: `you win the challenge with ${
+              opponentUser.fullName ?? opponentUser.username
+            } in ${course.name}`,
             notificationType: 'challenge',
             userId,
             referenceId: challenge._id,
@@ -520,7 +542,9 @@ export class ChallengeService {
 
         const opponentNotification =
           await this.notificationService.createNotification({
-            message: `you lose the challenge with ${challengerUser.fullName} in ${course.name}`,
+            message: `you lose the challenge with ${
+              challengerUser.fullName ?? challengerUser.username
+            } in ${course.name}`,
             notificationType: 'challenge',
             userId: opponentUser._id,
             referenceId: challenge._id,
@@ -559,7 +583,11 @@ export class ChallengeService {
           await this.notificationService.createNotification({
             notificationType: 'next-challenge',
             isLink: true,
-            message: `4you have got Equal Points with ${opponentUser.fullName} in the challenge ${course.name}, complete this challenge first to be a winner`,
+            message: `you have got Equal Points with ${
+              opponentUser.fullName ?? opponentUser.username
+            } in the challenge ${
+              course.name
+            }, complete this challenge first to be a winner`,
             userId: challenge.createdBy,
             referenceId: challenge._id,
             opponentUser: opponentUser._id,
@@ -569,7 +597,11 @@ export class ChallengeService {
           await this.notificationService.createNotification({
             notificationType: 'next-challenge',
             isLink: true,
-            message: `5you have got Equal Points with ${challengerUser.fullName} in the challenge ${course.name}, complete this challenge first to be a winner`,
+            message: `you have got Equal Points with ${
+              challengerUser.fullName ?? challengerUser.username
+            } in the challenge ${
+              course.name
+            }, complete this challenge first to be a winner`,
             userId: challenge.opponent,
             referenceId: challenge._id,
             opponentUser: challengerUser._id,
@@ -619,7 +651,9 @@ export class ChallengeService {
 
         const challengerNotification =
           await this.notificationService.createNotification({
-            message: `6you win the challenge with ${opponentUser.fullName} in ${course.name}`,
+            message: `you win the challenge with ${
+              opponentUser.fullName ?? opponentUser.username
+            } in ${course.name}`,
             notificationType: 'challenge',
             userId,
             referenceId: challenge._id,
@@ -628,7 +662,9 @@ export class ChallengeService {
 
         const opponentNotification =
           await this.notificationService.createNotification({
-            message: `7you lose the challenge with ${challengerUser.fullName} in ${course.name}`,
+            message: `you lose the challenge with ${
+              challengerUser.fullName ?? challengerUser.username
+            } in ${course.name}`,
             notificationType: 'challenge',
             userId: opponentUser._id,
             referenceId: challenge._id,
