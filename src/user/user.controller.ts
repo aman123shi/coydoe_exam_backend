@@ -22,6 +22,7 @@ import { UpdateUserDto } from './dto/updateUser.dto';
 import mongoose from 'mongoose';
 import { UserLoginByEmailDto } from './dto/loginByEmail.dto';
 import { ConfirmEmailDto } from './dto/confirmEmail.dto';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
 
 @Controller('users')
 export class UserController {
@@ -145,5 +146,15 @@ export class UserController {
       request.userId,
       file?.filename ?? '',
     );
+  }
+
+  @Post('forget-password')
+  async forgetPassword(@Body('email') email: string) {
+    return await this.userService.forgetPasswordSendOTP(email);
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return await this.userService.resetPassword(resetPasswordDto);
   }
 }

@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { sign } from 'jsonwebtoken';
 import { CreateUserDto } from './dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
@@ -14,6 +19,7 @@ import { MailingService } from '@app/mailing/mailing.service';
 import { generateOTPCode } from '@app/utils';
 import { ConfirmEmailDto } from './dto/confirmEmail.dto';
 import { UserLoginByEmailDto } from './dto/loginByEmail.dto';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
 
 @Injectable()
 export class UserService {
@@ -153,7 +159,47 @@ export class UserService {
     return responseBuilder({ statusCode: HttpStatus.OK, body: response });
   }
 
-  // verify email
+  // forget password send otp
+
+  async forgetPasswordSendOTP(email: string) {
+    const user = await this.userModel.findOne({
+      email,
+    });
+
+    if (!user) throw new NotFoundException();
+    const otpCode = generateOTPCode();
+
+    user.otpCode = otpCode;
+    this.mailerService.sendMail({ to: email, code: otpCode });
+    return { success: true };
+  }
+
+  // reset password
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const userExist = await this.userModel.findOne({
+      email: resetPasswordDto.email,
+      otpCode: resetPasswordDto.otp,
+    });
+
+    if (!userExist) {
+      throw new HttpException("User don't exist", HttpStatus.NOT_FOUND);
+    }
+    const salt = await bcrypt.genSalt(10);
+
+    userExist.password = await bcrypt.hash(resetPasswordDto.password, salt);
+
+    userExist.otpCode = '';
+    userExist.save();
+
+    const loggedInUser = userExist.toObject({ getters: true });
+    delete loggedInUser.password;
+    const response = {
+      ...loggedInUser,
+      token: this.generateJWT({ id: loggedInUser._id, email: userExist.email }),
+    };
+    return responseBuilder({ statusCode: HttpStatus.OK, body: response });
+  }
 
   async uploadPaymentImage(
     userId: mongoose.Schema.Types.ObjectId,
