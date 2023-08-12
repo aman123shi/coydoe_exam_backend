@@ -33,7 +33,7 @@ export class LeaderBoardService {
     private monthlyLeaderBoardModel: Model<MonthlyLeaderBoardDocument>,
   ) {}
   async deleteOlderEntriesOfTheMonth() {
-    const userPoint = await this.userPointsModel.deleteMany({
+    await this.userPointsModel.deleteMany({
       createdAt: {
         $lte: startOfDay(subDays(new Date(), 30)),
       },
@@ -44,7 +44,7 @@ export class LeaderBoardService {
     point: number,
   ) {
     //update daily insertion if you can get unless create
-    const userPoint = await this.userPointsModel.findOneAndUpdate(
+    await this.userPointsModel.findOneAndUpdate(
       {
         userId,
         createdAt: {
@@ -86,6 +86,7 @@ export class LeaderBoardService {
 
     // then update daily,weekly and monthly leader board score of that user only if it is positive
   }
+
   async generateDailyLeaderBoard(
     userId: any = null,
   ): Promise<UserTotalPoint[]> {
@@ -128,6 +129,7 @@ export class LeaderBoardService {
     ]);
     return weeklyLeaderBoard;
   }
+
   async generateMonthlyLeaderBoard(
     userId: any = null,
   ): Promise<UserTotalPoint[]> {
@@ -148,25 +150,30 @@ export class LeaderBoardService {
     ]);
     return monthlyLeaderBoard;
   }
+
   async getDailyLeaderBoard() {
     return await this.dailyLeaderBoardModel
       .find()
-      .populate('userId', ['fullName'])
+      .populate('userId', ['fullName', 'username'])
       .sort({ points: -1 })
       .limit(20);
   }
+
   async getWeeklyLeaderBoard() {
     return await this.weeklyLeaderBoardModel
       .find()
-      .populate('userId', ['fullName'])
+      .populate('userId', ['fullName', 'username'])
       .sort({ points: -1 })
       .limit(20);
   }
+
   async getMonthlyLeaderBoard() {
-    return await this.monthlyLeaderBoardModel
+    const data = await this.monthlyLeaderBoardModel
       .find()
-      .populate('userId', ['fullName'])
+      .populate('userId', ['fullName', 'username'])
       .sort({ points: -1 })
       .limit(20);
+
+    return { data };
   }
 }
