@@ -23,6 +23,7 @@ import mongoose from 'mongoose';
 import { UserLoginByEmailDto } from './dto/loginByEmail.dto';
 import { ConfirmEmailDto } from './dto/confirmEmail.dto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
+import { ChangePasswordDto } from './dto/changePassword.dto';
 
 @Controller('users')
 export class UserController {
@@ -156,5 +157,16 @@ export class UserController {
   @Post('reset-password')
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return await this.userService.resetPassword(resetPasswordDto);
+  }
+
+  @Post('change-password')
+  async changePassword(
+    @Req() request: ExpressRequest,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    return await this.userService.changePassword(
+      request.userId,
+      changePasswordDto,
+    );
   }
 }

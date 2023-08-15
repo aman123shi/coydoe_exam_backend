@@ -20,6 +20,7 @@ import { generateOTPCode } from '@app/utils';
 import { ConfirmEmailDto } from './dto/confirmEmail.dto';
 import { UserLoginByEmailDto } from './dto/loginByEmail.dto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
+import { ChangePasswordDto } from './dto/changePassword.dto';
 
 @Injectable()
 export class UserService {
@@ -188,6 +189,42 @@ export class UserService {
     const salt = await bcrypt.genSalt(10);
 
     userExist.password = await bcrypt.hash(resetPasswordDto.password, salt);
+
+    userExist.otpCode = '';
+    userExist.save();
+
+    const loggedInUser = userExist.toObject({ getters: true });
+    delete loggedInUser.password;
+    const response = {
+      ...loggedInUser,
+      token: this.generateJWT({ id: loggedInUser._id, email: userExist.email }),
+    };
+    return responseBuilder({ statusCode: HttpStatus.OK, body: response });
+  }
+
+  async changePassword(userId: any, changePasswordDto: ChangePasswordDto) {
+    const userExist = await this.userModel.findOne({
+      _id: userId,
+    });
+
+    if (!userExist) {
+      throw new HttpException("User don't exist", HttpStatus.NOT_FOUND);
+    }
+    const isPasswordCorrect = await bcrypt.compare(
+      changePasswordDto.oldPassword,
+      userExist.password,
+    );
+
+    if (!isPasswordCorrect) {
+      throw new HttpException(
+        'Incorrect Password',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const salt = await bcrypt.genSalt(10);
+
+    userExist.password = await bcrypt.hash(changePasswordDto.password, salt);
 
     userExist.otpCode = '';
     userExist.save();
