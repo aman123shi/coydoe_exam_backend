@@ -152,7 +152,7 @@ export class LeaderBoardService {
   }
 
   async getDailyLeaderBoard(userId: any) {
-    const leaderBoard = await this.dailyLeaderBoardModel
+    const leaderboard = await this.dailyLeaderBoardModel
       .find()
       .populate('userId', ['fullName', 'username'])
       .sort({ points: -1 })
@@ -161,7 +161,7 @@ export class LeaderBoardService {
     const user = await this.dailyLeaderBoardModel.findOne({ userId });
     if (!user) {
       return {
-        leaderBoard,
+        leaderboard,
         rank,
       };
     } else {
@@ -171,14 +171,14 @@ export class LeaderBoardService {
         })) + 1;
 
       return {
-        leaderBoard,
+        leaderboard,
         rank,
       };
     }
   }
 
   async getWeeklyLeaderBoard(userId: any) {
-    const leaderBoard = await this.weeklyLeaderBoardModel
+    const leaderboard = await this.weeklyLeaderBoardModel
       .find()
       .populate('userId', ['fullName', 'username'])
       .sort({ points: -1 })
@@ -187,7 +187,7 @@ export class LeaderBoardService {
     const user = await this.weeklyLeaderBoardModel.findOne({ userId });
     if (!user) {
       return {
-        leaderBoard,
+        leaderboard,
         rank,
       };
     } else {
@@ -197,14 +197,14 @@ export class LeaderBoardService {
         })) + 1;
 
       return {
-        leaderBoard,
+        leaderboard,
         rank,
       };
     }
   }
 
   async getMonthlyLeaderBoard(userId: any) {
-    const leaderBoard = await this.monthlyLeaderBoardModel
+    const leaderboard = await this.monthlyLeaderBoardModel
       .find()
       .populate('userId', ['fullName', 'username'])
       .sort({ points: -1 })
@@ -213,7 +213,7 @@ export class LeaderBoardService {
     const user = await this.monthlyLeaderBoardModel.findOne({ userId });
     if (!user) {
       return {
-        leaderBoard,
+        leaderboard,
         rank,
       };
     } else {
@@ -223,7 +223,7 @@ export class LeaderBoardService {
         })) + 1;
 
       return {
-        leaderBoard,
+        leaderboard,
         rank,
       };
     }
