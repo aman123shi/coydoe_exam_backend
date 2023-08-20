@@ -151,29 +151,81 @@ export class LeaderBoardService {
     return monthlyLeaderBoard;
   }
 
-  async getDailyLeaderBoard() {
-    return await this.dailyLeaderBoardModel
+  async getDailyLeaderBoard(userId: any) {
+    const leaderBoard = await this.dailyLeaderBoardModel
       .find()
       .populate('userId', ['fullName', 'username'])
       .sort({ points: -1 })
       .limit(20);
+    let rank = -1;
+    const user = await this.dailyLeaderBoardModel.findOne({ userId });
+    if (!user) {
+      return {
+        leaderBoard,
+        rank,
+      };
+    } else {
+      rank =
+        (await this.dailyLeaderBoardModel.countDocuments({
+          points: { $gt: user.points },
+        })) + 1;
+
+      return {
+        leaderBoard,
+        rank,
+      };
+    }
   }
 
-  async getWeeklyLeaderBoard() {
-    return await this.weeklyLeaderBoardModel
+  async getWeeklyLeaderBoard(userId: any) {
+    const leaderBoard = await this.weeklyLeaderBoardModel
       .find()
       .populate('userId', ['fullName', 'username'])
       .sort({ points: -1 })
       .limit(20);
+    let rank = -1;
+    const user = await this.weeklyLeaderBoardModel.findOne({ userId });
+    if (!user) {
+      return {
+        leaderBoard,
+        rank,
+      };
+    } else {
+      rank =
+        (await this.weeklyLeaderBoardModel.countDocuments({
+          points: { $gt: user.points },
+        })) + 1;
+
+      return {
+        leaderBoard,
+        rank,
+      };
+    }
   }
 
-  async getMonthlyLeaderBoard() {
-    const data = await this.monthlyLeaderBoardModel
+  async getMonthlyLeaderBoard(userId: any) {
+    const leaderBoard = await this.monthlyLeaderBoardModel
       .find()
       .populate('userId', ['fullName', 'username'])
       .sort({ points: -1 })
       .limit(20);
+    let rank = -1;
+    const user = await this.monthlyLeaderBoardModel.findOne({ userId });
+    if (!user) {
+      return {
+        leaderBoard,
+        rank,
+      };
+    } else {
+      rank =
+        (await this.monthlyLeaderBoardModel.countDocuments({
+          points: { $gt: user.points },
+        })) + 1;
 
-    return { data };
+      return {
+        leaderBoard,
+        rank,
+      };
+    }
   }
 }

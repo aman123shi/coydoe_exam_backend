@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
 import { LeaderBoardService } from './leaderBoard.service';
+import { ExpressRequest } from '@app/user/types/expressRequest.interface';
 
 @Controller('leaderboard')
 export class LeaderBoardController {
@@ -14,17 +15,17 @@ export class LeaderBoardController {
   }
 
   @Get('daily')
-  async getDaily() {
-    return await this.leaderBoardService.getDailyLeaderBoard();
+  async getDaily(@Req() request: ExpressRequest) {
+    return await this.leaderBoardService.getDailyLeaderBoard(request.userId);
   }
 
   @Get('weekly')
-  async getWeekly() {
-    return await this.leaderBoardService.getWeeklyLeaderBoard();
+  async getWeekly(@Req() request: ExpressRequest) {
+    return await this.leaderBoardService.getWeeklyLeaderBoard(request.userId);
   }
 
   @Get('monthly')
-  async getMonthly() {
-    return await this.leaderBoardService.getMonthlyLeaderBoard();
+  async getMonthly(@Req() request: ExpressRequest) {
+    return await this.leaderBoardService.getMonthlyLeaderBoard(request.userId);
   }
 }
