@@ -20,6 +20,7 @@ export class ChallengeController {
     return await this.challengeService.createChallenge({
       courseId: createChallengeDto.courseId,
       opponentId: createChallengeDto.opponentId,
+      numberOfQuestion: createChallengeDto?.numberOfQuestion ?? 5,
       userId: req.userId,
     });
   }

@@ -102,7 +102,7 @@ export class ChallengeService {
     return { data: challenges, total: challenges.length };
   }
 
-  async createChallenge({ courseId, userId, opponentId }) {
+  async createChallenge({ courseId, userId, opponentId, numberOfQuestion }) {
     const challengerUser = await this.userService.getUserById(userId);
     //5 is a minimum point required to create a challenge
     if (challengerUser.rewardPoint < 5) {
@@ -116,6 +116,7 @@ export class ChallengeService {
     const rewardPoint = 5;
     const randomQuestions = await this.questionService.getRandomQuestion(
       courseId,
+      numberOfQuestion,
     );
     for (const question of randomQuestions) {
       questionsInfo.push({ id: question._id, answer: question.answer });
