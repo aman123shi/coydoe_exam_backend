@@ -35,7 +35,12 @@ export class UserService {
   }
 
   async getAllOnlineUsers(userId: mongoose.Schema.Types.ObjectId) {
-    const users = await this.userModel.find({ _id: { $nin: [userId] } });
+    const user = await this.userModel.findOne({ _id: userId });
+
+    const users = await this.userModel.find({
+      _id: { $nin: [userId] },
+      rewardPoint: { $gte: (user?.rewardPoint ?? 0) - 10 },
+    });
     return { data: users, total: users.length };
   }
   async getUsersByRegion(countryId: string, regionId: string) {
