@@ -79,32 +79,31 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 })
 export class AppModule implements NestModule, OnModuleInit {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(UserAuthMiddleware)
-      .forRoutes(
-        { path: 'questions/create', method: RequestMethod.POST },
-        { path: 'data-clerk', method: RequestMethod.GET },
-        { path: 'grouped-questions/create', method: RequestMethod.POST },
-        { path: 'submit-answer', method: RequestMethod.POST },
-        { path: 'get-progress', method: RequestMethod.POST },
-        { path: 'create-challenge', method: RequestMethod.POST },
-        { path: 'submit-challenge', method: RequestMethod.POST },
-        { path: 'submit-additional-questions', method: RequestMethod.POST },
-        { path: 'get-additional-questions', method: RequestMethod.POST },
-        { path: 'notifications', method: RequestMethod.GET },
-        { path: 'notifications/get-new-count', method: RequestMethod.GET },
-        { path: 'users/all', method: RequestMethod.GET },
-        { path: 'users/get-reward-point', method: RequestMethod.GET },
-        { path: 'get-challenge-invitation', method: RequestMethod.GET },
-        { path: 'get-my-challenge', method: RequestMethod.GET },
-        { path: 'general-questions', method: RequestMethod.POST },
-        { path: 'users/upload-payment-image', method: RequestMethod.POST },
-        { path: 'users/change-password', method: RequestMethod.POST },
-        { path: 'users/is-premium-active', method: RequestMethod.GET },
-        { path: 'leaderboard/daily', method: RequestMethod.GET },
-        { path: 'leaderboard/weekly', method: RequestMethod.GET },
-        { path: 'leaderboard/monthly', method: RequestMethod.GET },
-      );
+    consumer.apply(UserAuthMiddleware).forRoutes(
+      { path: 'questions/create', method: RequestMethod.POST },
+      { path: 'data-clerk', method: RequestMethod.GET },
+      { path: 'grouped-questions/create', method: RequestMethod.POST },
+      { path: 'submit-answer', method: RequestMethod.POST },
+      { path: 'get-progress', method: RequestMethod.POST },
+      { path: 'create-challenge', method: RequestMethod.POST },
+      { path: 'submit-challenge', method: RequestMethod.POST },
+      { path: 'submit-additional-questions', method: RequestMethod.POST },
+      { path: 'get-additional-questions', method: RequestMethod.POST },
+      { path: 'notifications', method: RequestMethod.GET },
+      { path: 'notifications/get-new-count', method: RequestMethod.GET },
+      { path: 'users/all', method: RequestMethod.GET },
+      { path: 'users/update-user-info', method: RequestMethod.PUT },
+      { path: 'users/get-reward-point', method: RequestMethod.GET }, //
+      { path: 'get-challenge-invitation', method: RequestMethod.GET },
+      { path: 'get-my-challenge', method: RequestMethod.GET },
+      { path: 'general-questions', method: RequestMethod.POST },
+      { path: 'users/upload-payment-image', method: RequestMethod.POST },
+      { path: 'users/change-password', method: RequestMethod.POST },
+      { path: 'users/is-premium-active', method: RequestMethod.GET },
+      { path: 'leaderboard/daily', method: RequestMethod.GET },
+      { path: 'leaderboard/weekly', method: RequestMethod.GET },
+      { path: 'leaderboard/monthly', method: RequestMethod.GET },
+    );
   }
   constructor(private usersPointCleanUp: UserPointsCleanupService) {}
   onModuleInit() {

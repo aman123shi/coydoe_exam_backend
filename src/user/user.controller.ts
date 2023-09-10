@@ -169,4 +169,12 @@ export class UserController {
       changePasswordDto,
     );
   }
+
+  @Put('update-user-info')
+  async updateUserInfo(
+    @Req() request: ExpressRequest,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.userService.updateUser(request.userId, updateUserDto);
+  }
 }

@@ -1,7 +1,6 @@
 import { IsNotEmpty, IsOptional, IsPhoneNumber } from 'class-validator';
 
 export class CreateUserDto {
-  @IsNotEmpty()
   @IsOptional()
   username: string;
 
@@ -49,4 +48,7 @@ export class CreateUserDto {
 
   @IsOptional()
   paymentStatus: string;
+
+  @IsOptional()
+  hidePoints: boolean;
 }

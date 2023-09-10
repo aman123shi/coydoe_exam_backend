@@ -66,6 +66,9 @@ export class User {
 
   @Prop({ default: false })
   isEmailVerified: boolean;
+
+  @Prop({ default: false })
+  hidePoints: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
