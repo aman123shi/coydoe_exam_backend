@@ -32,4 +32,7 @@ export class CreateGeneralQuestionDto {
   @IsNotEmpty()
   @IsOptional()
   readonly questionNumber: number;
+
+  @IsOptional()
+  readonly examCategory?: string;
 }

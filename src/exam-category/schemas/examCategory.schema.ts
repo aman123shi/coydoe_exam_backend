@@ -7,6 +7,9 @@ export type ExamCategoryDocument = HydratedDocument<ExamCategory>;
 export class ExamCategory {
   @Prop()
   name: string;
+
+  @Prop({ default: '' })
+  category: string;
 }
 
 export const ExamCategorySchema = SchemaFactory.createForClass(ExamCategory);

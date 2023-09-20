@@ -7,5 +7,5 @@ export class GetDataInsertionReportDto {
 
   @IsNotEmpty()
   @IsOptional()
-  durationInDays: number = 30;
+  durationInDays = 30;
 }

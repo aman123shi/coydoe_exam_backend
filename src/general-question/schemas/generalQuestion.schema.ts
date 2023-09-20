@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 export type GeneralQuestionDocument = HydratedDocument<GeneralQuestion>;
 
@@ -34,6 +34,9 @@ export class GeneralQuestion {
 
   @Prop()
   questionNumber: number;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ExamCategory' })
+  examCategory: mongoose.Schema.Types.ObjectId;
 }
 
 export const GeneralQuestionSchema =

@@ -21,11 +21,11 @@ export class ExamCategoryService {
     return await this.examCategoryModel.find();
   }
   async getExamCategoriesWithCourses() {
-    let examCategories = await this.examCategoryModel.find();
-    let response = [];
+    const examCategories = await this.examCategoryModel.find();
+    const response = [];
     for (const examCat of examCategories) {
-      let courses = await this.courseService.getCourses(examCat.id, null);
-      let examCategoryWithCourses = {
+      const courses = await this.courseService.getCourses(examCat.id, null);
+      const examCategoryWithCourses = {
         _id: examCat.id,
         name: examCat.name,
         courses,
@@ -42,7 +42,7 @@ export class ExamCategoryService {
   async createExamCategory(
     examCategoryDto: ExamCategoryDto,
   ): Promise<ExamCategory> {
-    let newExamCategory = new this.examCategoryModel();
+    const newExamCategory = new this.examCategoryModel();
     Object.assign(newExamCategory, examCategoryDto);
     return await newExamCategory.save();
   }
