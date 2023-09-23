@@ -29,6 +29,7 @@ export class ExamCategoryService {
         _id: examCat.id,
         name: examCat.name,
         courses,
+        category: examCat?.category,
       };
       response.push(examCategoryWithCourses);
     }
