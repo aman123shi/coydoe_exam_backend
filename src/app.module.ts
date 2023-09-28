@@ -35,6 +35,7 @@ import { GeneralQuestionModule } from './general-question/generalQuestion.module
 import { MailingModule } from './mailing/mailing.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { MaterialResourceModule } from './material-resource/material-resource.module';
 
 @Module({
   imports: [
@@ -68,6 +69,8 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
     ExerciseModule,
     GeneralQuestionModule,
     MongooseModule.forRoot(process.env.MONGO_DB_URI),
+
+    MaterialResourceModule,
 
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
@@ -103,6 +106,7 @@ export class AppModule implements NestModule, OnModuleInit {
       { path: 'leaderboard/daily', method: RequestMethod.GET },
       { path: 'leaderboard/weekly', method: RequestMethod.GET },
       { path: 'leaderboard/monthly', method: RequestMethod.GET },
+      { path: 'material-resources', method: RequestMethod.POST },
     );
   }
   constructor(private usersPointCleanUp: UserPointsCleanupService) {}
