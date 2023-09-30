@@ -22,16 +22,27 @@ export class GeneralQuestionController {
     private readonly generalQuestionService: GeneralQuestionService,
   ) {}
 
-  @Get()
-  async getGeneralQuestions(@Query() query: GetGeneralQuestionDto) {
+  @Get('/:examCategory')
+  async getGeneralQuestions(
+    @Query() query: GetGeneralQuestionDto,
+    @Param('examCategory') examCategory: mongoose.Schema.Types.ObjectId,
+  ) {
     const page = parseInt(query?.page?.toString() || '1');
     const limit = parseInt(query?.limit?.toString() || '10');
-    return await this.generalQuestionService.getGeneralQuestions(page, limit);
+    return await this.generalQuestionService.getGeneralQuestions(
+      page,
+      limit,
+      examCategory,
+    );
   }
 
-  @Get('random')
-  async getRandomGeneralQuestions() {
-    return await this.generalQuestionService.getRandomGeneralQuestions();
+  @Get('random/:examCategory')
+  async getRandomGeneralQuestions(
+    @Param('examCategory') examCategory: mongoose.Schema.Types.ObjectId,
+  ) {
+    return await this.generalQuestionService.getRandomGeneralQuestions(
+      examCategory,
+    );
   }
 
   @Post()

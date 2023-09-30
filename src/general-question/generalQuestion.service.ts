@@ -19,20 +19,30 @@ export class GeneralQuestionService {
     private readonly adminService: AdminService,
   ) {}
 
-  async getGeneralQuestions(page: number, limit: number) {
-    const count = await this.generalQuestionModel.find().count();
+  async getGeneralQuestions(
+    page: number,
+    limit: number,
+    examCategory: mongoose.Schema.Types.ObjectId,
+  ) {
+    const count = await this.generalQuestionModel
+      .find({ examCategory })
+      .count();
     const questions = await this.generalQuestionModel
-      .find()
+      .find({ examCategory })
       .skip((page - 1) * limit)
       .limit(limit);
 
     return { count, questions };
   }
 
-  async getRandomGeneralQuestions() {
-    const count = await this.generalQuestionModel.find().count();
+  async getRandomGeneralQuestions(
+    examCategory: mongoose.Schema.Types.ObjectId,
+  ) {
+    const count = await this.generalQuestionModel
+      .find({ examCategory })
+      .count();
     const questions = await this.generalQuestionModel
-      .aggregate([{ $sample: { size: 10 } }])
+      .aggregate([{ $match: { examCategory } }, { $sample: { size: 10 } }])
       .exec();
 
     return { count, questions };
