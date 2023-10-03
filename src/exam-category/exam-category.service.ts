@@ -20,6 +20,14 @@ export class ExamCategoryService {
   async getExamCategory(): Promise<ExamCategory[]> {
     return await this.examCategoryModel.find();
   }
+
+  async getGeneralExamCategory(): Promise<any> {
+    const categories = await this.examCategoryModel.find({
+      category: 'generalQuestion',
+    });
+
+    return { data: categories };
+  }
   async getExamCategoriesWithCourses() {
     const examCategories = await this.examCategoryModel.find();
     const response = [];
