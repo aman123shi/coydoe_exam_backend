@@ -42,7 +42,14 @@ export class GeneralQuestionService {
       .find({ examCategory })
       .count();
     const questions = await this.generalQuestionModel
-      .aggregate([{ $match: { examCategory } }, { $sample: { size: 10 } }])
+      .aggregate([
+        {
+          $match: {
+            examCategory: new mongoose.Types.ObjectId(examCategory.toString()),
+          },
+        },
+        { $sample: { size: 10 } },
+      ])
       .exec();
 
     return { count, questions };
