@@ -42,6 +42,7 @@ export class GeneralQuestionService {
       .find({ examCategory })
       .count();
     const questions = await this.generalQuestionModel
+
       .aggregate([
         {
           $match: {

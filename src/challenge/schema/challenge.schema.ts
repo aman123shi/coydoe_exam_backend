@@ -2,7 +2,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { QuestionInfo } from '../dto/createChallenge.dto';
-
 export type ChallengeDocument = HydratedDocument<Challenge>;
 
 @Schema({ timestamps: true })
@@ -42,7 +41,7 @@ export class Challenge {
 
   @Prop({ default: false })
   isAdditionalQuestionSubmitted: boolean;
-  //
+
   @Prop({ default: 0 })
   challengerScore: number;
 
@@ -57,8 +56,6 @@ export class Challenge {
 
   @Prop({})
   additionalQuestions: QuestionInfo[];
-
-
 }
 
 export const ChallengeSchema = SchemaFactory.createForClass(Challenge);
