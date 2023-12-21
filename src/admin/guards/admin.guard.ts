@@ -17,13 +17,13 @@ export class AdminGuard implements CanActivate {
     ]);
     if (isPublic) return true;
 
-    let request = ctx.switchToHttp().getRequest<Request>();
+    const request = ctx.switchToHttp().getRequest<Request>();
     if (!request.headers.authorization) return false;
-    let token = request.headers.authorization.split('')[1];
+    const token = request.headers.authorization.split('')[1];
     console.log('Token from header ' + token);
 
     try {
-      let user = verify(token, process.env.JWT_SECRET) as {
+      const user = verify(token, process.env.JWT_SECRET) as {
         id: string;
         isAdmin: boolean;
       };

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   UserChallenge,
   UserChallengeDocument,
@@ -9,6 +14,8 @@ import {
   AdminChallenge,
   AdminChallengeDocument,
 } from './schemas/admin-challenge.schema';
+import { QuestionInfo } from '@app/challenge/dto/createChallenge.dto';
+import { QuestionService } from '@app/question/question.service';
 
 @Injectable()
 export class UserChallengeService {
@@ -17,17 +24,15 @@ export class UserChallengeService {
     private userChallengeModel: Model<UserChallengeDocument>,
     @InjectModel(AdminChallenge.name)
     private adminChallengeModel: Model<AdminChallengeDocument>,
+    private questionService: QuestionService,
   ) {}
 
-  async getLevelChallenge(level: number, userId: any): Promise<any> {
-    // check  if active challenge exist for this level
-    // if no active challenge is available
-    // return 404 no challenge found for this period
-    // if exists check if opponent unassigned user exist then assign the unassigned user as opponent
-    // if unassigned user does not exists play your challenge and wait for other challenger to be assigned to you
-    // if opponent not found from the previous generate new questions
-    // and return challenge id and questions or give opponent questions for the player
-
+  async getLevelChallenge(
+    level: number,
+    userId: any,
+    courseId: any,
+  ): Promise<any> {
+    let questions = [];
     const challengeExist = await this.adminChallengeModel.findOne({
       level: level,
       isActive: true,
@@ -38,6 +43,21 @@ export class UserChallengeService {
     const unAssignedUser = await this.userChallengeModel.findOne({
       opponentAssigned: false,
     });
+
+    const challengeAlreadySubmitted = await this.userChallengeModel.findOne({
+      userId,
+      level,
+      isActive: true,
+      challengeSubmitted: true,
+    });
+
+    if (challengeAlreadySubmitted) {
+      throw new HttpException(
+        'Challenge Already submitted',
+        HttpStatus.CONFLICT,
+      );
+    }
+
     const newUserChallenge = new this.userChallengeModel({
       adminChallenge: challengeExist._id,
       userId,
@@ -51,8 +71,28 @@ export class UserChallengeService {
       newUserChallenge.opponentAssigned = true;
       newUserChallenge.opponentId = unAssignedUser._id as any;
       newUserChallenge.questions = unAssignedUser.questions;
+      for (const question of unAssignedUser.questions) {
+        const q = await this.questionService.getQuestionById(question.id);
+        questions.push(q);
+      }
     } else {
+      // generate questions - - - - - - - - -
+      const questionsInfo: QuestionInfo[] = [];
+
+      const randomQuestions = await this.questionService.getRandomQuestion(
+        courseId,
+        10,
+      );
+
+      questions = randomQuestions;
+      for (const question of randomQuestions) {
+        questionsInfo.push({ id: question._id, answer: question.answer });
+      }
+
+      newUserChallenge.questions = questionsInfo;
     }
     await newUserChallenge.save();
+
+    return { data: questions, status: 'success', message: '' };
   }
 }

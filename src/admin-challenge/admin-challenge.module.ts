@@ -9,6 +9,7 @@ import {
   UserChallengeSchema,
 } from './schemas/user-challenge.schema';
 import { UserChallengeService } from './user-challenge.service';
+import { QuestionModule } from '@app/question/question.module';
 
 @Module({
   providers: [UserChallengeService],
@@ -19,6 +20,7 @@ import { UserChallengeService } from './user-challenge.service';
       { name: AdminChallenge.name, schema: AdminChallengeSchema },
       { name: UserChallenge.name, schema: UserChallengeSchema },
     ]),
+    QuestionModule,
   ],
 })
 export class AdminChallengeModule {}

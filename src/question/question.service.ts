@@ -40,10 +40,12 @@ export class QuestionService {
     @Inject(forwardRef(() => DirectionService))
     private readonly directionService: DirectionService,
   ) {}
+
   async getQuestionById(id: mongoose.Schema.Types.ObjectId) {
     const question = await this.questionModel.findOne({ _id: id });
     return question;
   }
+
   async getQuestion(
     getQuestionDto: GetQuestionDto,
     userId: mongoose.Schema.Types.ObjectId,
