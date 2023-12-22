@@ -16,6 +16,8 @@ import {
 } from './schemas/admin-challenge.schema';
 import { QuestionInfo } from '@app/challenge/dto/createChallenge.dto';
 import { QuestionService } from '@app/question/question.service';
+import { CreateUserChallengeDTO } from './dtos/createUserChallenge.dto';
+import { SubmitUserChallengeDto } from './dtos/submitUserChallenge.dto';
 
 @Injectable()
 export class UserChallengeService {
@@ -28,13 +30,12 @@ export class UserChallengeService {
   ) {}
 
   async getLevelChallenge(
-    level: number,
     userId: any,
-    courseId: any,
+    createUserChallengeDTO: CreateUserChallengeDTO,
   ): Promise<any> {
     let questions = [];
     const challengeExist = await this.adminChallengeModel.findOne({
-      level: level,
+      level: createUserChallengeDTO.level,
       isActive: true,
     });
 
@@ -44,55 +45,91 @@ export class UserChallengeService {
       opponentAssigned: false,
     });
 
-    const challengeAlreadySubmitted = await this.userChallengeModel.findOne({
+    const challengeCreated = await this.userChallengeModel.findOne({
       userId,
-      level,
+      level: createUserChallengeDTO.level,
       isActive: true,
-      challengeSubmitted: true,
     });
 
-    if (challengeAlreadySubmitted) {
+    if (challengeCreated && challengeCreated.challengeSubmitted) {
+      throw new HttpException(
+        'Challenge Already submitted',
+        HttpStatus.CONFLICT,
+      );
+    } else if (challengeCreated) {
+      for (const question of challengeCreated.questions) {
+        const q = await this.questionService.getQuestionById(question.id);
+        questions.push(q);
+      }
+    } else {
+      // new user which has no previous challenge
+      const newUserChallenge = new this.userChallengeModel({
+        adminChallenge: challengeExist._id,
+        userId,
+      });
+
+      if (unAssignedUser) {
+        unAssignedUser.opponentId = userId;
+        unAssignedUser.opponentAssigned = true;
+        await unAssignedUser.save();
+
+        newUserChallenge.opponentAssigned = true;
+        newUserChallenge.opponentId = unAssignedUser._id as any;
+        newUserChallenge.questions = unAssignedUser.questions;
+        for (const question of unAssignedUser.questions) {
+          const q = await this.questionService.getQuestionById(question.id);
+          questions.push(q);
+        }
+      } else {
+        const questionsInfo: QuestionInfo[] = [];
+
+        const randomQuestions = await this.questionService.getRandomQuestion(
+          createUserChallengeDTO.courseId,
+          10,
+        );
+
+        questions = randomQuestions;
+        for (const question of randomQuestions) {
+          questionsInfo.push({ id: question._id, answer: question.answer });
+        }
+
+        newUserChallenge.questions = questionsInfo;
+      }
+      await newUserChallenge.save();
+    }
+
+    return { data: questions, status: 'success', message: '' };
+  }
+
+  async submitChallengeQuestion(
+    userId: any,
+    submitUserChallengeDto: SubmitUserChallengeDto,
+  ) {
+    let userPoint = 0;
+    const challengeCreated = await this.userChallengeModel.findOne({
+      userId,
+      level: submitUserChallengeDto.level,
+      isActive: true,
+    });
+
+    if (challengeCreated && challengeCreated.challengeSubmitted) {
       throw new HttpException(
         'Challenge Already submitted',
         HttpStatus.CONFLICT,
       );
     }
 
-    const newUserChallenge = new this.userChallengeModel({
-      adminChallenge: challengeExist._id,
-      userId,
-    });
-
-    if (unAssignedUser) {
-      unAssignedUser.opponentId = userId;
-      unAssignedUser.opponentAssigned = true;
-      await unAssignedUser.save();
-
-      newUserChallenge.opponentAssigned = true;
-      newUserChallenge.opponentId = unAssignedUser._id as any;
-      newUserChallenge.questions = unAssignedUser.questions;
-      for (const question of unAssignedUser.questions) {
-        const q = await this.questionService.getQuestionById(question.id);
-        questions.push(q);
-      }
-    } else {
-      // generate questions - - - - - - - - -
-      const questionsInfo: QuestionInfo[] = [];
-
-      const randomQuestions = await this.questionService.getRandomQuestion(
-        courseId,
-        10,
+    for (const q of submitUserChallengeDto.questionsInfo) {
+      const currentQuestion = challengeCreated.questions.find(
+        (item) => item.id == q.id,
       );
-
-      questions = randomQuestions;
-      for (const question of randomQuestions) {
-        questionsInfo.push({ id: question._id, answer: question.answer });
-      }
-
-      newUserChallenge.questions = questionsInfo;
+      if (currentQuestion?.answer == q?.answer) userPoint++;
     }
-    await newUserChallenge.save();
+    challengeCreated.point = userPoint;
+    challengeCreated.challengeSubmitted = true;
 
-    return { data: questions, status: 'success', message: '' };
+    await challengeCreated.save();
+
+    return { data: challengeCreated };
   }
 }

@@ -27,6 +27,7 @@ export class AdminGuard implements CanActivate {
         id: string;
         isAdmin: boolean;
       };
+
       if (user && user.isAdmin) {
         return true;
       }

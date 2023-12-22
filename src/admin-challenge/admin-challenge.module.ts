@@ -10,10 +10,11 @@ import {
 } from './schemas/user-challenge.schema';
 import { UserChallengeService } from './user-challenge.service';
 import { QuestionModule } from '@app/question/question.module';
+import { UserChallengeController } from './user-challenge.controller';
 
 @Module({
-  providers: [UserChallengeService],
-  controllers: [],
+  providers: [UserChallengeService], // UserChallengeController
+  controllers: [UserChallengeController],
   exports: [],
   imports: [
     MongooseModule.forFeature([
