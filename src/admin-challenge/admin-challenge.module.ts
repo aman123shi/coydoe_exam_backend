@@ -11,10 +11,12 @@ import {
 import { UserChallengeService } from './user-challenge.service';
 import { QuestionModule } from '@app/question/question.module';
 import { UserChallengeController } from './user-challenge.controller';
+import { AdminChallengeController } from './admin-challenge.controller';
+import { AdminChallengeService } from './admin-challenge.service';
 
 @Module({
-  providers: [UserChallengeService], // UserChallengeController
-  controllers: [UserChallengeController],
+  providers: [UserChallengeService, AdminChallengeService],
+  controllers: [UserChallengeController, AdminChallengeController],
   exports: [],
   imports: [
     MongooseModule.forFeature([
