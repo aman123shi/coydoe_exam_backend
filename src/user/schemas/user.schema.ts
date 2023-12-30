@@ -69,6 +69,9 @@ export class User {
 
   @Prop({ default: false })
   hidePoints: boolean;
+
+  @Prop({ default: 1 })
+  eligibleForLevel: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { UserChallengeService } from './user-challenge.service';
 import { CreateUserChallengeDTO } from './dtos/createUserChallenge.dto';
 import { ExpressRequest } from '@app/user/types/expressRequest.interface';
@@ -28,5 +28,12 @@ export class UserChallengeController {
       request.userId,
       submitUserChallengeDto,
     );
+  }
+
+  // getPlayingUsers
+
+  @Get('get-level-players/:level')
+  async getLevelPlayers(@Param('level') level: number) {
+    return await this.userChallengeService.getPlayingUsers(level);
   }
 }

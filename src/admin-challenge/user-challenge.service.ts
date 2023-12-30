@@ -18,6 +18,7 @@ import { QuestionInfo } from '@app/challenge/dto/createChallenge.dto';
 import { QuestionService } from '@app/question/question.service';
 import { CreateUserChallengeDTO } from './dtos/createUserChallenge.dto';
 import { SubmitUserChallengeDto } from './dtos/submitUserChallenge.dto';
+import { UserService } from '@app/user/user.service';
 
 @Injectable()
 export class UserChallengeService {
@@ -27,6 +28,7 @@ export class UserChallengeService {
     @InjectModel(AdminChallenge.name)
     private adminChallengeModel: Model<AdminChallengeDocument>,
     private questionService: QuestionService,
+    private userService: UserService,
   ) {}
 
   async getLevelChallenge(
@@ -40,6 +42,19 @@ export class UserChallengeService {
     });
 
     if (!challengeExist) throw new NotFoundException();
+
+    /*
+
+    const user = await this.userService.getUserById(userId);
+    if (
+      !(
+        user?.eligibleForLevel &&
+        user?.eligibleForLevel >= createUserChallengeDTO.level
+      )
+    )
+      throw new NotFoundException();
+
+      */
 
     const unAssignedUser = await this.userChallengeModel.findOne({
       opponentAssigned: false,
@@ -66,6 +81,7 @@ export class UserChallengeService {
       const newUserChallenge = new this.userChallengeModel({
         adminChallenge: challengeExist._id,
         userId,
+        level: createUserChallengeDTO.level,
       });
 
       if (unAssignedUser) {
@@ -74,7 +90,7 @@ export class UserChallengeService {
         await unAssignedUser.save();
 
         newUserChallenge.opponentAssigned = true;
-        newUserChallenge.opponentId = unAssignedUser._id as any;
+        newUserChallenge.opponentId = unAssignedUser.userId as any;
         newUserChallenge.questions = unAssignedUser.questions;
         for (const question of unAssignedUser.questions) {
           const q = await this.questionService.getQuestionById(question.id);
@@ -87,7 +103,7 @@ export class UserChallengeService {
           createUserChallengeDTO.courseId,
           10,
         );
-
+        console.log(randomQuestions);
         questions = randomQuestions;
         for (const question of randomQuestions) {
           questionsInfo.push({ id: question._id, answer: question.answer });
@@ -131,5 +147,39 @@ export class UserChallengeService {
     await challengeCreated.save();
 
     return { data: challengeCreated };
+  }
+
+  async getPlayingUsers(level: number) {
+    const challengeCreated = await this.userChallengeModel
+      .find({
+        level,
+        opponentAssigned: true,
+        isActive: true,
+      })
+      .populate('userId opponentId');
+
+    const uniquePairs = [];
+    const encounteredUsers = new Set();
+
+    challengeCreated.forEach((challenge) => {
+      const userId = challenge.userId as any;
+      const opponentId = challenge.opponentId as any;
+      console.log(challenge);
+      const user = userId?.username;
+      const opponent = opponentId?.username;
+
+      if (
+        !(
+          encounteredUsers.has(userId._id.toString()) ||
+          encounteredUsers.has(opponentId._id.toString())
+        )
+      ) {
+        uniquePairs.push({ user, opponent });
+        encounteredUsers.add(userId._id.toString());
+        encounteredUsers.add(opponentId._id.toString());
+      }
+    });
+
+    return { data: uniquePairs };
   }
 }

@@ -13,6 +13,7 @@ import { QuestionModule } from '@app/question/question.module';
 import { UserChallengeController } from './user-challenge.controller';
 import { AdminChallengeController } from './admin-challenge.controller';
 import { AdminChallengeService } from './admin-challenge.service';
+import { UserModule } from '@app/user/user.module';
 
 @Module({
   providers: [UserChallengeService, AdminChallengeService],
@@ -24,6 +25,7 @@ import { AdminChallengeService } from './admin-challenge.service';
       { name: UserChallenge.name, schema: UserChallengeSchema },
     ]),
     QuestionModule,
+    UserModule,
   ],
 })
 export class AdminChallengeModule {}

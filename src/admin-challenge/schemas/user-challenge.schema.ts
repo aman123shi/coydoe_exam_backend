@@ -1,4 +1,5 @@
 import { QuestionInfo } from '@app/challenge/dto/createChallenge.dto';
+import { User } from '@app/user/schemas/user.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 
@@ -10,13 +11,16 @@ export class UserChallenge {
   adminChallenge: mongoose.Schema.Types.ObjectId;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  userId: mongoose.Schema.Types.ObjectId;
+  userId: mongoose.Schema.Types.ObjectId | User;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  opponentId: mongoose.Schema.Types.ObjectId;
+  opponentId: mongoose.Schema.Types.ObjectId | User;
 
   @Prop({ default: 0 })
   point: number;
+
+  @Prop({ default: 7 })
+  level: number;
 
   @Prop({ default: false })
   opponentAssigned: boolean;

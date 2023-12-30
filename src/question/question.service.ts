@@ -260,7 +260,10 @@ export class QuestionService {
     return await this.questionModel.deleteOne({ _id: id });
   }
 
-  async getRandomQuestion(courseId: mongoose.Schema.Types.ObjectId, limit = 5) {
+  async getRandomQuestion(
+    courseId: mongoose.Schema.Types.ObjectId,
+    limit = 10,
+  ) {
     const count = await this.questionModel.find({ course: courseId }).count();
     const questions = [];
     for (let i = 0; i < limit; i++) {
