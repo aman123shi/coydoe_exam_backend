@@ -6,6 +6,7 @@ import {
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { CreateAdminChallengeDTO } from './dtos/createAdminChallenge.dto';
+import { GetAdminChallengeDTO } from './dtos/getAdminChallenge.dto';
 
 @Injectable()
 export class AdminChallengeService {
@@ -22,4 +23,21 @@ export class AdminChallengeService {
 
     return { data: cleanAdminChallenge };
   }
+
+  async getAdminChallenge(getAdminChallengeDto: GetAdminChallengeDTO) {
+    const page = getAdminChallengeDto?.page ?? 1;
+    const size = getAdminChallengeDto?.size ?? 10;
+    const matchQuery: any = {};
+
+    if (getAdminChallengeDto?.level)
+      matchQuery.level = getAdminChallengeDto?.level;
+
+    if (getAdminChallengeDto?.startDate && getAdminChallengeDto?.endDate) {
+      matchQuery.startDate = { $gte: getAdminChallengeDto?.startDate };
+      matchQuery.endDate = { $lte: getAdminChallengeDto?.endDate };
+    }
+
+    return { data: cleanAdminChallenge };
+  }
+  //
 }
