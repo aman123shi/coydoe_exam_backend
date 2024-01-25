@@ -26,7 +26,8 @@ export class AdminChallengeService {
 
   async getAdminChallenge(getAdminChallengeDto: GetAdminChallengeDTO) {
     const page = getAdminChallengeDto?.page ?? 1;
-    const size = getAdminChallengeDto?.size ?? 10;
+    const limit = getAdminChallengeDto?.size ?? 10;
+    const skip = (page - 1) * limit;
     const matchQuery: any = {};
 
     if (getAdminChallengeDto?.level)
@@ -37,7 +38,21 @@ export class AdminChallengeService {
       matchQuery.endDate = { $lte: getAdminChallengeDto?.endDate };
     }
 
-    return { data: cleanAdminChallenge };
+    if (
+      getAdminChallengeDto.isActive !== undefined &&
+      getAdminChallengeDto.isActive !== null
+    ) {
+      matchQuery.isActive = getAdminChallengeDto.isActive;
+    }
+    console.log(matchQuery);
+    const adminChallenges = await this.adminChallengeModel
+      .find(matchQuery)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+    const total = await this.adminChallengeModel.count(matchQuery);
+    return { data: adminChallenges, total };
   }
   //
 }

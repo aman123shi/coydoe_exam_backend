@@ -2,20 +2,20 @@ import { IsOptional } from 'class-validator';
 
 export class GetAdminChallengeDTO {
   @IsOptional()
-  readonly level: number;
+  readonly level?: number;
 
   @IsOptional()
-  readonly startDate: Date;
+  readonly startDate?: Date;
 
   @IsOptional()
-  readonly endDate: Date;
+  readonly endDate?: Date;
 
   @IsOptional()
-  readonly page: number;
+  readonly page?: number;
 
   @IsOptional()
-  readonly size: number;
+  readonly size?: number;
 
   @IsOptional()
-  readonly isActive: boolean;
+  readonly isActive?: boolean;
 }
