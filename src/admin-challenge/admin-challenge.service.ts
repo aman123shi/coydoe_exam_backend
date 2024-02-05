@@ -55,4 +55,12 @@ export class AdminChallengeService {
     return { data: adminChallenges, total };
   }
   //
+
+  async deleteAdminChallenge(id: any) {
+    const adminChallenge = await this.adminChallengeModel
+      .findByIdAndRemove(id)
+      .exec();
+
+    return { data: adminChallenge };
+  }
 }
