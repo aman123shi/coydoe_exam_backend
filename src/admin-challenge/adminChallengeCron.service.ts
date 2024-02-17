@@ -111,7 +111,7 @@ export class AdminChallengeCronService {
           userId: currentUser?.userId,
           message: `you have won the ${
             adminChallengeData.label ?? 'competition'
-          } challenge of level ${adminChallengeData.level} with rank ${
+          }  of level ${adminChallengeData.level} with rank ${
             topPlayersCounter + 1
           }`,
           notificationType: 'inform',
