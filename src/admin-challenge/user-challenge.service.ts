@@ -194,7 +194,7 @@ export class UserChallengeService {
       .find({
         adminChallenge: adminChallengeId,
       })
-      .sort({ point: -1 })
+      .sort({ point: -1, createdAt: 1 })
       .limit(limit);
 
     if (topUsers.length == 1) return topUsers;
