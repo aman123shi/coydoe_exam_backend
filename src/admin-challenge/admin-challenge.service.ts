@@ -63,4 +63,9 @@ export class AdminChallengeService {
 
     return { data: adminChallenge };
   }
+
+  async getAdminChallengeById(id: any) {
+    const adminChallenge = await this.adminChallengeModel.findById(id).exec();
+    return adminChallenge;
+  }
 }

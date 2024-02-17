@@ -22,6 +22,12 @@ export class AdminChallenge {
 
   @Prop({ default: false })
   isActive: boolean;
+
+  @Prop({ default: false })
+  isMarkedByCron: boolean;
+
+  @Prop({ default: false })
+  hasBeenActivated: boolean;
 }
 
 export const AdminChallengeSchema =

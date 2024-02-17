@@ -182,4 +182,37 @@ export class UserChallengeService {
 
     return { data: uniquePairs };
   }
+
+  async getChallengeTopPlayers({
+    limit,
+    adminChallengeId,
+  }: {
+    limit: number;
+    adminChallengeId: any;
+  }) {
+    const topUsers = await this.userChallengeModel
+      .find({
+        adminChallenge: adminChallengeId,
+      })
+      .sort({ point: -1 })
+      .limit(limit);
+
+    if (topUsers.length == 1) return topUsers;
+    else if (topUsers.length % 2 !== 0) {
+      //remove the last user if total players are not even
+      topUsers.pop();
+    }
+
+    return topUsers;
+  }
+
+  async getChallengeUserByUserId(userId: any) {
+    const challengeCreated = await this.userChallengeModel
+      .findOne({
+        userId,
+      })
+      .populate('userId');
+
+    return challengeCreated;
+  }
 }

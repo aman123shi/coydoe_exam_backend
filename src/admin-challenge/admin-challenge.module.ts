@@ -14,18 +14,30 @@ import { UserChallengeController } from './user-challenge.controller';
 import { AdminChallengeController } from './admin-challenge.controller';
 import { AdminChallengeService } from './admin-challenge.service';
 import { UserModule } from '@app/user/user.module';
+import {
+  ChallengeWinners,
+  ChallengeWinnersSchema,
+} from './schemas/challenge-winners.schema';
+import { NotificationModule } from '@app/notification/notification.module';
+import { AdminChallengeCronService } from './adminChallengeCron.service';
 
 @Module({
-  providers: [UserChallengeService, AdminChallengeService],
+  providers: [
+    UserChallengeService,
+    AdminChallengeService,
+    AdminChallengeCronService,
+  ],
   controllers: [UserChallengeController, AdminChallengeController],
   exports: [],
   imports: [
     MongooseModule.forFeature([
       { name: AdminChallenge.name, schema: AdminChallengeSchema },
       { name: UserChallenge.name, schema: UserChallengeSchema },
+      { name: ChallengeWinners.name, schema: ChallengeWinnersSchema },
     ]),
     QuestionModule,
     UserModule,
+    NotificationModule,
   ],
 })
 export class AdminChallengeModule {}

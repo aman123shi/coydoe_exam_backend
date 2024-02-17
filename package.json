@@ -38,7 +38,7 @@
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
-    "date-fns": "^2.29.3",
+    "date-fns": "^2.30.0",
     "google-auth-library": "^8.7.0",
     "googleapis": "^122.0.0",
     "handlebars": "^4.7.7",
