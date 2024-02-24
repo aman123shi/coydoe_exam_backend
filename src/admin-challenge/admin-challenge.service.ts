@@ -7,12 +7,19 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { CreateAdminChallengeDTO } from './dtos/createAdminChallenge.dto';
 import { GetAdminChallengeDTO } from './dtos/getAdminChallenge.dto';
+import {
+  FixedChallenges,
+  FixedChallengesDocument,
+} from './schemas/fixed-challenges.schema';
+import { CreateFixedChallengeDTO } from './dtos/createFixedChallenge.dto';
 
 @Injectable()
 export class AdminChallengeService {
   constructor(
     @InjectModel(AdminChallenge.name)
     private adminChallengeModel: Model<AdminChallengeDocument>,
+    @InjectModel(FixedChallenges.name)
+    private fixedChallengeModel: Model<FixedChallengesDocument>,
   ) {}
 
   async createAdminChallenge(createAdminChallengeDto: CreateAdminChallengeDTO) {
@@ -67,5 +74,24 @@ export class AdminChallengeService {
   async getAdminChallengeById(id: any) {
     const adminChallenge = await this.adminChallengeModel.findById(id).exec();
     return adminChallenge;
+  }
+
+  async setFixedChallenge(createFixedChallengeDTO: CreateFixedChallengeDTO) {
+    const newFixedChallenge = await this.fixedChallengeModel.findOneAndUpdate(
+      {
+        level: createFixedChallengeDTO.level,
+      },
+      createFixedChallengeDTO,
+      { upsert: true },
+    );
+
+    const cleanAdminChallenge = newFixedChallenge.toObject({ getters: true });
+
+    return { data: cleanAdminChallenge };
+  }
+
+  async getFixedChallenge() {
+    const fixedChallenges = await this.fixedChallengeModel.find();
+    return { data: fixedChallenges };
   }
 }

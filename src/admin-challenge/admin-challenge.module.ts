@@ -20,6 +20,10 @@ import {
 } from './schemas/challenge-winners.schema';
 import { NotificationModule } from '@app/notification/notification.module';
 import { AdminChallengeCronService } from './adminChallengeCron.service';
+import {
+  FixedChallenges,
+  FixedChallengesSchema,
+} from './schemas/fixed-challenges.schema';
 
 @Module({
   providers: [
@@ -34,6 +38,7 @@ import { AdminChallengeCronService } from './adminChallengeCron.service';
       { name: AdminChallenge.name, schema: AdminChallengeSchema },
       { name: UserChallenge.name, schema: UserChallengeSchema },
       { name: ChallengeWinners.name, schema: ChallengeWinnersSchema },
+      { name: FixedChallenges.name, schema: FixedChallengesSchema },
     ]),
     QuestionModule,
     UserModule,

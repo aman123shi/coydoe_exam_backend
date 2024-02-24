@@ -10,6 +10,7 @@ import {
 import { CreateAdminChallengeDTO } from './dtos/createAdminChallenge.dto';
 import { AdminChallengeService } from './admin-challenge.service';
 import { GetAdminChallengeDTO } from './dtos/getAdminChallenge.dto';
+import { CreateFixedChallengeDTO } from './dtos/createFixedChallenge.dto';
 
 @Controller('admin-challenge')
 export class AdminChallengeController {
@@ -22,12 +23,26 @@ export class AdminChallengeController {
     );
   }
 
+  @Get('get/fixed-challenges')
+  async getFixedChallenges() {
+    return await this.adminChallengeService.getFixedChallenge();
+  }
+
   @Post('create')
   async createAdminChallenge(
     @Body() createAdminChallengeDto: CreateAdminChallengeDTO,
   ) {
     return await this.adminChallengeService.createAdminChallenge(
       createAdminChallengeDto,
+    );
+  }
+
+  @Post('create/fixed-challenge')
+  async createFixedChallenge(
+    @Body() createFixedChallengeDTO: CreateFixedChallengeDTO,
+  ) {
+    return await this.adminChallengeService.setFixedChallenge(
+      createFixedChallengeDTO,
     );
   }
 
