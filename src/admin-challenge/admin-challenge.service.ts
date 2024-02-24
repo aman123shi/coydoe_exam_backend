@@ -94,4 +94,11 @@ export class AdminChallengeService {
     const fixedChallenges = await this.fixedChallengeModel.find();
     return { data: fixedChallenges };
   }
+
+  async deleteFixedChallenge(level: any) {
+    const fixedChallenges = await this.fixedChallengeModel.findOneAndRemove({
+      level,
+    });
+    return { data: fixedChallenges };
+  }
 }

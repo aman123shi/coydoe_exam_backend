@@ -50,4 +50,9 @@ export class AdminChallengeController {
   async deleteAdminChallenge(@Param('id') id: any) {
     return await this.adminChallengeService.deleteAdminChallenge(id);
   }
+
+  @Delete('fixed-challenges/:level')
+  async deleteFixedChallenge(@Param('level') level: any) {
+    return await this.adminChallengeService.deleteFixedChallenge(level);
+  }
 }
