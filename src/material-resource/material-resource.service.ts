@@ -26,7 +26,7 @@ export class MaterialResourceService {
       getMaterialResourceDto,
     );
 
-    return newMaterialResources;
+    return { data: newMaterialResources };
   }
 
   async createMaterialResource(
