@@ -37,6 +37,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { MaterialResourceModule } from './material-resource/material-resource.module';
 import { AdminChallengeModule } from './admin-challenge/admin-challenge.module';
+import { InnovationModule } from './innovation/innovation.module';
 
 @Module({
   imports: [
@@ -72,7 +73,7 @@ import { AdminChallengeModule } from './admin-challenge/admin-challenge.module';
     MongooseModule.forRoot(process.env.MONGO_DB_URI),
     AdminChallengeModule,
     MaterialResourceModule,
-
+    InnovationModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
       exclude: ['/api*'],
