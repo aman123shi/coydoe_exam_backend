@@ -29,11 +29,11 @@ export class AdminChallengeCronService {
 
   @Cron(CronExpression.EVERY_30_MINUTES)
   async makeActiveScheduledChallenges() {
-    await this.adminChallengeModel.updateMany(
+    const challenge = await this.adminChallengeModel.updateMany(
       {
         isActive: false,
         hasBeenActivated: false,
-        startDate: { $gte: startOfDay(new Date()) },
+        startDate: { $lte: startOfDay(new Date()) },
       },
       {
         $set: {
@@ -42,6 +42,7 @@ export class AdminChallengeCronService {
         },
       },
     );
+    console.log('make active scheduled challenges activated with ', challenge);
   }
 
   @Cron(CronExpression.EVERY_30_MINUTES)
@@ -79,6 +80,8 @@ export class AdminChallengeCronService {
         adminChallenge: adminChallenge._id,
         winners,
       });
+
+      console.log('this are a challenge winners', challengeWinners);
 
       await challengeWinners.save();
 
@@ -131,6 +134,6 @@ export class AdminChallengeCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  @Cron(CronExpression.EVERY_MINUTE)
   async selectQualifiedUsersForNextLevel() {}
 }
