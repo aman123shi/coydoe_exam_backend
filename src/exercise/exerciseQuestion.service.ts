@@ -27,7 +27,7 @@ export class ExerciseQuestionService {
         grade: getExerciseQuestionDto.grade,
         courseId: getExerciseQuestionDto.courseId,
       })
-      .sort({ chapter: 1 })
+      .sort({ chapter: 1, questionNumber: 1 })
       .skip(skip)
       .limit(getExerciseQuestionDto.size);
 
