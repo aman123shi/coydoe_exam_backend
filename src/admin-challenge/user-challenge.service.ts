@@ -128,6 +128,10 @@ export class UserChallengeService {
       isActive: true,
     });
 
+    if (!challengeCreated) {
+      throw new HttpException('Challenge Not found', HttpStatus.NOT_FOUND);
+    }
+
     if (challengeCreated && challengeCreated.challengeSubmitted) {
       throw new HttpException(
         'Challenge Already submitted',
